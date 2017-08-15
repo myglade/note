@@ -1,0 +1,718 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="shortcut icon" href="/card2.png" />
+<link rel="icon" href="/card2.png" type="image/png" />
+
+<title>Card Home</title>
+<STYLE TYPE="text/css"><!--
+@font-face{  
+    font-family: Andale Mono;  
+    src: url('/fonts/andalemo.ttf') format('truetype');  
+}
+
+@font-face{  
+    font-family: Courier New;  
+    src: local('cour'), url('/fonts/cour.ttf') format('truetype');  
+}
+
+/*
+@font-face{  
+    font-family: Consolas;  
+    src: local('consolas'), url('/fonts/consola.ttf') format('truetype');  
+}
+
+@font-face{  
+    font-family: Andale Mono;  
+    src: url('/fonts/andalemo.ttf') format('truetype');  
+}
+
+@font-face{  
+    font-family: Courier New1;  
+    src: local('cour'), url('/fonts/cour.ttf') format('truetype');  
+}
+*/
+
+table.reference
+{
+    background-color:#ffffff;
+    border:1px solid #c3c3c3;
+    border-collapse:collapse;
+    font-family:Consolas, Arial, Monospace;
+    font-size:12px;
+}
+
+table.reference th
+{
+    background-color:#e5eecc;
+    border:1px solid #c3c3c3;
+    padding:3px;
+    vertical-align:top;
+}
+
+table.reference td 
+{
+    border:1px solid #c3c3c3;
+    padding:3px;
+    vertical-align:top;
+    text-align:center;
+}
+
+table.reference a 
+{
+    text-decoration: none;
+}
+
+h2.result,h2.result_head
+{
+    color:#617f10;
+    background-color:transparent;
+    margin-top:0px;
+}
+
+h2.result {font-size:125%%;}
+h2.result_head {font-size:140%%;}
+
+.page
+{
+    font-family:Consolas, Arial, Monospace;
+    font-size:12px;
+}
+
+.stress
+{
+    color:#003366;
+	font-weight: normal;
+}
+
+-->
+</STYLE>
+<script type="text/javascript" src="js/summary.js"></script>
+
+<script>
+function ApplyFontface(fontName, local, fontUrl, fontFormat)
+{
+	var format;
+	
+	format = 
+	"@font-face {\n" +
+	"	font-family: '" + fontName + "';\n" + 
+	"	src: local('" + local + "'), url('" + fontUrl + "') format(" + fontFormat + ");\n" +
+	"}";
+
+	var newStyle = document.createElement('style');
+	newStyle.appendChild(document.createTextNode(format));
+	document.head.appendChild(newStyle);
+}
+
+function LoadFont()
+{	
+	var OSName="Unknown OS";
+	if (navigator.appVersion.indexOf("Win")!=-1) OSName="Windows";
+	if (navigator.appVersion.indexOf("Mac")!=-1) OSName="MacOS";
+	if (navigator.appVersion.indexOf("X11")!=-1) OSName="UNIX";
+	if (navigator.appVersion.indexOf("Linux")!=-1) OSName="Linux";
+
+	if (OSName == "Linux") 
+	{
+		ApplyFontface("Consolas", "monospace", "/fonts/consola.ttf", "truetype");
+	}
+	else
+	{
+		ApplyFontface("Consolas", "consolas", "/fonts/consola.ttf", "truetype");
+	}
+}
+
+LoadFont();
+
+var gSection = "<!--{section}-->";
+var gCategory = <!--{category}-->;
+var gQueryTag = [<!--{querytag}-->];
+var gQueryBookmark = <!--{querybookmark}-->;
+var gQuerySearchMode = <!--{querymode}-->;
+var gInfo = <!--{info}-->;
+var gType = <!--{type}-->;
+var gCurUrl = "<!--{curUrl}-->";
+var tagListG = new Array();
+var gUrl;
+var gBMode = 0;		// browser
+var gPageName = "home2";
+var gNumbering = 1;
+
+function getElementById(name) {
+    if (document.getElementById) {
+        return document.getElementById(name);
+    }
+    else if (document.all) {
+        return document.all[name];
+    }
+}
+
+String.prototype.format = function() {
+    var s = this,
+        i = arguments.length;
+
+    while (i--) {
+        s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
+    }
+    return s;
+};
+
+function createCookie(name,value,days) {
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime()+(days*24*60*60*1000));
+        var expires = "; expires="+date.toGMTString();
+    }
+    else var expires = "";
+    document.cookie = name+"="+value+expires+"; path=/";
+}
+
+function readCookie(name, def) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+	return typeof def !== 'undefined' ? def : null;
+}
+
+function eraseCookie(name) {
+    createCookie(name,"",-1);
+}
+
+var QueryString = function () {
+  // This function is anonymous, is executed immediately and 
+  // the return value is assigned to QueryString!
+  var query_string = {};
+  var query = window.location.search.substring(1);
+  var vars = query.split("&");
+  for (var i=0;i<vars.length;i++) {
+    var pair = vars[i].split("=");
+    	// If first entry with this name
+    if (typeof query_string[pair[0]] === "undefined") {
+      query_string[pair[0]] = pair[1];
+    	// If second entry with this name
+    } else if (typeof query_string[pair[0]] === "string") {
+      var arr = [ query_string[pair[0]], pair[1] ];
+      query_string[pair[0]] = arr;
+    	// If third or later entry with this name
+    } else {
+      query_string[pair[0]].push(pair[1]);
+    }
+  } 
+    return query_string;
+} ();
+
+function saveTag()
+{
+    for(var i = 0; i < gInfo[gSection]["tag"].length; i++)
+    {
+        item = gInfo[gSection]["tag"][i];
+		tag_name = "tag_" + item["id"];
+        if (getElementById(tag_name).checked)
+        {
+			createCookie(tag_name, 1, 3650);
+        }
+		else
+		{
+			createCookie(tag_name, 0, 3650);
+		}
+    }
+
+	reloadPage();
+}
+
+function reloadPage()
+{
+    var s = getElementById('category');
+    if (s.selectedIndex != -1)
+        gCategory = s[s.selectedIndex].value;
+    else
+        gCategory = "-1";
+
+	createCookie("category", gCategory, 3650);
+	createCookie("section", gSection, 3650);
+	
+    if (getElementById("bookmark").checked)
+        gQueryBookmark = "1";
+    else
+        gQueryBookmark = "0";
+		
+    if (getElementById("smode").checked)
+        gQuerySearchMode = "1";
+    else
+        gQuerySearchMode = "0";
+
+    if (getElementById("bmode").checked)
+	{
+        gBMode = "1";
+		gType = "1";
+	}
+    else
+	{
+        gBMode = "0";
+		gType = "0";
+	}
+
+    tag = '';
+    for(var i = 0; i < gInfo[gSection]["tag"].length; i++)
+    {
+        item = gInfo[gSection]["tag"][i];
+        if (getElementById("tag_" + item["id"]).checked)
+        {
+            tag += "&tag_{0}={0}".format(item["id"]);
+        }
+    }
+	
+    s = "{5}?sec={0}&cate={1}&bk={2}&smode={3}&type={4}".format(gSection, gCategory, gQueryBookmark, gQuerySearchMode, gType, gPageName) + tag;
+	window.location = s;
+	
+}
+
+function zoom()
+{
+    var s = getElementById('hzoom');
+
+    getElementById("summary").style.zoom = s[s.selectedIndex].value + "%";
+	createCookie("hzoom", s.selectedIndex, 3650);
+	createCookie("hzoom_v", s[s.selectedIndex].value + "%", 3650);
+}
+
+function ChangeSection(e)
+{
+    gSection = e[e.selectedIndex].value;
+    SetElement(gSection);
+    reloadPage();
+}
+
+function SetElement(section)
+{
+    var     str;
+    
+    str = "<SELECT class='page' NAME='category' id='category' onChange='reloadPage()' >\r\n"; 
+    str += "    <option value='-1'>ALL</option>\r\n";
+    
+    for(var i = 0; i < gInfo[section]["category"].length; i++)
+    {
+        item = gInfo[section]["category"][i];
+        str += "    <option value='{0}'>{1}</option>\r\n".format(item["id"], item["name"]);
+    }
+    str += "</select>\r\n";
+	
+    getElementById("categoryDiv").innerHTML = str;
+    getElementById("bookmark").checked = 0;
+    getElementById("smode").checked = 0;
+    
+    str = '';
+    for(var i = 0; i < gInfo[section]["tag"].length; i++)
+    {
+        item = gInfo[section]["tag"][i];
+        str += "<input type='checkbox' name='tag_{0}' id='tag_{0}' value='{0}' onChange='saveTag()' style='vertical-align:middle'/>{1} \r\n".format(item["id"], item["name"]);
+        tagListG[i] = 'tag_{0}'.format(item["id"]);
+    }
+    getElementById("tagDiv").innerHTML = str;
+}
+
+function load()
+{
+    var     curSection = -1;
+    var     i;
+  
+    getElementById("hidetag").checked = +readCookie("hidetag", 0);
+	getElementById("summary").style.zoom = readCookie("hzoom_v", "100%");
+	
+ 	gBMode = readCookie("bmode", 0);
+    getElementById("bmode").checked = +gBMode;
+    if (gBMode)
+	{
+        gType = 2;
+	}
+    else
+	{
+        gType = 0;
+	}
+	
+    str = "<SELECT class='page' NAME='section' id='section' onChange='ChangeSection(this)'>\r\n"; 
+    
+	var v = readCookie("section", " ");
+	if (v != gSection)
+	{
+		gSection = v;
+	}
+	
+	v = +readCookie("category", "-1");
+	if (v != gCategory)
+	{
+		gCategory = v;
+	}
+	
+    i = 0;
+    for(key in gInfo)
+    {
+        str += "<option value='{0}'>{0}</option>\r\n".format(key);
+        if (gSection == key)
+        {
+            curSection = i; 
+        }
+        i++;
+    }
+    str += "</select>\r\n";
+     
+    getElementById("sectionDiv").innerHTML = str;
+    //alert(document.getElementById("section").innerHTML);
+
+    sec = getElementById("section");
+    if (curSection == -1)
+    {
+        sec.selectedIndex = 0;
+        gSection = sec[0].value;
+    }
+    else
+    {
+        sec.selectedIndex = curSection;
+    }
+
+	var right = parent.document.getElementById("item1");
+	if (right != null)
+	{
+		right.src = readCookie("p_" + gSection + "_" + gCategory, "");
+	}
+	
+    SetElement(gSection);
+
+    var     e;
+    
+    e = getElementById("category");
+    for(var i = 0; i < e.options.length; i++)
+    {
+        if (e.options[i].value == gCategory)
+        {
+            e.selectedIndex = i;
+            break;
+        }
+    }
+//  getElementById("category").selectedIndex = gCategory;
+    getElementById("bookmark").checked = +gQueryBookmark;
+    getElementById("smode").checked = +readCookie("smode", 0);
+    
+    for(var i = 0; i < gInfo[gSection]["tag"].length; i++)
+    {
+        item = gInfo[gSection]["tag"][i];
+		tag_name = "tag_" + item["id"];
+		
+		v = readCookie(tag_name, 0);
+		getElementById(tag_name).checked = +v;
+    }
+
+	
+ 	var s = getElementById('hzoom');
+	s.selectedIndex = readCookie("hzoom", 0);
+	
+    //loadSummaryFromJavascript();
+	loadSummary();
+}
+
+function loadSummary()
+{
+    var xmlhttp;
+    
+    if (window.XMLHttpRequest)
+    {// code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp=new XMLHttpRequest();
+    }
+    else
+    {// code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200)
+        {
+            DisplaySummary(xmlhttp.responseText, xmlhttp._url);
+        }
+    }
+    var     section, cate, s;
+    
+    s = document.getElementById("section");
+    section = s[s.selectedIndex].value;
+    s = getElementById('category');
+    if (s.selectedIndex != -1)
+        cate = s[s.selectedIndex].value;
+    else
+        cate = "-1";
+        
+    if (getElementById("bookmark").checked)
+        bookmark = "&bk=1";
+    else
+        bookmark = "";
+    
+    if (getElementById("smode").checked)
+        searchMode = "&smode=1";
+    else
+        searchMode = "";
+
+    tag = '';
+    for(var i = 0; i < gInfo[section]["tag"].length; i++)
+    {
+        item = gInfo[section]["tag"][i];
+        if (getElementById("tag_" + item["id"]).checked)
+        {
+            tag += "&tag_{0}={0}".format(item["id"]);
+        }
+    }
+    xmlhttp._url = "sec={0}&cate={1}{2}{3}{4}&len={5}".format(section, cate, bookmark, tag, searchMode, -100);
+    query = "summary?" + xmlhttp._url;
+    xmlhttp.open("GET", query, true);
+    xmlhttp.send();
+
+}
+
+function OrSearch()
+{
+    if (getElementById("smode").checked)
+	{
+		createCookie("smode", 1, 3650);
+	}
+	else
+	{
+		createCookie("smode", 0, 3650);
+	}
+	reloadPage();
+}
+
+function browseMode()
+{
+    if (getElementById("bmode").checked)
+	{
+        gType = 2;
+		gBMode = 1;
+        s = "query3";
+        d = "query4";
+        s1 = "type=0";
+        d1 = "type=2";
+	}
+    else
+	{
+        gType = 0;
+		gBMode = 0;
+        s = "query4";
+        d = "query3";
+        s1 = "type=2";
+        d1 = "type=0";
+	}
+    
+    right = parent.document.getElementById("item1");
+  	if (right != null)
+	{
+        src = right.src;
+        if (src.indexOf(s) >= 0)
+        {
+            src = src.replace(s, d);
+            src = src.replace(s1, d1);
+        }
+		right.src = src;
+	}
+
+ 	createCookie("bmode", gBMode, 3650);
+    reloadPage();
+}
+
+function hideTag()
+{
+	if (getElementById("hidetag").checked)
+		hidetag = 1;
+	else
+		hidetag = 0;
+		
+	createCookie("hidetag", hidetag, 3650);
+    reloadPage();    
+}
+
+function go(start)
+{
+	if (gType == 0)
+	{
+		page = "query";
+	}
+	else
+	{
+		page = "query2";
+	}
+	s = "{0}?type={1}&{2}&start={3}".format(page, gType, gUrl, start);
+
+	window.location = s;
+}
+
+function clickContent(url)
+{
+	var right = parent.document.getElementById("item1");
+	if (right != null)
+	{
+		right.src = url.href;
+	}
+	else
+	{
+		window.location = url.href;
+	}
+    return false;
+}
+
+// convert string to int -> prefix "+".  +str
+
+function DisplaySummary(str, url)
+{
+    var     e, s;
+    var     summary;
+    
+	gUrl = url;
+
+	if (gCategory == -1)
+		gNumbering = 1;
+	else
+		gNumbering = 0;
+		
+    if (gBMode == 0)
+    {
+        url = "query3?type=0&" + url;
+    }
+    else
+    {
+        url = "query4?type=2&" + url;
+    }
+    
+	var obj = JSON.parse(str); //eval("(function(){return " + str + ";})()");
+    s = "Result (" + obj["total"] + ")";
+    getElementById("result").innerHTML = s;
+    
+	if (gNumbering == 1) 
+	{
+		e = "   <tr>\r\n" + 
+			"       <th width=\"1%\"> </th>\r\n" + 
+			"       <th width=\"1%\">B</th>\r\n" + 
+			"       <th>Title</th>\r\n" + 
+			"   </tr>\r\n";
+    }
+	else 
+	{
+		e = "   <tr>\r\n" + 
+			"       <th width=\"1%\">B</th>\r\n" + 
+			"       <th>Title</th>\r\n" + 
+			"   </tr>\r\n";
+	}
+	
+    if (+obj["total"] > 0)
+    {
+        summary = obj["summary"];
+        for(var i = 0; i < summary.length; i++)
+        {
+			if (gNumbering == 1)
+			{
+				num = "       <td style='text-align:center;'>{0}</td>\r\n".format(i + 1);
+			}
+			else
+			{
+				num = "";
+			}
+			
+            s = "   <tr>\r\n" + 
+                "{3}" +
+                "       <td id='s{5}'>{4}</td>" +
+                "       <td style='text-align:left;'><a href='{0}&start={1}' onclick='return clickContent(this);'>{2}</a></td>\r\n" +
+                "   </tr>\r\n";
+                
+            e += s.format(url, i + 1, summary[i]["key"], num, summary[i]["bookmark"], i+1);
+				 
+			if (i == 0)
+			{
+				nextUrl = "{0}&start={1}".format(url, 1);
+			}
+        }
+    }
+    getElementById("summary").innerHTML = e;
+	
+	if (readCookie("p_" + gSection + "_" + gCategory, "") == "")
+	{
+		var right = parent.document.getElementById("item1");
+		if (right != null)
+			right.src = nextUrl;
+	}
+}
+
+
+</script>
+</HEAD>
+
+<BODY onload="load()">
+
+<FORM ACTION="" METHOD="get">
+
+<TABLE class="page" border="0" cellpadding="3" cellspacing="1">
+    <TR>
+        <TD STYLE='width: 50px; text-align:left;' >
+            <div id="sectionDiv">
+            </div>
+        </TD>
+        <TD STYLE='width: 200px; text-align:left;' >
+            <div id="categoryDiv">
+            </div>
+        </TD>
+	</TR>
+	<TR>
+
+    </TR>
+
+    <TR>
+        <TD colspan=4>
+            <input type="checkbox" name="bookmark" id="bookmark" value="0" onchange="reloadPage()" style='vertical-align:middle' />Bookmark
+            <input type="checkbox" name="smode" id="smode" value="0" onchange="OrSearch()" style='vertical-align:middle' />OR Search
+            <input type="checkbox" name="bmode" id="bmode" value="0" onchange="browseMode()" style='vertical-align:middle' />Browse
+            <input type="checkbox" name="hidetag" id="hidetag" value="0" onchange="hideTag()" style='vertical-align:middle' />Hide Tag
+            &nbsp;&nbsp;<select class="page" name="hzoom" id="hzoom" onchange="zoom()">
+                <option value="100">100%</option>
+                <option value="80">80%</option>
+                <option value="90">90%</option>
+                <option value="110">110%</option>
+                <option value="120">120%</option>
+                <option value="130">130%</option>
+                <option value="140">140%</option>
+                <option value="150">150%</option>
+                <option value="175">175%</option>
+                <option value="200">200%</option>
+            </select>
+            </TD>
+
+    </TR>
+   	<TR>
+        <TD> </TD>
+    </TR>
+
+    <TR>
+        <TD colspan=10>
+            <div id="tagDiv">
+            </div>
+        </TD>
+    </TR>
+    </div>
+</TABLE>
+</FORM>
+
+<P>
+<h2 class="result"><div id="result">Result</div></h2>
+<table class="reference" width="100%" border="1" cellpadding="0" cellspacing="0">
+    <tbody id='summary'>
+        <tr>
+            <th width="1%"> </th>
+            <th>Title</th>
+        </tr>
+    </tbody>
+</table>
+
+</BODY>
+
+</HTML>

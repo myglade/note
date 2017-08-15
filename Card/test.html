@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=Windows-949">
+
+
+<STYLE TYPE="text/css"><!--
+.content {   
+	border-right-width: 0px;
+  	background-color: white;
+  	font-family: monospace;
+  	text-align: left;
+  	white-space: -moz-pre-wrap; /* Mozilla based browsers */
+  	white-space: -pre-wrap;     /* Opera 4 - 6 */
+  	white-space: -o-pre-wrap;   /* Opera >= 7 */
+  	white-space: pre-wrap;      /* CSS3 */
+  	word-wrap: break-word;      /* IE 5.5+ */
+}
+-->
+</STYLE>
+</HEAD>
+
+
+<BODY>
+<table width=99% border=0 cellspacing=0 cellpadding=0 align=center>
+<!-- 
+	<tr>
+		<td colspan=3> 
+			<div align=center><b>Title</b></div>
+		</td>
+	</tr>
+-->
+	<tr>
+		<td width=8%> <div align=left><a href=/db/query?type=1&sec=it&start=7>Prev</a></div></td>
+
+		<td width=86%> <div align=center><a href=/db/home?type=1&sec=it>Home</a></div></td>
+		<td width=6%> <div align=right><a href=/db/query?type=1&sec=it&start=9>Next</a></div></td>
+	</tr>
+	<tr>
+		<td colspan=3> <hr align=center></td>
+	</tr> 
+
+</table>
+
+<DIV class="content">
+<size 22> 
+SOLUTION
+The algorithm is fairly straightforward. We basically do a breadth-first search, where each word branches to all words in the dictionary that are one edit away. The interesting part is how to implement this-should we build a graph as we go? We could, but there's an easier way. We can instead use a "backtrack map." In this backtrack map, if B[v] = w, then you know that you edited v to get w. When we reach our end word, we can use this backtrack map repeatedly to reverse our path. See the code below:
+ 
+</size><size 20>start: the word we're starting with
+stop: the word we're ending with
+ 
+Q: action queue-words that we must still explore
+V: visited map-maps from word to bool
+B: backtrack map (word to word)-
+ 
+Insert start word into Q and V.
+While Q is not empty do
+    Dequeue word w from Q
+    For each possible word v from w with one edit operation
+        If v == stop
+            Create a linked list called list
+            Append v to list
+             
+            While w is not the start word
+                w = B[w]
+                Prepend v to list
+             
+            Return list
+         
+        If v is a dictionary word
+            If not Visited[v]
+                Enqueue v in Q
+                Visited[v] = true
+                B[v] = w
+             
+Failure, since we've visited everything reachable from the start.
+</size><size 22> 
+Let n be the length of the start word and m be the number of like sized words in the dictionary.
+The runtime of this algorithm is O(n m) since the while loop will dequeue at most m unique words. The for loop is O(n) as it walks down the string applying a fixed number of replacements for each character.
+ 
+
+<u><b>
+
+</size>
+</DIV>
+
+<table width=99% border=0 cellspacing=0 cellpadding=0 align=center>
+	<tr>
+		<td height=20 colspan=3> <hr></td>
+
+	</tr>
+	<tr>
+		<td width=8%> <div align=left><a href=/db/query?type=1&sec=it&start=7>Prev</a></div></td>
+		<td width=86%> <div align=center><a href=/db/home?type=1&sec=it>Home</a></div></td>
+		<td width=6%> <div align=right><a href=/db/query?type=1&sec=it&start=9>Next</a></div></td>
+	</tr>
+
+</table>
+ 
+</BODY>
+</HTML>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+

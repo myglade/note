@@ -1,0 +1,552 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="ResizableLib">
+      <UniqueIdentifier>{9c8b5202-3067-4e52-894d-6086506c4acd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RulerRichEditCtrl">
+      <UniqueIdentifier>{08a45698-e892-4370-815a-4514d027c7f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RulerRichEditCtrl\Resource Files">
+      <UniqueIdentifier>{e726c70b-99bf-4e5f-9f3f-21bc1faad390}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RulerRichEditCtrl\External">
+      <UniqueIdentifier>{36c675b5-a9bb-4bf7-9837-ebd8ee111ece}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RulerRichEditCtrl\TextFile">
+      <UniqueIdentifier>{62e1a4c9-a5a4-4f2d-98d0-b9526080da53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RtfParser">
+      <UniqueIdentifier>{aa5de6d8-010f-4fab-be15-b3f0a8f3c699}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="http">
+      <UniqueIdentifier>{05ce3170-7f90-4d4f-937a-c04ef2bc1fd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="json">
+      <UniqueIdentifier>{55bf908c-ebe9-4e4c-b788-12723a4690ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sqlite">
+      <UniqueIdentifier>{a56506d7-6f4a-4b5e-b1b0-d5a11e67f79e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Compress">
+      <UniqueIdentifier>{6405cf49-44d2-4d2e-878f-a226a120a4d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="html_template">
+      <UniqueIdentifier>{8f1ac557-221e-41a1-933b-da9113cb1eae}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Card.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CardDoc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CardView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CardViewHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Category.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CheckComboBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateSection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Db.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DbDirChangeHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DbManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DelayedDirectoryChangeHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectoryChanges.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Goto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LinkSelect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainFrm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Setting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tag.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WndResizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ResizableLib\ResizableDialog.cpp">
+      <Filter>ResizableLib</Filter>
+    </ClCompile>
+    <ClCompile Include="ResizableLib\ResizableFormView.cpp">
+      <Filter>ResizableLib</Filter>
+    </ClCompile>
+    <ClCompile Include="ResizableLib\ResizableGrip.cpp">
+      <Filter>ResizableLib</Filter>
+    </ClCompile>
+    <ClCompile Include="ResizableLib\ResizableLayout.cpp">
+      <Filter>ResizableLib</Filter>
+    </ClCompile>
+    <ClCompile Include="ResizableLib\ResizableMinMax.cpp">
+      <Filter>ResizableLib</Filter>
+    </ClCompile>
+    <ClCompile Include="ResizableLib\ResizablePage.cpp">
+      <Filter>ResizableLib</Filter>
+    </ClCompile>
+    <ClCompile Include="ResizableLib\ResizablePageEx.cpp">
+      <Filter>ResizableLib</Filter>
+    </ClCompile>
+    <ClCompile Include="ResizableLib\ResizableSheet.cpp">
+      <Filter>ResizableLib</Filter>
+    </ClCompile>
+    <ClCompile Include="ResizableLib\ResizableSheetEx.cpp">
+      <Filter>ResizableLib</Filter>
+    </ClCompile>
+    <ClCompile Include="ResizableLib\ResizableState.cpp">
+      <Filter>ResizableLib</Filter>
+    </ClCompile>
+    <ClCompile Include="RulerRichEditCtrl\FontComboBox.cpp">
+      <Filter>RulerRichEditCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="RulerRichEditCtrl\LineSpacing.cpp">
+      <Filter>RulerRichEditCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="RulerRichEditCtrl\OleRichEditCtrl.cpp">
+      <Filter>RulerRichEditCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="RulerRichEditCtrl\RRECRuler.cpp">
+      <Filter>RulerRichEditCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="RulerRichEditCtrl\RRECToolbar.cpp">
+      <Filter>RulerRichEditCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="RulerRichEditCtrl\RulerRichEdit.cpp">
+      <Filter>RulerRichEditCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="RulerRichEditCtrl\RulerRichEditCtrl.cpp">
+      <Filter>RulerRichEditCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="RulerRichEditCtrl\SizeComboBox.cpp">
+      <Filter>RulerRichEditCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="RulerRichEditCtrl\StdGrfx.cpp">
+      <Filter>RulerRichEditCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="RulerRichEditCtrl\External\ColourPicker.cpp">
+      <Filter>RulerRichEditCtrl\External</Filter>
+    </ClCompile>
+    <ClCompile Include="RulerRichEditCtrl\External\ColourPopup.cpp">
+      <Filter>RulerRichEditCtrl\External</Filter>
+    </ClCompile>
+    <ClCompile Include="RulerRichEditCtrl\External\StdioFileEx.cpp">
+      <Filter>RulerRichEditCtrl\External</Filter>
+    </ClCompile>
+    <ClCompile Include="RulerRichEditCtrl\TextFile\TextFile.cpp">
+      <Filter>RulerRichEditCtrl\TextFile</Filter>
+    </ClCompile>
+    <ClCompile Include="RtfParser\FcListener.cpp">
+      <Filter>RtfParser</Filter>
+    </ClCompile>
+    <ClCompile Include="RtfParser\HtmlListener.cpp">
+      <Filter>RtfParser</Filter>
+    </ClCompile>
+    <ClCompile Include="RtfParser\RtfImage.cpp">
+      <Filter>RtfParser</Filter>
+    </ClCompile>
+    <ClCompile Include="RtfParser\RtfImageParser.cpp">
+      <Filter>RtfParser</Filter>
+    </ClCompile>
+    <ClCompile Include="RtfParser\RtfParser.cpp">
+      <Filter>RtfParser</Filter>
+    </ClCompile>
+    <ClCompile Include="RtfParser\TextListener.cpp">
+      <Filter>RtfParser</Filter>
+    </ClCompile>
+    <ClCompile Include="http\base64.cpp">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\HttpServer.cpp">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\main.cpp">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\Socket.cpp">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\StdHelpers.cpp">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\UrlHelper.cpp">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\WebServer.cpp">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\CppSQLite3.cpp">
+      <Filter>sqlite</Filter>
+    </ClCompile>
+    <ClCompile Include="SearchResult.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SearchBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MoveTo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DbV3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="miniz.cpp">
+      <Filter>Compress</Filter>
+    </ClCompile>
+    <ClCompile Include="HtmlTemplate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtfParser\NumberingListener.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtfParser\HtmlListener2.cpp">
+      <Filter>RtfParser</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Card.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CardDoc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CardView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Category.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CheckComboBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CreateSection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Db.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DbDirChangeHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DbManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DelayedDirectoryChangeHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectoryChanges.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Env.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Goto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LinkSelect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MainFrm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Setting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tag.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WndResizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResizableLib\ResizableDialog.h">
+      <Filter>ResizableLib</Filter>
+    </ClInclude>
+    <ClInclude Include="ResizableLib\ResizableFormView.h">
+      <Filter>ResizableLib</Filter>
+    </ClInclude>
+    <ClInclude Include="ResizableLib\ResizableGrip.h">
+      <Filter>ResizableLib</Filter>
+    </ClInclude>
+    <ClInclude Include="ResizableLib\ResizableLayout.h">
+      <Filter>ResizableLib</Filter>
+    </ClInclude>
+    <ClInclude Include="ResizableLib\ResizableMinMax.h">
+      <Filter>ResizableLib</Filter>
+    </ClInclude>
+    <ClInclude Include="ResizableLib\ResizablePage.h">
+      <Filter>ResizableLib</Filter>
+    </ClInclude>
+    <ClInclude Include="ResizableLib\ResizablePageEx.h">
+      <Filter>ResizableLib</Filter>
+    </ClInclude>
+    <ClInclude Include="ResizableLib\ResizableSheet.h">
+      <Filter>ResizableLib</Filter>
+    </ClInclude>
+    <ClInclude Include="ResizableLib\ResizableSheetEx.h">
+      <Filter>ResizableLib</Filter>
+    </ClInclude>
+    <ClInclude Include="ResizableLib\ResizableState.h">
+      <Filter>ResizableLib</Filter>
+    </ClInclude>
+    <ClInclude Include="RulerRichEditCtrl\FontComboBox.h">
+      <Filter>RulerRichEditCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="RulerRichEditCtrl\ids.h">
+      <Filter>RulerRichEditCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="RulerRichEditCtrl\LineSpacing.h">
+      <Filter>RulerRichEditCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="RulerRichEditCtrl\OleRichEditCtrl.h">
+      <Filter>RulerRichEditCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="RulerRichEditCtrl\resource.h">
+      <Filter>RulerRichEditCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="RulerRichEditCtrl\RRECRuler.h">
+      <Filter>RulerRichEditCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="RulerRichEditCtrl\RRECToolbar.h">
+      <Filter>RulerRichEditCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="RulerRichEditCtrl\RulerRichEdit.h">
+      <Filter>RulerRichEditCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="RulerRichEditCtrl\RulerRichEditCtrl.h">
+      <Filter>RulerRichEditCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="RulerRichEditCtrl\SizeComboBox.h">
+      <Filter>RulerRichEditCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="RulerRichEditCtrl\StdGrfx.h">
+      <Filter>RulerRichEditCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="RulerRichEditCtrl\External\ColourPicker.h">
+      <Filter>RulerRichEditCtrl\External</Filter>
+    </ClInclude>
+    <ClInclude Include="RulerRichEditCtrl\External\ColourPopup.h">
+      <Filter>RulerRichEditCtrl\External</Filter>
+    </ClInclude>
+    <ClInclude Include="RulerRichEditCtrl\External\StdioFileEx.h">
+      <Filter>RulerRichEditCtrl\External</Filter>
+    </ClInclude>
+    <ClInclude Include="RulerRichEditCtrl\TextFile\TextFile.h">
+      <Filter>RulerRichEditCtrl\TextFile</Filter>
+    </ClInclude>
+    <ClInclude Include="RtfParser\FcListener.h">
+      <Filter>RtfParser</Filter>
+    </ClInclude>
+    <ClInclude Include="RtfParser\HtmlListener.h">
+      <Filter>RtfParser</Filter>
+    </ClInclude>
+    <ClInclude Include="RtfParser\RtfImage.h">
+      <Filter>RtfParser</Filter>
+    </ClInclude>
+    <ClInclude Include="RtfParser\RtfParser.h">
+      <Filter>RtfParser</Filter>
+    </ClInclude>
+    <ClInclude Include="RtfParser\TextListener.h">
+      <Filter>RtfParser</Filter>
+    </ClInclude>
+    <ClInclude Include="http\base64.h">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="http\Socket.h">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="http\StdHelpers.h">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="http\Tracer.h">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="http\UrlHelper.h">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="http\WebServer.h">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="json\elements.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\reader.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\visitor.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\writer.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite\CppSQLite3.h">
+      <Filter>sqlite</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite\sqlite3.h">
+      <Filter>sqlite</Filter>
+    </ClInclude>
+    <ClInclude Include="SearchResult.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SearchBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MoveTo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DbV3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DbQuery.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="miniz.h">
+      <Filter>Compress</Filter>
+    </ClInclude>
+    <ClInclude Include="RtfParser\NumberingListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtfParser\HtmlListener2.h">
+      <Filter>RtfParser</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\Card.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\Card.rc2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\CardDoc.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\Toolbar.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RulerRichEditCtrl\RulerRichEditCtrl.aps">
+      <Filter>RulerRichEditCtrl</Filter>
+    </None>
+    <None Include="RulerRichEditCtrl\toolbar.bmp">
+      <Filter>RulerRichEditCtrl\Resource Files</Filter>
+    </None>
+    <None Include="json\elements.inl">
+      <Filter>json</Filter>
+    </None>
+    <None Include="json\reader.inl">
+      <Filter>json</Filter>
+    </None>
+    <None Include="json\writer.inl">
+      <Filter>json</Filter>
+    </None>
+    <None Include="sqlite\sqlite3.def">
+      <Filter>sqlite</Filter>
+    </None>
+    <None Include="sqlite3.dll">
+      <Filter>sqlite</Filter>
+    </None>
+    <None Include="ReadMe.txt" />
+    <None Include="RulerRichEditCtrl\resource" />
+    <None Include="query.html">
+      <Filter>html_template</Filter>
+    </None>
+    <None Include="home.html">
+      <Filter>html_template</Filter>
+    </None>
+    <None Include="test.html">
+      <Filter>html_template</Filter>
+    </None>
+    <None Include="query2.html">
+      <Filter>html_template</Filter>
+    </None>
+    <None Include="query3.html">
+      <Filter>html_template</Filter>
+    </None>
+    <None Include="query4.html">
+      <Filter>html_template</Filter>
+    </None>
+    <None Include="fhome.html">
+      <Filter>html_template</Filter>
+    </None>
+    <None Include="home2.html">
+      <Filter>html_template</Filter>
+    </None>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Card.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="RulerRichEditCtrl\RulerRichEditCtrl.rc">
+      <Filter>RulerRichEditCtrl\Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="sqlite\sqlite3.lib">
+      <Filter>sqlite</Filter>
+    </Library>
+  </ItemGroup>
+</Project>

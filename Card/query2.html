@@ -1,0 +1,685 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=Windows-949">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="shortcut icon" href="/card2.png" />
+<link rel="icon" href="/card2.png" type="image/png" />
+	
+<STYLE TYPE="text/css"><!--
+@font-face{  
+    font-family: Andale Mono;  
+    src: url('/fonts/andalemo.ttf') format('truetype');  
+}
+
+@font-face{  
+    font-family: Courier New;  
+    src: local('cour'), url('/fonts/cour.ttf') format('truetype');  
+}
+/*
+@font-face{  
+    font-family: Consolas;  
+    src: local('consolas'), url('/fonts/consola.ttf') format('truetype');  
+}
+
+@font-face{  
+    font-family: Andale Mono;  
+    src: url('/fonts/andalemo.ttf') format('truetype');  
+}
+
+@font-face{  
+    font-family: Courier New1;  
+    src: local('cour'), url('/fonts/cour.ttf') format('truetype');  
+}
+*/
+
+.content {   
+    border-right-width: 0px;
+    background-color: white;
+    font-size: 12px;
+    font-family: Consolas, Courier New, Monospace, Arial;
+    text-align: left;
+    white-space: -moz-pre-wrap; /* Mozilla based browsers */
+    white-space: -pre-wrap;     /* Opera 4 - 6 */
+    white-space: -o-pre-wrap;   /* Opera >= 7 */
+    white-space: pre-wrap;      /* CSS3 */
+    word-wrap: break-word;      /* IE 5.5+ */
+}
+
+table.reference
+{
+    background-color:#ffffff;
+    border:1px solid #c3c3c3;
+    border-collapse:collapse;
+    font-family:Consolas, Courier New, Monospace, Arial;
+    font-size:12px;
+}
+
+table.reference th
+{
+    background-color:#e5eecc;
+    border:1px solid #c3c3c3;
+    padding:3px;
+    vertical-align:top;
+}
+
+table.reference td 
+{
+    border:1px solid #c3c3c3;
+    padding:3px;
+    vertical-align:top;
+    text-align:center;
+}
+
+h2.result,h2.result_head
+{
+    color:#617f10;
+    background-color:transparent;
+    margin-top:0px;
+}
+
+h2.result {font-size:125%;}
+h2.result_head {font-size:140%;}
+
+.page 
+{
+    font-family:Consolas, Courier New, Monospace, Arial;
+    font-size:12px;
+}
+.button1
+{
+    font-family:Consolas, Arial, Monospace, Courier New;
+    font-size:12px;
+	width:100%;
+    height:30px;
+	border-width:0px;
+	background-color:#E0E0E0;
+}
+.button2
+{
+    font-family:Consolas, Arial, Monospace, Courier New;
+    font-size:12px;
+	width:100%;
+    height:30px;
+	border-width:0px;
+	background-color:#CCCCCC;
+}
+
+
+.detail
+{
+/*	visibility: hidden;*/
+}
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    font-family:Consolas, Arial, Monospace, Courier New;
+    font-size:14px;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+-->
+</STYLE>
+
+<script type="text/javascript">
+function ApplyFontface(fontName, local, fontUrl, fontFormat)
+{
+	var format;
+	
+	format = 
+	"@font-face {\n" +
+	"	font-family: '" + fontName + "';\n" + 
+	"	src: local('" + local + "'), url('" + fontUrl + "') format(" + fontFormat + ");\n" +
+	"}";
+
+	var newStyle = document.createElement('style');
+	newStyle.appendChild(document.createTextNode(format));
+	document.head.appendChild(newStyle);
+}
+
+function LoadFont()
+{	
+	var OSName="Unknown OS";
+	if (navigator.appVersion.indexOf("Win")!=-1) OSName="Windows";
+	if (navigator.appVersion.indexOf("Mac")!=-1) OSName="MacOS";
+	if (navigator.appVersion.indexOf("X11")!=-1) OSName="UNIX";
+	if (navigator.appVersion.indexOf("Linux")!=-1) OSName="Linux";
+
+	if (OSName == "Linux") 
+	{
+		ApplyFontface("Consolas", "monospace", "/fonts/consola.ttf", "truetype");
+	}
+	else
+	{
+		ApplyFontface("Consolas", "consolas", "/fonts/consola.ttf", "truetype");
+	}
+}
+
+LoadFont();
+
+// Browser mode
+// keyword
+// key, content,(summary,1,10), info
+
+var gType = <!--{type}-->;
+var gSection = "<!--{section}-->";
+var gCategory = <!--{category}-->;
+var gTag = [<!--{tag}-->];
+var gBookmark = <!--{bookmark}-->;
+var gQueryTag = [<!--{querytag}-->];
+var gQueryBookmark = <!--{querybookmark}-->;
+var gTotal = <!--{total}-->;
+var gStart = <!--{start}-->;
+var gCount = <!--{count}-->;
+var gSort = "<!--{sort}-->";
+var gInfo = <!--{info}-->;
+var gITime = <!--{itime}-->;
+var gId = <!--{id}-->;
+var gQuerySearchMode = <!--{querymode}-->;
+var gItemCateory = "<!--{itemcategory}-->";
+var gHideTag = 0;
+var gCurUrl = "<!--{curUrl}-->";
+var gPrevUrl = "<!--{prevUrl}-->";
+var gNextUrl = "<!--{nextUrl}-->";
+var gHomeUrl = "<!--{homeUrl}-->";
+
+function getElementById(name) {
+    if (document.getElementById) {
+        return document.getElementById(name);
+    }
+    else if (document.all) {
+        return document.all[name];
+    }
+}
+
+String.prototype.format = function() {
+    var s = this,
+        i = arguments.length;
+
+    while (i--) {
+        s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
+    }
+    return s;
+};
+
+function createCookie(name,value,days) {
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime()+(days*24*60*60*1000));
+        var expires = "; expires="+date.toGMTString();
+    }
+    else var expires = "";
+    document.cookie = name+"="+value+expires+"; path=/";
+}
+
+function readCookie(name, def) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+	return typeof def !== 'undefined' ? def : null;
+}
+
+
+function eraseCookie(name) {
+    createCookie(name,"",-1);
+}
+
+function zoom()
+{
+    var s = getElementById('zoom');
+
+    getElementById("mytable").style.zoom = s[s.selectedIndex].value + "%";
+	createCookie("zoom", s.selectedIndex, 3650);
+	createCookie("zoom_v", s[s.selectedIndex].value + "%", 3650);
+}
+
+function ChangeTag()
+{
+//    var bookmark = 0;
+    var disabled = true;
+    
+//    if (getElementById("bookmark").checked)
+//        bookmark = 1;
+
+//    if (bookmark != gBookmark)
+//    {
+//        disabled = false;
+//    }
+        
+    var tag = new Array();
+    for(var i = 0; i < gInfo[gSection]["tag"].length; i++)
+    {
+        item = gInfo[gSection]["tag"][i];
+        if (getElementById("tag_" + item["id"]).checked)
+        {
+            tag.push(item["id"]);
+        }
+    }
+    if (tag.length != gTag.length)
+    {
+        disabled = false;
+    }
+    else
+    {
+        tag.sort();
+        if (tag.toString() != gTag.toString())
+            disabled = false;
+    }  
+    
+    getElementById("save").disabled = disabled;
+}
+
+function onNext()
+{
+	window.location = gNextUrl;
+	
+	return;
+/*
+	var     url = document.URL;
+
+    if (gTotal > 1 && gStart < gTotal)
+    {
+        s = url.replace("start=" + gStart, "start=" + (gStart + 1));
+        s = s.replace("type=2", "type=0");
+		window.location = s;
+    }
+*/
+}
+
+function onType()
+{
+	var     url = document.URL;
+
+    // content switch url
+    if (gType == 0)
+    {
+        s = url.replace("type=0", "type=2");
+    }
+    else
+    {
+        s = url.replace("type=2", "type=0");
+    }
+	window.location = s;
+}
+
+function onHome()
+{
+	window.location = gHomeUrl;
+/*
+    // home url
+    tag = ''
+    for(i = 0; i < gQueryTag.length; i++)
+    {
+        tag += "&tag_{0}={0}".format(gQueryTag[i]);
+    }
+	s = "home?sec={0}&cate={1}&bk={2}&smode={3}&type=0&hidetag={4}".format(gSection, gCategory, gQueryBookmark, gQuerySearchMode, gHideTag) + tag;	
+	window.location = s;
+*/
+}
+
+var QueryString = function () {
+  // This function is anonymous, is executed immediately and 
+  // the return value is assigned to QueryString!
+  var query_string = {};
+  var query = window.location.search.substring(1);
+  var vars = query.split("&");
+  for (var i=0;i<vars.length;i++) {
+    var pair = vars[i].split("=");
+    	// If first entry with this name
+    if (typeof query_string[pair[0]] === "undefined") {
+      query_string[pair[0]] = pair[1];
+    	// If second entry with this name
+    } else if (typeof query_string[pair[0]] === "string") {
+      var arr = [ query_string[pair[0]], pair[1] ];
+      query_string[pair[0]] = arr;
+    	// If third or later entry with this name
+    } else {
+      query_string[pair[0]].push(pair[1]);
+    }
+  } 
+    return query_string;
+} ();
+
+function load()
+{
+    var     s, e, tag;
+    var		property1;
+    var     tagStr = "";
+    
+	getElementById("mytable").style.zoom = readCookie("zoom_v", "100%");
+	gHideTag = readCookie("hidetag", 0);
+	
+    getElementById("prev").disabled = true;
+    getElementById("next").disabled = true;
+    getElementById("prev2").disabled = true;
+    getElementById("next2").disabled = true;
+    if (gType != 0)
+    {
+ 		getElementById("separator").innerHTML = "<hr>";
+	}
+	
+    if (gStart > 1) 
+    {
+        getElementById("prev").disabled = false;
+        getElementById("prev2").disabled = false;
+    }
+    
+    if (gStart < gTotal)
+    {
+        getElementById("next").disabled = false;
+        getElementById("next2").disabled = false;
+    }
+    gTag.sort();
+    gQueryTag.sort();
+    
+    if (gHideTag == 0)
+    {
+        property = 
+            "<TABLE class=\"page\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n" + 
+            "   <tr>\n" + 
+            "       <td colspan=5> \n" + 
+            "            <div id=\"desc\" align=left></div>\n" + 
+            "        </td>\n" + 
+            "    </tr>\n" + 
+            "    <tr>\n" +   
+            "        <td>&nbsp;</td>\n" + 
+            "    </tr>\n" + 
+            "    <tr>\n" + 
+            "        <td colspan=5>\n" + 
+            "            <div id=\"property1\"></div>\n" + 
+            "        </td>\n" + 
+            "    </tr>\n" + 
+            "</TABLE>\n";
+        getElementById("property").innerHTML = property;
+        property1 = "<table border=\"0\" cellspacing=0 cellpadding=0 align=center width=\"100%\">\n" +
+                    "<tr><td>\n" +
+                    "    <input name=\"bookmark\" id=\"bookmark\" value=\"0\" type=\"checkbox\" onchange='SaveBookmark()' style=\"vertical-align:middle\" />Bookmark\n" +
+                    "</td>\n" + 
+                    "<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>\n" + 
+                    "<td style=\"text-align:left\">Tag: </td>\n" + 
+                    "<TD style=\"vertical-align:middle\">\n" + 
+                    "    <div id=\"tagList\" align=left>&nbsp;&nbsp;&nbsp;&nbsp;</div>\n" + 
+                    "</TD>\n" + 
+                    "<td>&nbsp;&nbsp;</td>\n" + 
+                     "</tr></table>\n";
+
+        getElementById("property1").innerHTML = property1;
+        if (gBookmark != 0)
+        {
+            getElementById("bookmark").checked = 1;
+        }
+        s = '';
+        for(var i = 0; i < gInfo[gSection]["tag"].length; i++)
+        {
+            item = gInfo[gSection]["tag"][i];
+            s += "<input type='checkbox' name='{1}' id='tag_{0}' value='{0}' onchange='ChangeTag()' style='vertical-align:middle'  />{1} \r\n".format(item["id"], item["name"]);
+        }
+		
+		s += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+		s += "    <input class=\"page\" id=\"save\" value=\"Save\" type=\"button\" style=\"width:70px;\" onclick=\"SaveTags()\" disabled />\n";
+
+        getElementById("tagList").innerHTML = s;
+        for(var i = 0; i < gTag.length; i++)
+        {
+            getElementById("tag_" + gTag[i]).checked = 1;
+        }
+    }
+    else
+    {
+        property = 
+            "<TABLE class=\"page\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n" + 
+            "   <tr>\n" + 
+            "       <td colspan=5> \n" + 
+            "            <div id=\"desc\" align=left></div>\n" + 
+            "        </td>\n" + 
+            "    </tr>\n" + 
+            "</TABLE>\n";
+        getElementById("property").innerHTML = property;
+
+        tagStr = "[Tag] ";
+        var     t = [];
+        for(var i = 0; i < gInfo[gSection]["tag"].length; i++)
+        {
+            item = gInfo[gSection]["tag"][i];
+            t[item["id"]] = item["name"];
+        }
+        for(var i = 0; i < gTag.length; i++)
+        {
+            if (i == 0)
+                tagStr += t[gTag[i]];
+            else 
+                tagStr += ", " +  t[gTag[i]];
+        }
+    }
+    document.title = s = "[{0}/{1}] {2}".format(gStart, gTotal, gItemCateory);
+
+    e = "Browse"; 
+    s = "[{0}] <A href=\"#0\" id='url_info'><B>{1}/{2}</B></A> [Category] <B>{3}</B>   {4}".format(
+        e, gStart, gTotal, gItemCateory, tagStr);
+//   s = "[{0}] <A href='/db/query2?type=2&sec={1}&id={2}' target='_blank'><B>{3}/{4}</B></A> [Category] <B>{5}</B>   {6}".format(
+//        e, gSection, gId, gStart, gTotal, gItemCateory, tagStr);
+ 
+	s += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + 
+		"+/-<SELECT class='page' NAME='zoom' id='zoom' onChange='zoom()' >" + 
+		"<option value='100'>Default</option>" + 
+		"<option value='80'>80%</option>" + 
+		"<option value='90'>90%</option>" + 
+		"<option value='110'>110%</option>" + 
+		"<option value='120'>120%</option>" + 
+		"<option value='130'>130%</option>" + 
+		"<option value='140'>140%</option>" + 
+		"<option value='150'>150%</option>" + 
+		"<option value='175'>175%</option>" + 
+		"<option value='200'>200%</option>" + 
+		"</SELECT>"; 
+
+	getElementById("desc").innerHTML = s;
+    var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+	if (is_firefox)
+	{
+//		alert("firefox");
+	}
+	
+ 	var s = getElementById('zoom');
+	s.selectedIndex = readCookie("zoom", 0);
+
+	var modal = document.getElementById('myModal');
+	var btn = document.getElementById("url_info");
+
+	// Get the <span> element that closes the modal
+	var span = document.getElementsByClassName("close")[0];	
+	// When the user clicks the button, open the modal
+	btn.onclick = function() {
+		modal.style.display = "block";
+		url = "{0}/db/query2?type=2&sec={1}&id={2}".format(location.origin, gSection, gId);
+		card = "card:sec={0}&id={1}".format(gSection, gId);
+		s = "<A href='{0}' target='_blank'>{0}</A> <p> <A href='{1}'>{1}</A>".format(url, card);
+		getElementById("urlinfo").innerHTML = s;
+	}
+
+	// When the user clicks on <span> (x), close the modal
+	span.onclick = function() {
+		modal.style.display = "none";
+	}
+
+	// When the user clicks anywhere outside of the modal, close it
+	window.onclick = function(event) {
+		if (event.target == modal) {
+			modal.style.display = "none";
+		}
+	}
+		
+    return;
+}
+
+function SaveBookmark()
+{
+    var xmlhttp;
+    if (window.XMLHttpRequest)
+    {// code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp=new XMLHttpRequest();
+    }
+    else
+    {// code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+/*
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200)
+        {
+            alert("success");
+        }
+    }
+*/
+    if (getElementById("bookmark").checked)
+        bookmark = "&bk=1";
+    else
+        bookmark = "&bk=0";
+    
+    query = "updatebk?sec={0}&id={1}{2}{3}".format(gSection, gId, bookmark);
+    xmlhttp.open("GET", query, true);
+    xmlhttp.send();
+//    window.location.reload(false);
+}
+
+function SaveTags()
+{
+    var xmlhttp;
+    if (window.XMLHttpRequest)
+    {// code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp=new XMLHttpRequest();
+    }
+    else
+    {// code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+/*
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200)
+        {
+            alert("success");
+        }
+    }
+*/
+    if (getElementById("bookmark").checked)
+        bookmark = "&bk=1";
+    else
+        bookmark = "&bk=0";
+    
+    tag = '';
+    for(var i = 0; i < gInfo[gSection]["tag"].length; i++)
+    {
+        item = gInfo[gSection]["tag"][i];
+        if (getElementById("tag_" + item["id"]).checked)
+        {
+            tag += "&tag_{0}={0}".format(item["id"]);
+        }
+    }
+
+    query = "update?sec={0}&id={1}{2}{3}".format(gSection, gId, bookmark, tag);
+    xmlhttp.open("GET", query, false);
+    xmlhttp.send();
+    window.location.reload(false);
+}
+
+</script>
+</HEAD>
+
+
+<BODY onload="load()">
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">¡¿</span>
+    <p><div id='urlinfo'> dddSome text in the Modal..</div></p>
+  </div>
+
+</div>
+<table class="page" width="100%" border=0 cellspacing=0 cellpadding=0 align=center>
+    <tr>
+        <td align=left style="width:40%;" ><input type="button" value="p   r   e   v" class="button1" id="prev" onclick="location.href='<!--{prevUrl}-->'" /></td>
+        <td align=center style="width:20%;" ><input type="button" value="h   o   m   e" class="button2" id="home" onclick="location.href='<!--{homeUrl}-->'" /></td>
+        <td align=left style="width:40%;" ><input type="button" value="n   e   x   t" class="button1" id="next" onclick="location.href='<!--{nextUrl}-->'" /></td>
+    </tr>
+    <tr>
+        <td colspan=4> <hr align=center></td>
+    </tr> 
+    <tr>
+        <td colspan=4><div id="property"></div></td>
+    </tr>
+</table>
+
+<table class="page" width="100%" border=0 cellspacing=0 cellpadding=3 align=center id="mytable">
+<tr>
+<td>
+<PRE class="content">
+
+<!--{css}-->
+<!--{key}-->
+<div id="separator" ></div>
+<!--{content}-->
+
+</PRE>
+</td>
+</tr>
+</table>
+
+<table class="page" width="100%" border=0 cellspacing=0 cellpadding=0 align=center>
+    <tr>
+        <td height=20 colspan=4> <hr></td>
+    </tr>
+    <tr>
+        <td align=left style="width:40%;" ><input type="button" value="p   r   e   v" class="button1" id="prev2" onclick="location.href='<!--{prevUrl}-->'" /></td>
+        <td align=center style="width:20%;" ><input type="button" value="h   o   m   e" class="button2" onclick="location.href='<!--{homeUrl}-->" /></td>
+        <td align=left style="width:40%;" ><input type="button" value="n   e   x   t" class="button1" id="next2" onclick="location.href='<!--{nextUrl}-->'" /></td>
+    </tr>
+</table>
+ 
+</BODY>
+</HTML>
+ 
+ 
+ 
+ 
+ 
+ 
+ 

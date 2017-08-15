@@ -1,0 +1,705 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#include ""res\\Card.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\Card.ico"
+IDR_CardTYPE            ICON                    "res\\CardDoc.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR 16, 15
+BEGIN
+    BUTTON      ID_EDIT_ADDITEM
+    BUTTON      ID_EDIT_REMOVEITEM
+    BUTTON      ID_EDIT_MOVETOFIRST
+    BUTTON      ID_EDIT_MOVETOPREV
+    BUTTON      ID_EDIT_MOVETONEXT
+    BUTTON      ID_EDIT_SAVE
+    SEPARATOR
+    BUTTON      ID_VIEW_FIRST
+    BUTTON      ID_VIEW_PREV
+    BUTTON      ID_VIEW_NEXT
+    BUTTON      ID_VIEW_LAST
+    SEPARATOR
+    BUTTON      ID_VIEW_PREVVIEW
+    BUTTON      ID_VIEW_NEXTVIEW
+    SEPARATOR
+    BUTTON      ID_SECTION_HOLDER
+    BUTTON      ID_CATE_HOLDER
+    BUTTON      ID_TAG_HOLDER
+    BUTTON      ID_OR_TAG_HOLDER
+    BUTTON      ID_VIEW_BOOKMARKMODE
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "Save",                        ID_EDIT_SAVE
+        MENUITEM SEPARATOR
+        MENUITEM "Save As FlashCard",           ID_FILE_SAVE_IOS
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "Edit"
+    BEGIN
+        MENUITEM "Add Item",                    ID_EDIT_ADDITEM
+        MENUITEM "Remove Item",                 ID_EDIT_REMOVEITEM
+        MENUITEM SEPARATOR
+        MENUITEM "Move To First",               ID_EDIT_MOVETOFIRST
+        MENUITEM "Move To Prev",                ID_EDIT_MOVETOPREV
+        MENUITEM "Move To Next",                ID_EDIT_MOVETONEXT
+        MENUITEM "Move To",                     ID_EDIT_MOVETO
+        MENUITEM SEPARATOR
+        MENUITEM "Reload",                      ID_EDIT_RELOAD
+        MENUITEM "Set Bookmark",                ID_EDIT_SETBOOKMARK
+        MENUITEM "Reset Bookmark",              ID_EDIT_RESETBOOKMARK
+        MENUITEM "Set Numbering",               ID_EDIT_SETNUMBERING
+        MENUITEM SEPARATOR
+        MENUITEM "Export To Html",              ID_EDIT_EXPORTTOHTML
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "First Item",                  ID_VIEW_FIRST
+        MENUITEM "Prev Item",                   ID_VIEW_PREV
+        MENUITEM "Next Item",                   ID_VIEW_NEXT
+        MENUITEM "Last Item",                   ID_VIEW_LAST
+        MENUITEM SEPARATOR
+        MENUITEM "Prev View",                   ID_VIEW_PREVVIEW
+        MENUITEM "Next View",                   ID_VIEW_NEXTVIEW
+        MENUITEM SEPARATOR
+        MENUITEM "Go to",                       ID_VIEW_GOTO
+        MENUITEM "Search in Key",               ID_VIEW_SEARCHINKEY
+        MENUITEM "Search in Content",           ID_VIEW_SEARCHINCONTENT
+        MENUITEM SEPARATOR
+        MENUITEM "Bookmark Mode",               ID_VIEW_BOOKMARKMODE
+        MENUITEM "ReadOnly Mode",               ID_VIEW_READONLYMODE
+        MENUITEM "Test Mode",                   ID_VIEW_TESTMODE
+    END
+    POPUP "Setting"
+    BEGIN
+        MENUITEM "Preference",                  ID_EDIT_SETTING
+        MENUITEM "Compact DB",                  ID_EDIT_COMPACTDB
+        MENUITEM SEPARATOR
+        MENUITEM "Manage Category",             ID_EDIT_CATEGORY
+        MENUITEM "Manage Tag",                  ID_EDIT_TAG
+    END
+    POPUP "Window"
+    BEGIN
+        MENUITEM "Key List",                    ID_WINDOW_KEYLIST
+        MENUITEM "Search",                      ID_WINDOW_SEARCH
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About Card...",              ID_APP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS
+BEGIN
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
+    "A",            ID_EDIT_SELECT_ALL,     VIRTKEY, CONTROL, NOINVERT
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_EDIT_SAVE,           VIRTKEY, CONTROL, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 163, 90
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Card"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20
+    LTEXT           "Card, Version 1.0.2",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2011",IDC_STATIC,42,26,114,8
+    DEFPUSHBUTTON   "OK",IDOK,106,69,50,14,WS_GROUP
+    EDITTEXT        IDC_EDIT2,21,47,123,12,ES_CENTER | ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
+END
+
+IDD_CARD_FORM DIALOGEX 0, 0, 425, 229
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    CTEXT           "",IDC_STATIC_PLACEMENT2,2,16,421,78,WS_BORDER
+    CTEXT           "",IDC_STATIC_PLACEMENT3,2,98,421,131,WS_BORDER
+    COMBOBOX        IDC_CATEGORY,2,1,95,199,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_EDIT1,254,4,169,12,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
+    CONTROL         "Bookmark",IDC_BOOKMARK,"Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,202,2,42,12
+    COMBOBOX        IDC_TAG_COMBO,97,1,102,124,CBS_DROPDOWNLIST | CBS_OWNERDRAWVARIABLE | CBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,248,2,1,13,WS_EX_CLIENTEDGE
+END
+
+IDD_SETTING DIALOGEX 0, 0, 216, 299
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Setting"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Database",IDC_STATIC,7,7,202,165
+    LISTBOX         IDC_LIST1,18,27,179,44,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,172,278,37,14
+    CONTROL         "ASC (1-n)",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON | WS_GROUP,76,107,47,10
+    CONTROL         "DESC (n-1)",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON,130,107,51,10
+    CONTROL         "Make working folder",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,189,80,10
+    CONTROL         "Launch Web server",IDC_CHECK3,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,227,78,10
+    LTEXT           "Port",IDC_STATIC,108,228,14,8
+    EDITTEXT        IDC_EDIT1,132,226,40,12,ES_AUTOHSCROLL
+    LTEXT           "Result Sort",IDC_STATIC,26,107,38,8
+    GROUPBOX        "General",IDC_STATIC,7,175,202,98
+    EDITTEXT        IDC_EDIT3,19,202,165,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDC_SET_WORKING_FOLDER,189,202,14,12
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME,15,220,186,1,WS_EX_STATICEDGE
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME,16,243,186,1,WS_EX_STATICEDGE
+    LTEXT           "Cache Size (10-1024 MB)",IDC_STATIC,19,253,87,8
+    EDITTEXT        IDC_EDIT4,104,251,40,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Clear Cache",IDC_CLEAR_CACHE,147,251,50,14
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME,84,82,114,1,WS_EX_STATICEDGE
+    LTEXT           "Flash Card Option",IDC_STATIC,20,78,58,8
+    PUSHBUTTON      "+",IDC_ADD_SECTION,171,15,12,10
+    PUSHBUTTON      "-",IDC_REMOVE_SECTION,186,15,12,10
+    CONTROL         "Enable <size> tag of Key",IDC_KEY_SIZE_TAG,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,25,123,110,10
+    CONTROL         "Enable <size> tag of Content",IDC_CONTENT_SIZE_TAG,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,25,137,110,10
+    CONTROL         "Enable image field",IDC_ADD_IMAGE_TO_FC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,25,151,110,10
+    LTEXT           "Dictionary Mode",IDC_STATIC,26,93,57,8
+    EDITTEXT        IDC_EDIT5,87,91,40,12,ES_AUTOHSCROLL | ES_READONLY
+END
+
+IDD_INPUT DIALOGEX 0, 0, 184, 50
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "New Name"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT1,6,7,171,15,ES_AUTOHSCROLL | ES_WANTRETURN
+    DEFPUSHBUTTON   "OK",IDOK,71,29,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,127,29,50,14
+END
+
+IDD_DIALOG2 DIALOGEX 0, 0, 315, 167
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "List"
+FONT 9, "Arial", 400, 0, 0x0
+BEGIN
+    CONTROL         "",IDC_LIST1,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,0,2,313,163
+END
+
+IDD_CATEGORY DIALOGEX 0, 0, 216, 182
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Category"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,172,161,37,14
+    LISTBOX         IDC_LIST2,7,7,202,149,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "+",IDC_CATE_ADD,7,163,16,12
+    PUSHBUTTON      "-",IDC_CATE_REMOVE,26,163,16,12
+    PUSHBUTTON      "R",IDC_CATE_RENAME,45,163,16,12
+END
+
+IDD_TAG DIALOGEX 0, 0, 216, 182
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Tag"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,172,161,37,14
+    LISTBOX         IDC_LIST2,7,7,202,149,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "+",IDC_TAG_ADD,7,163,16,12
+    PUSHBUTTON      "-",IDC_TAG_REMOVE,26,163,16,12
+    PUSHBUTTON      "R",IDC_TAG_RENAME,45,163,16,12
+END
+
+IDD_CREATE_SECTION DIALOGEX 0, 0, 184, 70
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Create Section"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT1,6,7,171,15,ES_AUTOHSCROLL | ES_WANTRETURN
+    DEFPUSHBUTTON   "OK",IDOK,71,49,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,127,49,50,14
+    CONTROL         "Dictionary Mode",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,28,103,10
+END
+
+IDD_LINK DIALOGEX 0, 0, 317, 388
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Link"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,205,367,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,260,367,50,14
+    CONTROL         "",IDC_LIST1,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,162,303,199
+    EDITTEXT        IDC_EDIT1,7,19,303,14,ES_AUTOHSCROLL
+    LTEXT           "Display to text",IDC_STATIC,7,7,117,8
+    EDITTEXT        IDC_EDIT6,7,52,303,14,ES_AUTOHSCROLL
+    LTEXT           "Address",IDC_STATIC,7,39,117,8
+    LTEXT           "Or Pick a location in database",IDC_STATIC,7,127,117,8
+    COMBOBOX        IDC_COMBO1,50,144,93,108,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Database",IDC_STATIC,10,145,35,8
+    COMBOBOX        IDC_COMBO2,149,144,161,108,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_EDIT7,7,86,303,36,ES_MULTILINE | WS_VSCROLL | WS_HSCROLL
+    LTEXT           "Onenote Address",IDC_STATIC,7,72,117,8
+END
+
+IDD_GOTO DIALOGEX 0, 0, 316, 226
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Goto"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,205,205,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,259,205,50,14
+    CONTROL         "",IDC_LIST1,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,25,302,174
+    COMBOBOX        IDC_COMBO1,50,7,92,108,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Database",IDC_STATIC,10,8,35,8
+    COMBOBOX        IDC_COMBO2,146,7,163,108,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_SEARCH DIALOGEX 0, 0, 189, 90
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Search Result"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_LIST1,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,0,2,187,80
+END
+
+IDD_SEARCH_BOX DIALOGEX 0, 0, 202, 54
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Search"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,91,33,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,145,33,50,14
+    EDITTEXT        IDC_STRING,7,7,187,14,ES_AUTOHSCROLL | ES_WANTRETURN
+END
+
+IDD_MOVETO DIALOGEX 0, 0, 202, 54
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Move To"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,91,33,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,145,33,50,14
+    EDITTEXT        IDC_STRING,7,7,187,14,ES_AUTOHSCROLL | ES_WANTRETURN | ES_NUMBER
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,2,0,0
+ PRODUCTVERSION 1,2,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904e4"
+        BEGIN
+            VALUE "CompanyName", "Frank Kim"
+            VALUE "FileDescription", "Flash card editor"
+            VALUE "FileVersion", "1.2.0.0"
+            VALUE "InternalName", "Card.exe"
+            VALUE "LegalCopyright", "Syjin.com.  All rights reserved."
+            VALUE "OriginalFilename", "Card.exe"
+            VALUE "ProductName", "Flash card editor"
+            VALUE "ProductVersion", "1.2.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 156
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 83
+    END
+
+    IDD_CARD_FORM, DIALOG
+    BEGIN
+        LEFTMARGIN, 2
+        RIGHTMARGIN, 423
+        TOPMARGIN, 1
+    END
+
+    IDD_SETTING, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 209
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 292
+    END
+
+    IDD_INPUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 6
+        RIGHTMARGIN, 177
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 43
+    END
+
+    IDD_DIALOG2, DIALOG
+    BEGIN
+        RIGHTMARGIN, 313
+        TOPMARGIN, 2
+        BOTTOMMARGIN, 165
+    END
+
+    IDD_CATEGORY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 209
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 175
+    END
+
+    IDD_TAG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 209
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 175
+    END
+
+    IDD_CREATE_SECTION, DIALOG
+    BEGIN
+        LEFTMARGIN, 6
+        RIGHTMARGIN, 177
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 63
+    END
+
+    IDD_LINK, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 310
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 381
+    END
+
+    IDD_GOTO, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 219
+    END
+
+    IDD_SEARCH, DIALOG
+    BEGIN
+        RIGHTMARGIN, 187
+        TOPMARGIN, 2
+        BOTTOMMARGIN, 88
+    END
+
+    IDD_SEARCH_BOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 195
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 47
+    END
+
+    IDD_MOVETO, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 195
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 47
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
+END
+
+STRINGTABLE
+BEGIN
+    IDR_MAINFRAME           "Card\n\nCard\n\n\nCard.Document\nCard.Document"
+END
+
+STRINGTABLE
+BEGIN
+    AFX_IDS_APP_TITLE       "Card"
+    AFX_IDS_IDLEMESSAGE     "Ready"
+END
+
+STRINGTABLE
+BEGIN
+    ID_INDICATOR_EXT        "EXT"
+    ID_INDICATOR_CAPS       "CAP"
+    ID_INDICATOR_NUM        "NUM"
+    ID_INDICATOR_SCRL       "SCRL"
+    ID_INDICATOR_OVR        "OVR"
+    ID_INDICATOR_REC        "REC"
+END
+
+STRINGTABLE
+BEGIN
+    ID_FILE_NEW             "Create a new document\nNew"
+    ID_FILE_OPEN            "Open an existing document\nOpen"
+    ID_FILE_CLOSE           "Close the active document\nClose"
+    ID_FILE_SAVE            "Save the active document\nSave"
+    ID_FILE_SAVE_AS         "Save the active document with a new name\nSave As"
+END
+
+STRINGTABLE
+BEGIN
+    ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
+    ID_APP_EXIT             "Quit the application; prompts to save documents\nExit"
+END
+
+STRINGTABLE
+BEGIN
+    ID_FILE_MRU_FILE1       "Open this document"
+    ID_FILE_MRU_FILE2       "Open this document"
+    ID_FILE_MRU_FILE3       "Open this document"
+    ID_FILE_MRU_FILE4       "Open this document"
+    ID_FILE_MRU_FILE5       "Open this document"
+    ID_FILE_MRU_FILE6       "Open this document"
+    ID_FILE_MRU_FILE7       "Open this document"
+    ID_FILE_MRU_FILE8       "Open this document"
+    ID_FILE_MRU_FILE9       "Open this document"
+    ID_FILE_MRU_FILE10      "Open this document"
+    ID_FILE_MRU_FILE11      "Open this document"
+    ID_FILE_MRU_FILE12      "Open this document"
+    ID_FILE_MRU_FILE13      "Open this document"
+    ID_FILE_MRU_FILE14      "Open this document"
+    ID_FILE_MRU_FILE15      "Open this document"
+    ID_FILE_MRU_FILE16      "Open this document"
+END
+
+STRINGTABLE
+BEGIN
+    ID_NEXT_PANE            "Switch to the next window pane\nNext Pane"
+    ID_PREV_PANE            "Switch back to the previous window pane\nPrevious Pane"
+END
+
+STRINGTABLE
+BEGIN
+    ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
+END
+
+STRINGTABLE
+BEGIN
+    ID_EDIT_CLEAR           "Erase the selection\nErase"
+    ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
+    ID_EDIT_COPY            "Copy the selection and put it on the Clipboard\nCopy"
+    ID_EDIT_CUT             "Cut the selection and put it on the Clipboard\nCut"
+    ID_EDIT_FIND            "Find the specified text\nFind"
+    ID_EDIT_PASTE           "Insert Clipboard contents\nPaste"
+    ID_EDIT_REPEAT          "Repeat the last action\nRepeat"
+    ID_EDIT_REPLACE         "Replace specific text with different text\nReplace"
+    ID_EDIT_SELECT_ALL      "Select the entire document\nSelect All"
+    ID_EDIT_UNDO            "Undo the last action\nUndo"
+    ID_EDIT_REDO            "Redo the previously undone action\nRedo"
+END
+
+STRINGTABLE
+BEGIN
+    ID_VIEW_TOOLBAR         "Show or hide the toolbar\nToggle ToolBar"
+    ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle StatusBar"
+END
+
+STRINGTABLE
+BEGIN
+    AFX_IDS_SCSIZE          "Change the window size"
+    AFX_IDS_SCMOVE          "Change the window position"
+    AFX_IDS_SCMINIMIZE      "Reduce the window to an icon"
+    AFX_IDS_SCMAXIMIZE      "Enlarge the window to full size"
+    AFX_IDS_SCNEXTWINDOW    "Switch to the next document window"
+    AFX_IDS_SCPREVWINDOW    "Switch to the previous document window"
+    AFX_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
+END
+
+STRINGTABLE
+BEGIN
+    AFX_IDS_SCRESTORE       "Restore the window to normal size"
+    AFX_IDS_SCTASKLIST      "Activate Task List"
+END
+
+STRINGTABLE
+BEGIN
+    ID_VIEW_PREV            "Previous\nPrevious"
+    ID_VIEW_NEXT            "Next\nNext"
+    ID_VIEW_LAST            "To the Last\nTo the last"
+    ID_VIEW_FIRST           "To First\nTo First"
+    ID_EDIT_MOVETOFIRST     "Move to\nMove to the first"
+    ID_EDIT_FILTER          "Filter\nFilter..."
+    ID_EDIT_ADDITEM         "Add Item\nAdd item"
+    ID_EDIT_REMOVEITEM      "Delete\nDelete Item"
+END
+
+STRINGTABLE
+BEGIN
+    ID_SECTION_HOLDER       "Choose Section\nSection"
+    ID_CATE_HOLDER          "Category\nCategory"
+    ID_EDIT_SAVE            "Save\nSave"
+    ID_BOOKMARK_HOLDER      "Bookmark\nBookmark"
+END
+
+STRINGTABLE
+BEGIN
+    ID_TAG_HOLDER           "Tag\nTag"
+    ID_VIEW_READONLYMODE    "Read Only\nRead Only"
+    ID_VIEW_TESTMODE        "Test mode\nTest mode"
+    ID_EDIT_MOVETOPREV      "Move Prev\nMove to Prev "
+    ID_EDIT_MOVETONEXT      "Move Next\nMove to Next"
+END
+
+STRINGTABLE
+BEGIN
+    ID_OR_TAG_HOLDER        "OR Tag\nOR Tag"
+END
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#include "res\Card.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
