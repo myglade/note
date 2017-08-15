@@ -119,6 +119,8 @@ int CDb::Init(LPCTSTR db_path, LPCTSTR file, LPCTSTR dbName, BOOL dictMode)
 				return 1;
 			}
 		}
+
+       // reset_itime();
 	}
 	catch(CppSQLite3Exception &ex)
 	{
@@ -3100,3 +3102,55 @@ int CDb::ExportToHtml(BOOL exportContent)
     return total;
 }
 
+void CDb::reset_itime()
+{
+    CNames names;
+
+    {
+        CppSQLite3Query q;
+        if (ExecuteSql(q, "SELECT * FROM category ORDER BY name ASC;") == -1)
+            return;
+
+        while (!q.eof())
+        {
+            CName	name;
+
+            name.id = q.getIntField(0);
+            name.name = q.getStringField(1);
+            names.Add(name);
+
+            q.nextRow();
+        }
+    }
+
+    int d = 0;
+
+    for(int i = 0; i < names.GetCount(); i++) 
+    {
+        char		query[1024];
+        CppSQLite3Query q;
+
+        _sntprintf(query, 1024, "SELECT id,itime FROM data WHERE category=%d ORDER BY itime ASC;",
+            names[i].id);
+        TRACE("%s\n", query);
+
+        ExecuteSql(q, "SELECT id,itime FROM data WHERE category=%d ORDER BY itime ASC;",
+                   names[i].id);
+
+        unsigned int itime, id;
+
+        while (!q.eof())
+        {
+            id = q.getIntField(0);
+            itime = q.getIntField(1);
+
+            if (ExecuteSql("UPDATE data SET itime=%u WHERE id=%u",
+                            d, id) == -1)
+                return;
+
+            d += 100;
+            q.nextRow();
+        }
+    }
+
+}

@@ -208,6 +208,8 @@ public:
     int LoadMedia(int did, int owner, RtfImage &info);
     int UpgradeImageDb();
 
+    void reset_itime();
+
 protected:
 	CppSQLite3DB		m_db;
 
