@@ -120,7 +120,7 @@ int CDb::Init(LPCTSTR db_path, LPCTSTR file, LPCTSTR dbName, BOOL dictMode)
 			}
 		}
 
-       // reset_itime();
+        reset_itime();
 	}
 	catch(CppSQLite3Exception &ex)
 	{
@@ -1472,50 +1472,65 @@ int CDb::MoveTo(CUIntArray &src, int dst)
 {
 	Lock				lock(m_mutex);
 	unsigned int		start;
-    int                 inc;
+    int                 inc = 100;
 
     if (m_cur_itemCount <= 0 || src.GetCount() == 0)
 		return -1;
 
+    map<unsigned int, int> m;
     CppSQLite3Query		q;
+    int first, last;
 
 	if (m_sort == "ASC")
-	{
-        if (dst == 0)
+	{   
         {
-            LoadDataFromCurrentSetting(q, 0, 1);
-            start = (unsigned int) q.getIntField("itime") - 10000 * src.GetCount();
-            inc = 10000;
-        }
-        else if (dst == m_cur_itemCount)
-        {
-            LoadDataFromCurrentSetting(q, m_cur_itemCount - 1, 1);
-            start = (unsigned int) q.getIntField("itime") + 10000;
-            inc = 10000;
-        }
-        else
-        {
-            unsigned int s1, s2;
+            CppSQLite3Query		q;
 
-            LoadDataFromCurrentSetting(q, dst - 1, 2);
-            s1 = q.getIntField("itime");
-            q.nextRow();
-            s2 = q.getIntField("itime");
+            ExecuteSql(q, "SELECT itime FROM data WHERE id=%u", src[0]);
+            first = q.getIntField("itime");
+            first = min(first, dst);
+        }
 
-            inc = (s2 - s1) / (src.GetCount() + 1);
-            if (inc < 2)
+        {
+            CppSQLite3Query		q;
+
+            ExecuteSql(q, "SELECT itime FROM data WHERE id=%u", src[src.GetCount() - 1]);
+            last = q.getIntField("itime");
+            last = max(last, dst);
+        }
+
+
+
+        LoadDataFromCurrentSetting(q, first, last - first + 1);
+
+
+        start = dst * 100;
+        for (int i = 0; i < src.GetCount(); i++)
+        {
+            if (ExecuteSql("UPDATE data SET itime=%u WHERE id=%u",
+                start, src[i]) == -1)
                 return -1;
 
-            start = s1 + inc;
+            m[src[i]] = start;
+            start += inc;
         }
 
-        for(int i = 0; i < src.GetCount(); i++)
-        {
-	        if (ExecuteSql("UPDATE data SET itime=%u WHERE id=%u", 
-		        start, src[i]) == -1)
-		        return -1;
+        if (dst < m_cur_itemCount) {
+            while (!q.eof()) {
+                auto id = q.getIntField("id");
+                
+                if (m.count(id) > 0) {
+                    q.nextRow();
+                    continue;
+                }
 
-            start += inc;
+                if (ExecuteSql("UPDATE data SET itime=%u WHERE id=%u",
+                    start, id) == -1)
+                    return -1;
+
+                start += inc;
+                q.nextRow();
+            }
         }
 	}
 	else
@@ -3138,6 +3153,7 @@ void CDb::reset_itime()
                    names[i].id);
 
         unsigned int itime, id;
+        d = 0;
 
         while (!q.eof())
         {
@@ -3148,7 +3164,7 @@ void CDb::reset_itime()
                             d, id) == -1)
                 return;
 
-            d += 100;
+            d += 1;
             q.nextRow();
         }
     }
