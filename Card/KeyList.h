@@ -29,7 +29,7 @@ public:
 
 	virtual BOOL OnInitDialog();
 	void FillItem(bool force = false);
-    void GetIdListofSelection(CUIntArray &list);
+    void GetIdListofSelection(std::vector<std::pair<int, int>> &list);
 
 	afx_msg void OnNMDblclkList1(NMHDR *pNMHDR, LRESULT *pResult);
 protected:

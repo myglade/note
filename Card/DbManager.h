@@ -88,7 +88,7 @@ public:
 	void ToFirst();
 	void ToPrev();
 	void ToNext();
-    int MoveTo(CUIntArray &src, int dst);
+    int MoveTo(std::vector<std::pair<int, int>> &src, int dst);
 
 	CString GetCurId();
 	CString GetCurDbName();

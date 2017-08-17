@@ -1468,68 +1468,69 @@ void CDb::Last()
 	UpdateCurData();
 }
 
-int CDb::MoveTo(CUIntArray &src, int dst)
+int CDb::MoveTo(std::vector<std::pair<int, int>> &src, int dst)
 {
 	Lock				lock(m_mutex);
-	unsigned int		start;
+	unsigned int		start, end;
     int                 inc = 100;
 
-    if (m_cur_itemCount <= 0 || src.GetCount() == 0)
+    if (m_cur_itemCount <= 0 || src.size() == 0)
 		return -1;
 
     map<unsigned int, int> m;
     CppSQLite3Query		q;
     int first, last;
 
+    first = src.front().first;
+    last = src.back().first;
+
 	if (m_sort == "ASC")
 	{   
+        start = min(first, dst);
+        end = max(first, dst);
+ 
+        for (int i = 0; i < src.size(); i++)
         {
-            CppSQLite3Query		q;
-
-            ExecuteSql(q, "SELECT itime FROM data WHERE id=%u", src[0]);
-            first = q.getIntField("itime");
-            first = min(first, dst);
+            m[src[i].second] = -1;
         }
 
-        {
-            CppSQLite3Query		q;
+        LoadDataFromCurrentSetting(q, start, end - start + 1);
 
-            ExecuteSql(q, "SELECT itime FROM data WHERE id=%u", src[src.GetCount() - 1]);
-            last = q.getIntField("itime");
-            last = max(last, dst);
-        }
+        int new_itime = start;
 
+        while (!q.eof()) {
+            auto id = q.getIntField("id");
+            auto itime = q.getIntField("id");
 
+            if (m.count(id) > 0) {
+                q.nextRow();
+                continue;
+            }
 
-        LoadDataFromCurrentSetting(q, first, last - first + 1);
+            if (dst == itime) {
+                for (auto &s : src) {
+                    m[s.second] = new_itime;
 
-
-        start = dst * 100;
-        for (int i = 0; i < src.GetCount(); i++)
-        {
+                    if (ExecuteSql("UPDATE data SET itime=%u WHERE id=%u",
+                        new_itime++, s.second) == -1)
+                        return -1;
+                }
+            }
+            
             if (ExecuteSql("UPDATE data SET itime=%u WHERE id=%u",
-                start, src[i]) == -1)
+                new_itime++, id) == -1)
                 return -1;
 
-            m[src[i]] = start;
-            start += inc;
+            q.nextRow();
         }
 
-        if (dst < m_cur_itemCount) {
-            while (!q.eof()) {
-                auto id = q.getIntField("id");
-                
-                if (m.count(id) > 0) {
-                    q.nextRow();
-                    continue;
-                }
+        if (m.begin()->second == -1) {
+            for (auto &s : src) {
+                m[s.second] = new_itime;
 
                 if (ExecuteSql("UPDATE data SET itime=%u WHERE id=%u",
-                    start, id) == -1)
+                    new_itime++, s.second) == -1)
                     return -1;
-
-                start += inc;
-                q.nextRow();
             }
         }
 	}

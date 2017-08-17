@@ -148,7 +148,7 @@ public:
 	virtual int ToFirst();
 	virtual int ToPrev();
 	virtual int ToNext();
-	virtual int MoveTo(CUIntArray &src, int dst);
+	virtual int MoveTo(std::vector<std::pair<int, int>> &src, int dst);
 	
 //	virtual int SaveAsHtml(CWnd *wnd);
 //	virtual int SaveAsJson();

@@ -106,7 +106,7 @@ int GetLocalAddress(char *szStr)
 
 void SetHostAddr()
 {
-	char szStr[15];
+	char szStr[255];
 
 	GetLocalAddress(szStr);
 	webserver::m_internalAddr.Format("http://%s:%d/", szStr, webserver::m_port);

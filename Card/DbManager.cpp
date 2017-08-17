@@ -1543,7 +1543,7 @@ void CDbManager::ToNext()
     m_isDirty = true;
 }
 
-int CDbManager::MoveTo(CUIntArray &src, int dst)
+int CDbManager::MoveTo(std::vector<std::pair<int, int>> &src, int dst)
 {
 	ASSERT(m_curDb);
 	if (m_curDb->db->MoveTo(src, dst) == -1)

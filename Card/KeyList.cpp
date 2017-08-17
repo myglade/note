@@ -222,11 +222,11 @@ BOOL CKeyList::PreTranslateMessage(MSG* pMsg)
     return CResizableDialog::PreTranslateMessage(pMsg);
 }
 
-void CKeyList::GetIdListofSelection(CUIntArray &list)
+void CKeyList::GetIdListofSelection(std::vector<std::pair<int, int>> &list)
 {
     POSITION pos = m_list.GetFirstSelectedItemPosition();
 
-    list.RemoveAll();
+    list.clear();
 
     if (pos == NULL)
         return;
@@ -235,7 +235,7 @@ void CKeyList::GetIdListofSelection(CUIntArray &list)
        while (pos)
        {
           int nItem = m_list.GetNextSelectedItem(pos);
-          list.Add(m_list.GetItemData(nItem));
+          list.push_back(pair<int, int>(nItem, m_list.GetItemData(nItem)));
        }
     }
 }

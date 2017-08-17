@@ -851,10 +851,10 @@ void CCardView::OnEditMoveto()
         MessageBox("Invalid Number");
         return;
     }
-    CUIntArray src;    
+    std::vector<std::pair<int, int>> src;
 
     m_keyListView->GetIdListofSelection(src);
-    if (src.GetCount() == 0)
+    if (src.size() == 0)
     {
         MessageBox("Nothing is selected");
         return;
