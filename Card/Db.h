@@ -209,6 +209,7 @@ public:
     int UpgradeImageDb();
 
     void reset_itime();
+    void Reindex();
 
 protected:
 	CppSQLite3DB		m_db;

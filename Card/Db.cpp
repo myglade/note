@@ -80,7 +80,7 @@ int CDb::Init(LPCTSTR db_path, LPCTSTR file, LPCTSTR dbName, BOOL dictMode)
 			if (CreateTable() == -1)
 				return -1;
 
-            m_version = 3;
+            m_version = 4;
 			SetEnv(KEY_SIZE_TAG, 0);
 			SetEnv(CONTENT_SIZE_TAG, 0);
 			SetEnv(ADD_IMAGE_TO_FC_TAG, 1);
@@ -118,9 +118,14 @@ int CDb::Init(LPCTSTR db_path, LPCTSTR file, LPCTSTR dbName, BOOL dictMode)
 				}
 				return 1;
 			}
+            else if (m_version == 3) {
+                reset_itime();
+                m_version = 4;
+                SetEnv("version", m_version);
+            }
 		}
 
-        reset_itime();
+    //    
 	}
 	catch(CppSQLite3Exception &ex)
 	{
@@ -573,6 +578,13 @@ void CDb::ChangeTagSearchMode(int mode)
 
 void CDb::SetSort(LPCTSTR sort, int index)
 {
+    if (CString(sort) != _T("ASC")) {
+        MessageBox(NULL, "Only ASC is supported", "Warning", MB_OK);
+        return;
+    }
+
+    m_sort = "ASC";
+
     if (m_sort == sort)
         return;
 
@@ -610,6 +622,7 @@ int CDb::CreateItem(int category, int bookmark, CUIntArray &tag,
 				 RtfImageList &keyImages, RtfImageList& contentImages)
 {
 	Lock		lock(m_mutex);
+    char		query[1024];
 
 	if (key == "" || category == -1)
 		return -1;
@@ -622,11 +635,19 @@ int CDb::CreateItem(int category, int bookmark, CUIntArray &tag,
 
 	EncodeTagString(tag, tagStr);
 
+    _sntprintf(query, 1024, "SELECT MAX(itime) FROM data WHERE category=%u;", category);
+    int itime = m_db.execScalar(query, INT_MAX);
+
+    if (itime == INT_MAX)
+        itime = 0;
+    else
+        itime++;
+
 	// 1      2       3        4         5     6            7           8       9     10
 	// itime, mtime, category, bookmark, tag, keyImage, contentImage, dictKey, key, content
 	CppSQLite3Statement stmt = m_db.compileStatement("insert into data values(NULL,?,?,?,?,?,?,?,?,?,?,1,1);");
 
-	stmt.bind(1, t);
+	stmt.bind(1, itime);
 	stmt.bind(2, t);
 	stmt.bind(3, category);
 	stmt.bind(4, bookmark);
@@ -750,14 +771,32 @@ int CDb::UpdateItem(int mask, int category, int bookmark,
 	CString		query, s;
 	int			i = 1;
 	Lock		lock(m_mutex);
+    int         itime = 0;
+    bool        need_reindex = false;
 
 	if (mask == 0)
 		return -1;
 
 	s.Format("UPDATE data SET mtime=%u", (int) time(NULL));
 
-	if (mask & CATEGORY_UPDATE)
-		s += ", category=?";
+    if (mask & CATEGORY_UPDATE) {
+        s += ", category=?";
+
+        if (m_cur_itemCategory != category) {
+            char		query2[1024];
+
+            _sntprintf(query2, 1024, "SELECT MAX(itime) FROM data WHERE category=%u;", category);
+            itime = m_db.execScalar(query2, INT_MAX);
+
+            if (itime == INT_MAX)
+                itime = 0;
+            else
+                itime++;
+
+            s += ", itime=?";
+            need_reindex = true;
+        }
+    }
 
 	if (mask & BOOKMARK_UPDATE)
 		s += ", bookmark=?";
@@ -785,7 +824,10 @@ int CDb::UpdateItem(int mask, int category, int bookmark,
 	if (mask & CATEGORY_UPDATE)
 	{
 		stmt.bind(i++, category);
-	}
+        if (m_cur_itemCategory != category) {
+            stmt.bind(i++, itime);
+        }
+    }
 	if (mask & BOOKMARK_UPDATE)
 	{
 		if (bookmark != 0)
@@ -943,6 +985,9 @@ int CDb::UpdateItem(int mask, int category, int bookmark,
             }
         }
 	}
+
+    if (need_reindex)
+        Reindex();
 
 	UpdateCurData();
 	ResetImageList(keyImages.add);
@@ -1468,6 +1513,32 @@ void CDb::Last()
 	UpdateCurData();
 }
 
+void CDb::Reindex()
+{
+    CppSQLite3Query		q;
+    int                 index = 0;
+
+    int n = LoadDataFromCurrentSetting(q, 0, m_cur_itemCount);
+    if (n == 0)
+        return;
+
+    while (!q.eof()) {
+        auto id = q.getIntField("id");
+        auto itime = q.getIntField("itime");
+
+        if (itime != index) {
+            if (ExecuteSql("UPDATE data SET itime=%u WHERE id=%u",
+                index, id) == -1)
+                return;
+
+        }
+
+        index++;
+        q.nextRow();
+    }
+}
+
+
 int CDb::MoveTo(std::vector<std::pair<int, int>> &src, int dst)
 {
 	Lock				lock(m_mutex);
@@ -1487,7 +1558,7 @@ int CDb::MoveTo(std::vector<std::pair<int, int>> &src, int dst)
 	if (m_sort == "ASC")
 	{   
         start = min(first, dst);
-        end = max(first, dst);
+        end = max(last, dst);
  
         for (int i = 0; i < src.size(); i++)
         {
@@ -1500,7 +1571,7 @@ int CDb::MoveTo(std::vector<std::pair<int, int>> &src, int dst)
 
         while (!q.eof()) {
             auto id = q.getIntField("id");
-            auto itime = q.getIntField("id");
+            auto itime = q.getIntField("itime");
 
             if (m.count(id) > 0) {
                 q.nextRow();
@@ -1536,41 +1607,8 @@ int CDb::MoveTo(std::vector<std::pair<int, int>> &src, int dst)
 	}
 	else
 	{
-        if (dst == 0)
-        {
-            LoadDataFromCurrentSetting(q, 0, 1);
-            start = (unsigned int) q.getIntField("itime") + 10000 * src.GetCount();
-            inc = -10000;
-        }
-        else if (dst == m_cur_itemCount)
-        {
-            LoadDataFromCurrentSetting(q, m_cur_itemCount - 1, 1);
-            start = (unsigned int) q.getIntField("itime") - 10000;
-            inc = -10000;
-        }
-        else
-        {
-            unsigned int s1, s2;
-
-            LoadDataFromCurrentSetting(q, dst - 1, 2);
-            s1 = q.getIntField("itime");
-            q.nextRow();
-            s2 = q.getIntField("itime");
-
-            inc = (s2 - s1) / (src.GetCount() + 1);
-            start = s1 + inc;
-            if (inc < 2)
-                return -1;
-        }
-
-        for(int i = 0; i < src.GetCount(); i++)
-        {
-	        if (ExecuteSql("UPDATE data SET itime=%u WHERE id=%u", 
-		        start, src[i]) == -1)
-		        return -1;
-
-            start += inc;
-        }
+        MessageBox(NULL, "Not Support in desc sort", "Error", MB_OK);
+        return 0;
     }
 
     m_index = dst;
@@ -1591,19 +1629,13 @@ int CDb::ToFirst()
 
 	if (m_sort == "ASC")
 	{
-		CppSQLite3Query		q;
-
-		LoadDataFromCurrentSetting(q, 0, 1);
-		t = q.getIntField("itime") - 100;
+        vector<pair<int, int>> item = { {m_cur_itime, m_cur_id } };
+        MoveTo(item, 0);
 	}
 	else
 	{
 		t = (unsigned int) time(0);
 	}
-
-	if (ExecuteSql("UPDATE data SET itime=%u WHERE id=%u", 
-		t, m_cur_id) == -1)
-		return -1;
 
 	UpdateCurData();
 	return 0;
