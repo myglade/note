@@ -136,7 +136,8 @@ public:
 	int SaveAsFc();
 	void GotoById(LPCTSTR db, LPCTSTR id, BOOL setHistory, BOOL delayUpdate);
 	void SetHistory();
-    
+    void toClipboard(CString &s);
+
     virtual void DbNotify(int msg);
 
 protected:
@@ -184,7 +185,9 @@ public:
 	afx_msg void OnViewSearchincontent();
 	afx_msg void OnViewBookmarkmode();
 	afx_msg void OnUpdateViewBookmarkmode(CCmdUI *pCmdUI);
-	afx_msg void OnCbnSelchangeTagCombo();
+    afx_msg void OnViewUrl();
+    afx_msg void OnUpdateViewUrl(CCmdUI *pCmdUI);
+    afx_msg void OnCbnSelchangeTagCombo();
 	afx_msg void OnEditCategory();
 	afx_msg void OnEditTag();
 	afx_msg void OnCbnCloseupItemTagCombo();

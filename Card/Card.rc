@@ -69,7 +69,9 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\Card.ico"
+
 IDR_CardTYPE            ICON                    "res\\CardDoc.ico"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -77,6 +79,7 @@ IDR_CardTYPE            ICON                    "res\\CardDoc.ico"
 //
 
 IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -105,6 +108,7 @@ BEGIN
     BUTTON      ID_TAG_HOLDER
     BUTTON      ID_OR_TAG_HOLDER
     BUTTON      ID_VIEW_BOOKMARKMODE
+    BUTTON      ID_VIEW_URL
 END
 
 
@@ -157,6 +161,8 @@ BEGIN
         MENUITEM "Bookmark Mode",               ID_VIEW_BOOKMARKMODE
         MENUITEM "ReadOnly Mode",               ID_VIEW_READONLYMODE
         MENUITEM "Test Mode",                   ID_VIEW_TESTMODE
+        MENUITEM SEPARATOR
+        MENUITEM "Copy URL",                    ID_VIEW_URL
     END
     POPUP "Setting"
     BEGIN
@@ -228,14 +234,14 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,248,2,1,13,WS_EX_CLIENTEDGE
 END
 
-IDD_SETTING DIALOGEX 0, 0, 216, 299
+IDD_SETTING DIALOGEX 0, 0, 217, 335
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Setting"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Database",IDC_STATIC,7,7,202,165
+    GROUPBOX        "Database",IDC_STATIC,7,7,203,165
     LISTBOX         IDC_LIST1,18,27,179,44,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    DEFPUSHBUTTON   "OK",IDOK,172,278,37,14
+    DEFPUSHBUTTON   "OK",IDOK,173,314,37,14
     CONTROL         "ASC (1-n)",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON | WS_GROUP,76,107,47,10
     CONTROL         "DESC (n-1)",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON,130,107,51,10
     CONTROL         "Make working folder",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,189,80,10
@@ -243,7 +249,7 @@ BEGIN
     LTEXT           "Port",IDC_STATIC,108,228,14,8
     EDITTEXT        IDC_EDIT1,132,226,40,12,ES_AUTOHSCROLL
     LTEXT           "Result Sort",IDC_STATIC,26,107,38,8
-    GROUPBOX        "General",IDC_STATIC,7,175,202,98
+    GROUPBOX        "General",IDC_STATIC,7,175,203,137
     EDITTEXT        IDC_EDIT3,19,202,165,12,ES_AUTOHSCROLL
     PUSHBUTTON      "...",IDC_SET_WORKING_FOLDER,189,202,14,12
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME,15,220,186,1,WS_EX_STATICEDGE
@@ -261,6 +267,9 @@ BEGIN
     CONTROL         "Enable image field",IDC_ADD_IMAGE_TO_FC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,25,151,110,10
     LTEXT           "Dictionary Mode",IDC_STATIC,26,93,57,8
     EDITTEXT        IDC_EDIT5,87,91,40,12,ES_AUTOHSCROLL | ES_READONLY
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME,15,273,186,1,WS_EX_STATICEDGE
+    LTEXT           "URL Host",IDC_STATIC,20,281,33,8
+    EDITTEXT        IDC_EDIT8,18,293,183,14,ES_AUTOHSCROLL
 END
 
 IDD_INPUT DIALOGEX 0, 0, 184, 50
@@ -443,9 +452,9 @@ BEGIN
     IDD_SETTING, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 209
+        RIGHTMARGIN, 210
         TOPMARGIN, 7
-        BOTTOMMARGIN, 292
+        BOTTOMMARGIN, 328
     END
 
     IDD_INPUT, DIALOG
@@ -527,6 +536,17 @@ BEGIN
     END
 END
 #endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_SETTING AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
 
 
 /////////////////////////////////////////////////////////////////////////////

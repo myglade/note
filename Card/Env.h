@@ -13,6 +13,7 @@
 #define LAUNCH_WEBSERVER		"launch_webserver"
 #define WEBSERVER_PORT			"webserver_port"
 #define CACHE_SIZE				"cache_size"
+#define URL                     "url"
 
 #define WINDOW_SETTING_SECTION	"Settings"
 

@@ -20,6 +20,7 @@ CSetting::CSetting(CWnd* pParent /*=NULL*/)
 	, m_webServer(FALSE)
 	, m_workingFolder(_T(""))
 	, m_cacheSize(0)
+    , m_url(_T(""))
 {
 }
 
@@ -29,23 +30,24 @@ CSetting::~CSetting()
 
 void CSetting::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_LIST1, m_sections);
-	DDX_Radio(pDX, IDC_RADIO1, m_sort);
-	DDX_Text(pDX, IDC_EDIT1, m_port);
-	DDV_MinMaxUInt(pDX, m_port, 80, 65000);
-	DDX_Check(pDX, IDC_CHECK1, m_makingWorkingFolder);
-	DDX_Check(pDX, IDC_CHECK3, m_webServer);
-	DDX_Text(pDX, IDC_EDIT3, m_workingFolder);
-	DDX_Control(pDX, IDC_EDIT3, m_workingFolderCtrl);
-	DDX_Control(pDX, IDC_SET_WORKING_FOLDER, m_setWorkingFolderBtn);
-	DDX_Control(pDX, IDC_EDIT1, m_portCtrl);
-	DDX_Text(pDX, IDC_EDIT4, m_cacheSize);
-	DDV_MinMaxUInt(pDX, m_cacheSize, 10, 1024);
-	DDX_Control(pDX, IDC_KEY_SIZE_TAG, m_keySizeTagBtn);
-	DDX_Control(pDX, IDC_CONTENT_SIZE_TAG, m_contentSizeTagBtn);
-	DDX_Control(pDX, IDC_ADD_IMAGE_TO_FC, m_addImage2FcBtn);
-	DDX_Control(pDX, IDC_EDIT5, m_dictMode);
+    CDialog::DoDataExchange(pDX);
+    DDX_Control(pDX, IDC_LIST1, m_sections);
+    DDX_Radio(pDX, IDC_RADIO1, m_sort);
+    DDX_Text(pDX, IDC_EDIT1, m_port);
+    DDV_MinMaxUInt(pDX, m_port, 80, 65000);
+    DDX_Check(pDX, IDC_CHECK1, m_makingWorkingFolder);
+    DDX_Check(pDX, IDC_CHECK3, m_webServer);
+    DDX_Text(pDX, IDC_EDIT3, m_workingFolder);
+    DDX_Control(pDX, IDC_EDIT3, m_workingFolderCtrl);
+    DDX_Control(pDX, IDC_SET_WORKING_FOLDER, m_setWorkingFolderBtn);
+    DDX_Control(pDX, IDC_EDIT1, m_portCtrl);
+    DDX_Text(pDX, IDC_EDIT4, m_cacheSize);
+    DDV_MinMaxUInt(pDX, m_cacheSize, 10, 1024);
+    DDX_Control(pDX, IDC_KEY_SIZE_TAG, m_keySizeTagBtn);
+    DDX_Control(pDX, IDC_CONTENT_SIZE_TAG, m_contentSizeTagBtn);
+    DDX_Control(pDX, IDC_ADD_IMAGE_TO_FC, m_addImage2FcBtn);
+    DDX_Control(pDX, IDC_EDIT5, m_dictMode);
+    DDX_Text(pDX, IDC_EDIT8, m_url);
 }
 
 
@@ -79,6 +81,7 @@ BOOL CSetting::OnInitDialog()
 	m_webServer = GetEnv(PROFILE_SECTION, LAUNCH_WEBSERVER, 0);
 	m_port = GetEnv(PROFILE_SECTION, WEBSERVER_PORT, 9999);
 	m_cacheSize = GetEnv(PROFILE_SECTION, CACHE_SIZE, 30);
+    m_url = GetEnv(PROFILE_SECTION, URL, "http://localhost:9999/db/query2");
 
 	m_workingFolderCtrl.EnableWindow(m_makingWorkingFolder);
 	m_setWorkingFolderBtn.EnableWindow(m_makingWorkingFolder);
@@ -257,6 +260,9 @@ void CSetting::OnOK()
 		SetEnv(PROFILE_SECTION, WEBSERVER_PORT, m_port);
 	}
 	SetEnv(PROFILE_SECTION, CACHE_SIZE, m_cacheSize);
+
+    SetEnv(PROFILE_SECTION, URL, m_url);
+
 
 	CDialog::OnOK();
 }

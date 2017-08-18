@@ -56,4 +56,5 @@ public:
 	CButton m_keySizeTagBtn;
 	CButton m_contentSizeTagBtn;
 	CButton m_addImage2FcBtn;
+    CString m_url;
 };

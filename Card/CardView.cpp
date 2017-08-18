@@ -159,7 +159,9 @@ BEGIN_MESSAGE_MAP(CCardView, CFormView)
 	ON_COMMAND(ID_VIEW_SEARCHINCONTENT, &CCardView::OnViewSearchincontent)
 	ON_COMMAND(ID_VIEW_BOOKMARKMODE, &CCardView::OnViewBookmarkmode)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_BOOKMARKMODE, &CCardView::OnUpdateViewBookmarkmode)
-	ON_COMMAND(ID_EDIT_CATEGORY, &CCardView::OnEditCategory)
+    ON_COMMAND(ID_VIEW_URL, &CCardView::OnViewUrl)
+    ON_UPDATE_COMMAND_UI(ID_VIEW_URL, &CCardView::OnUpdateViewUrl)
+    ON_COMMAND(ID_EDIT_CATEGORY, &CCardView::OnEditCategory)
 	ON_COMMAND(ID_EDIT_TAG, &CCardView::OnEditTag)
 	ON_CBN_CLOSEUP(IDC_TAG_COMBO, &CCardView::OnCbnCloseupItemTagCombo)
 	ON_COMMAND(ID_VIEW_READONLYMODE, &CCardView::OnViewReadonlymode)
@@ -1666,6 +1668,52 @@ void CCardView::OnUpdateViewBookmarkmode(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(m_bookmarkMode);
 }
+
+void CCardView::toClipboard(CString &s) {
+    ::OpenClipboard(0);
+    ::EmptyClipboard();
+    HGLOBAL hg = GlobalAlloc(GMEM_MOVEABLE, s.GetLength() + 1);
+
+    if (!hg) {
+        ::CloseClipboard();
+        return;
+    }
+
+    memcpy(GlobalLock(hg), (LPCTSTR) s, s.GetLength() + 1);
+    GlobalUnlock(hg);
+    ::SetClipboardData(CF_TEXT, hg);
+    ::CloseClipboard();
+    GlobalFree(hg);
+}
+
+void CCardView::OnViewUrl()
+{
+    if (m_db.GetCurDb() == NULL)
+        return;
+
+    auto id = m_db.GetCurId();
+    CString	section;
+
+    auto i = m_section->GetCurSel();
+    if (i >= 0)
+        m_section->GetLBText(i, section);
+
+    CString s;
+    CString url = GetEnv(PROFILE_SECTION, URL, "http://localhost:9999/db/query2");
+
+    s.Format("%s?type=2&sec=%s&id=%s\ncard:sec=%s&id=%s", url, section, id, section, id);
+    toClipboard(s);
+    TRACE("%s\n", s);
+}
+
+void CCardView::OnUpdateViewUrl(CCmdUI *pCmdUI)
+{
+    if (m_db.GetCurDb() == NULL)
+        pCmdUI->Enable(0);
+    else
+        pCmdUI->Enable(1);
+}
+
 
 void CCardView::UpdateKeyListView()
 {
