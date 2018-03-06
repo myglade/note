@@ -1704,6 +1704,9 @@ void CCardView::OnViewUrl()
     s.Format("%s?type=2&sec=%s&id=%s\ncard:sec=%s&id=%s", url, section, id, section, id);
     toClipboard(s);
     TRACE("%s\n", s);
+
+    s.Format("%s?type=2&sec=%s&id=%s", url, section, id);
+    ShellExecute(NULL, _T("open"), s, NULL, NULL, SW_SHOWNORMAL);
 }
 
 void CCardView::OnUpdateViewUrl(CCmdUI *pCmdUI)
