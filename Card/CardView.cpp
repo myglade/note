@@ -429,7 +429,7 @@ LRESULT  CCardView::OnLinkSet(WPARAM wParam, LPARAM lParam)
                  title.Format("Onenote Online: %s", dlg.m_display);
             }
 
-            ctl->SetLink(title, http, true);
+            //ctl->SetLink(title, http, true);
         }
         if (onenote != "") 
         {
