@@ -74,7 +74,7 @@ void CTag::OnBnClickedTagAdd()
 		return;
 	}
 
-	m_db->CreateTag(input.m_name);
+	m_db->CreateTag(input.m_name, input.m_preset);
 	Load();
 	m_list.SetCurSel(m_list.FindStringExact(0, input.m_name));
 }

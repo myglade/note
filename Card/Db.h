@@ -80,7 +80,7 @@ public:
 	virtual int GetCategoryList(CNames &names);
 	virtual int RenameCategory(LPCTSTR old, LPCTSTR newName);
 
-	virtual int CreateTag(LPCTSTR name, int insertBefore = -1);
+	virtual int CreateTag(LPCTSTR name, bool set = false);
 	virtual int DeleteTag(LPCTSTR name);
 	virtual int GetTagList(CNames &names);
 	virtual int RenameTag(LPCTSTR old, LPCTSTR newName);

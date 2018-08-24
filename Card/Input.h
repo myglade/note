@@ -21,6 +21,7 @@ protected:
 public:
 	CString m_name;
 	CString m_title;
+    BOOL m_preset;
 
 	void Set(CString title, CString name);
 	virtual BOOL OnInitDialog();

@@ -1025,11 +1025,11 @@ int CDbManager::RenameCategory(CString &old, CString &newName)
 	return 0;
 }
 
-int CDbManager::CreateTag(CString &name)
+int CDbManager::CreateTag(CString &name, BOOL preset)
 { 
 	if (m_curDb == NULL)
 		return -1;
-	if (m_curDb->db->CreateTag(name) == -1)
+	if (m_curDb->db->CreateTag(name, preset) == -1)
 		return -1;
 
 	SyncW2O(m_curDb);

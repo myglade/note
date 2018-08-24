@@ -69,7 +69,7 @@ public:
     int GetCategoryList(LPCTSTR db, CNames &names);
 	int DeleteCategory(CString &name);
 	int RenameCategory(CString &old, CString &newName);
-	int CreateTag(CString &name);
+	int CreateTag(CString &name, BOOL preset);
 	int GetTagList(CNames &names);
 	int DeleteTag(CString &name);
 	int RenameTag(CString &old, CString &newName);

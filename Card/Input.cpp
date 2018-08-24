@@ -14,7 +14,7 @@ CInput::CInput(CWnd* pParent /*=NULL*/)
 	: CDialog(CInput::IDD, pParent)
 	, m_name(_T("")), m_title(_T("Input"))
 {
-
+    m_preset = FALSE;
 }
 
 CInput::~CInput()
@@ -25,6 +25,7 @@ void CInput::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT1, m_name);
+    DDX_Check(pDX, IDC_CHECK1, m_preset);
 }
 
 

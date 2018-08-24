@@ -411,7 +411,7 @@ int CDb::RenameCategory(LPCTSTR old, LPCTSTR newName)
 	return ExecuteSql("UPDATE category SET name='%s' WHERE name='%s';", newName, old);
 }
 
-int CDb::CreateTag(LPCTSTR name, int insertBefore)
+int CDb::CreateTag(LPCTSTR name, bool set)
 {
 	Lock		lock(m_mutex);
 
@@ -435,7 +435,43 @@ int CDb::CreateTag(LPCTSTR name, int insertBefore)
 		q.nextRow();
 	}
 
-	return ExecuteSql("INSERT INTO tag VALUES(%d, '%s');", next, name);
+    if (ExecuteSql("INSERT INTO tag VALUES(%d, '%s');", next, name) == -1)
+        return -1;
+
+    if (set == false)
+        return 0;
+
+    if (ExecuteSql(q, "SELECT id,tag FROM data") == -1)
+        return -1;
+
+    CString query;
+
+    while (!q.eof())
+    {
+        int     id = q.getIntField("id");
+        CString tag = q.getStringField("tag");
+
+        CUIntArray tagList;
+        bool found = false;
+
+        DecodeTagString(tag, tagList);
+
+        for (int i = 0; i < tagList.GetCount(); i++) {
+            if (tagList[i] == next) {
+                found = true;
+                break;
+            }
+        }
+
+        if (found == false)
+            tagList.Add(next);
+
+        CString newTagStr;
+        EncodeTagString(tagList, newTagStr);
+        ExecuteSql("UPDATE data SET tag='%s' WHERE id=%u;", newTagStr, id);
+
+        q.nextRow();
+    }
 }
 
 int CDb::DeleteTag(LPCTSTR name)
