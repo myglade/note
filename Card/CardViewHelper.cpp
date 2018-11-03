@@ -418,6 +418,8 @@ int CCardView::SaveAsFc()
 
 	total = m_db.LoadDataFromCurrentSetting(q, -1, 0);
 
+    CString str;
+
 	while(!q.eof())
 	{
 		imageCount = 0;
@@ -434,7 +436,19 @@ int CCardView::SaveAsFc()
 
 			m_db.LoadImage(id, 0, imageList);
 
-			if (parser.OpenFromString(q.getStringField("key"), &imageList) == -1)
+            if (q.getIntField("keyCompressed") == 0)
+            {
+                str = q.getStringField("key");
+            }
+            else
+            {
+                int     len = 0;
+                auto    p = q.getBlobField("key", len);
+
+                m_db.Decompress(p, len, str);
+            }
+
+			if (parser.OpenFromString(str, &imageList) == -1)
 			{
 				MessageBox("Fail to parse", "Error");
 				return -1;
@@ -447,6 +461,7 @@ int CCardView::SaveAsFc()
 				MessageBox("Fail to parse", "Error");
 				return -1;
 			}
+
 			if (addImage2Fc)
 			{
 				if (listener.m_images.GetCount() > 0)
@@ -465,7 +480,21 @@ int CCardView::SaveAsFc()
 		}
 
 		m_db.LoadImage(id, 1, imageList);
-		if (parser.OpenFromString(q.getStringField("content"), &imageList) == -1)
+
+
+        if (q.getIntField("contentCompressed") == 0)
+        {
+            str = q.getStringField("content");
+        }
+        else
+        {
+            int     len = 0;
+            auto    p = q.getBlobField("content", len);
+
+            m_db.Decompress(p, len, str);
+        }
+
+		if (parser.OpenFromString(str, &imageList) == -1)
 		{
 			MessageBox("Fail to parse", "Error");
 			return -1;

@@ -93,14 +93,20 @@ int GetLocalAddress(char *szStr)
         return -1;
     }
 
+    string t;
+    vector<string> address;
+
     for (int i = 0; phe->h_addr_list[i] != 0; ++i) {
         struct in_addr addr;
         memcpy(&addr, phe->h_addr_list[i], sizeof(struct in_addr));
 		strcpy(szStr, inet_ntoa(addr));
-		break;
+        address.push_back(szStr);
+//		break;
     }
-    
-	WSACleanup();
+    sort(address.begin(), address.end());
+    strcpy(szStr, address[0].c_str());
+
+	WSACleanup();    
     return 0;
 }
 

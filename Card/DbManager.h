@@ -127,6 +127,7 @@ public:
     int GetSummary(LPCTSTR db, int category,  
                     StringMapArray &result, BOOL categoryName,
                     CString lineFeed, bool stressHead);
+    int Decompress(const unsigned char *src, int srcLen, CString &dst);
 
 	int SaveIndex(DbInfo *info);
 //	int LoadIndex(DbInfo *info);

@@ -1560,6 +1560,12 @@ CString &CDbManager::GetError() const
 	return m_curDb->db->GetError(); 
 }
 
+int CDbManager::Decompress(const unsigned char *src, int srcLen, CString &dst)
+{
+    ASSERT(m_curDb);
+    return m_curDb->db->Decompress(src, srcLen, dst);
+}
+
 int CDbManager::LoadDataFromCurrentSetting(CppSQLite3Query &q, int start, int count) 
 {
 	ASSERT(m_curDb);
