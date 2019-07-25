@@ -11,6 +11,7 @@ void DbHandler(webserver::http_request* r, CString page);
 void HomeHandler(webserver::http_request* r, CString htmlTemplate);
 void SummaryHandler(webserver::http_request* r);
 void UpdateHandler(webserver::http_request* r, bool onlyBookmark = false);
+void UpdateUpDown(webserver::http_request* r);
 void MakeSummary(webserver::http_request* r, string &res);
 void CreateJsFileForSummary(webserver::http_request* r);
 void LoadFile(webserver::http_request* r, string file = "");
@@ -277,9 +278,9 @@ void Handler(webserver::http_request* r)
 		UpdateHandler(r, true);
 		return;
 	}
-	else if (r->path_ == "/db/updatebk")
+	else if (r->path_ == "/db/updateox")
 	{
-		UpdateHandler(r, true);
+        UpdateUpDown(r);
 		return;
 	}
     else if (r->path_ == "/")
@@ -373,6 +374,8 @@ void DbHandler(webserver::http_request* r, CString page)
 	char *				buf;
 	CString				s;
     CString             id;
+    int                 up = -1;
+    int                 down = -1;
 
 	db = CDbManager::GetInstance();
 	iter = r->params_.find("type");
@@ -420,6 +423,14 @@ void DbHandler(webserver::http_request* r, CString page)
 	if (iter != r->params_.end())
 		searchMode = atoi(iter->second.c_str());
 
+    iter = r->params_.find("up");
+    if (iter != r->params_.end())
+        up = atoi(iter->second.c_str());
+    
+    iter = r->params_.find("down");
+    if (iter != r->params_.end())
+        down = atoi(iter->second.c_str());
+
 	iter = r->params_.find("sort");
 	if (iter != r->params_.end())
 	{
@@ -441,7 +452,8 @@ void DbHandler(webserver::http_request* r, CString page)
 	int		total;
     
     if (id == "")
-        total = db->Query(result, type, section, cate, bookmark, tags, searchMode, sort, start - 1, count);
+        total = db->Query(result, type, section, cate, bookmark, tags, up, down,
+            searchMode, sort, start - 1, count);
     else
     {
         total = db->Query(result, section, id, TRUE, sort, start);
@@ -793,6 +805,8 @@ void MakeSummary(webserver::http_request* r, string &res)
 	CString				sort = "ASC";
     int                 searchMode = 0;
     int                 len = 100;
+    int                 up = 0;
+    int                 down = 0;
 
 	db = CDbManager::GetInstance();
 
@@ -826,6 +840,14 @@ void MakeSummary(webserver::http_request* r, string &res)
 	if (iter != r->params_.end())
 		searchMode = atoi(iter->second.c_str());
 
+    iter = r->params_.find("up");
+    if (iter != r->params_.end())
+        up = atoi(iter->second.c_str());
+
+    iter = r->params_.find("down");
+    if (iter != r->params_.end())
+        down = atoi(iter->second.c_str());
+
     iter = r->params_.find("sort");
 	if (iter != r->params_.end())
 	{
@@ -833,8 +855,8 @@ void MakeSummary(webserver::http_request* r, string &res)
 			sort = "DESC";
 	}
 
-	int total = db->GetSummaryAsJson(s, section, cate, bookmark, tags, searchMode, sort,
-        LINE_FEED, true, len);
+	int total = db->GetSummaryAsJson(s, section, cate, bookmark, tags, up, down, 
+        searchMode, sort, LINE_FEED, true, len);
 
 	ConvUtf8(s, res);
 
@@ -914,3 +936,50 @@ void UpdateHandler(webserver::http_request* r, bool onlyBookmark)
 
 	return;
 }
+
+
+void UpdateUpDown(webserver::http_request* r)
+{
+    StringMap::const_iterator iter;
+    CDbManager *		db;
+    CString				s;
+    CUIntArray			tags;
+    unsigned int		id;
+    int					bookmark = -1;
+    int					mask = 0;
+    CString				section;
+
+    db = CDbManager::GetInstance();
+
+    iter = r->params_.find("sec");
+    if (iter == r->params_.end())
+        return MakeErrorResponse(r);
+    section = iter->second.c_str();
+
+    iter = r->params_.find("id");
+    if (iter == r->params_.end())
+        return MakeErrorResponse(r);
+    id = (unsigned int)atoi(iter->second.c_str());
+
+    int up = 0, down = 0;
+
+    iter = r->params_.find("up");
+    if (iter != r->params_.end())
+        up = atoi(iter->second.c_str());
+
+    iter = r->params_.find("down");
+    if (iter != r->params_.end())
+        down = atoi(iter->second.c_str());
+
+    if (db->UpdateUpDown(section, id, up, down) == 0)
+    {
+        r->answer_ = "success";
+    }
+    else
+    {
+        r->answer_ = "fail";
+    }
+
+    return;
+}
+

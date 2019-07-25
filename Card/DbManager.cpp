@@ -601,7 +601,8 @@ int CDbManager::GetDbListAsJson(std::string &s)
 }
 
 int CDbManager::Query(StringMapArray &result, int contentType, LPCTSTR db, int category, 
-		int bookmark, CUIntArray &tagList, int tagSearchMode, LPCTSTR sort, int index, int count)
+		int bookmark, CUIntArray &tagList, int up, int down, 
+        int tagSearchMode, LPCTSTR sort, int index, int count)
 {
 	DbMap::iterator		iter;
 
@@ -614,8 +615,8 @@ int CDbManager::Query(StringMapArray &result, int contentType, LPCTSTR db, int c
 	if (OpenDb(iter->second) == -1)
 		return - 1;
 
-	return iter->second->db->Query(result, contentType, category, bookmark, tagList, tagSearchMode,
-		sort, index, count);
+	return iter->second->db->Query(result, contentType, category, bookmark, tagList, up, down, 
+            tagSearchMode, sort, index, count);
 }
 
 int CDbManager::Query(StringMapArray &result, LPCTSTR db, LPCTSTR id, 
@@ -636,7 +637,7 @@ int CDbManager::Query(StringMapArray &result, LPCTSTR db, LPCTSTR id,
 }
 
 int CDbManager::GetSummaryAsJson(std::string &s, LPCTSTR db, int category, 
-		int bookmark, CUIntArray &tagList, int tagSearchMode, LPCTSTR sort, 
+		int bookmark, CUIntArray &tagList, int up, int down, int tagSearchMode, LPCTSTR sort,
         CString lineFeed, bool stressHead, int start, int count)
 {
 	DbMap::iterator		iter;
@@ -651,7 +652,7 @@ int CDbManager::GetSummaryAsJson(std::string &s, LPCTSTR db, int category,
 		return - 1;
 
 	return iter->second->db->GetSummaryAsJson(s, category, 
-		bookmark, tagList, tagSearchMode, sort, lineFeed, stressHead, start, count);
+		bookmark, tagList, up, down, tagSearchMode, sort, lineFeed, stressHead, start, count);
 }
 
 int CDbManager::UpdateTag(LPCTSTR db, unsigned int id, 
@@ -684,6 +685,37 @@ int CDbManager::UpdateTag(LPCTSTR db, unsigned int id,
 
     return res;
 }
+
+int CDbManager::UpdateUpDown(LPCTSTR db, unsigned int id, int up, int down)
+{
+    DbMap::iterator		iter;
+
+    if (db == NULL)
+        return -1;
+    iter = m_dbMap.find(db);
+    if (iter == m_dbMap.end())
+        return -1;
+
+    if (OpenDb(iter->second) == -1)
+        return -1;
+
+    int res = iter->second->db->UpdateUpDown(id, up, down);
+    if (res == 0)
+    {
+        SyncW2O(iter->second);
+        if (GetCurDbName() == db)
+        {
+            if (m_dbListener)
+            {
+                m_dbListener->DbNotify(DB_TAG_CHANGE);
+            }
+        }
+    }
+    m_isDirty = TRUE;
+
+    return res;
+}
+
 
 int CDbManager::SetDbEnv(DbInfo *info, LPCTSTR key, LPCTSTR value)
 {
