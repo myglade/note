@@ -14,11 +14,6 @@
                 }
 
                 @font-face {
-                    font-family: Consolas;
-                    src: local('consolas'), url('/fonts/consola.ttf') format('truetype');
-                }
-
-                @font-face {
                     font-family: Courier New;
                     src: local('cour'), url('/fonts/cour.ttf') format('truetype');
                 }
@@ -208,8 +203,6 @@
         var gInfo = < !--{ info }-->;
         var gITime = < !--{ itime }-->;
         var gId = < !--{ id }-->;
-        var gUser1 = < !--{ user1 }-->;
-        var gUser2 = < !--{ user2 }-->;
         var gQuerySearchMode = < !--{ querymode }-->;
         var gItemCateory = "<!--{itemcategory}-->";
         var gHideTag = 0;
@@ -237,7 +230,7 @@
             return s;
         };
 
-        function setCookie(name, value, days) {
+        function createCookie(name, value, days) {
             if (days) {
                 var date = new Date();
                 date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
@@ -260,15 +253,15 @@
 
 
         function eraseCookie(name) {
-            setCookie(name, "", -1);
+            createCookie(name, "", -1);
         }
 
         function zoom() {
             var s = getElementById('zoom');
 
             getElementById("mytable").style.zoom = s[s.selectedIndex].value + "%";
-            setCookie("zoom", s.selectedIndex, 3650);
-            setCookie("zoom_v", s[s.selectedIndex].value + "%", 3650);
+            createCookie("zoom", s.selectedIndex, 3650);
+            createCookie("zoom_v", s[s.selectedIndex].value + "%", 3650);
         }
 
         function ChangeTag() {
@@ -332,8 +325,7 @@
         }
 
         function onHome() {
-
-            window.location = "/db/home";
+            window.location = gHomeUrl;
             /*
                 // home url
                 tag = ''
@@ -399,7 +391,7 @@
 
             if (gHideTag == 0) {
                 property =
-                    "<TABLE class=\"page\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n" +
+                    "<TABLE class=\"page\" border=\"1\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n" +
                     "   <tr>\n" +
                     "       <td colspan=5> \n" +
                     "            <div id=\"desc\" align=left></div>\n" +
@@ -411,6 +403,11 @@
                     "    <tr>\n" +
                     "        <td colspan=5>\n" +
                     "            <div id=\"property1\"></div>\n" +
+                    "        </td>\n" +
+                    "    </tr>\n" +
+                    "    <tr>\n" +
+                    "        <td colspan=5>\n" +
+                    "            <div id=\"user\"></div>\n" +
                     "        </td>\n" +
                     "    </tr>\n" +
                     "</TABLE>\n";
@@ -444,6 +441,18 @@
                 for (var i = 0; i < gTag.length; i++) {
                     getElementById("tag_" + gTag[i]).checked = 1;
                 }
+
+                user = "<table border=\"0\" cellspacing=0 cellpadding=0 align=center width=\"100%\">\n" +
+                    "<tr><td colspan=5>\n" +
+                    "    <input name='fail' id='fail' value=\"0\" type='button' onchange='UpdateUserData()' style=\"vertical-align:middle\" />X\n" +
+                    "</td>\n<td colspan=5>\n" +
+                    "    <input name='fail' id='fail' value=\"0\" type='button' onchange='UpdateUserData()' style=\"vertical-align:middle\" />X\n" +
+                    "</td>\n" +
+                    "<td>&nbsp;&nbsp;&nbsp;&nbsp; Failure</td>\n" +
+                    "</tr></table>\n";
+
+                getElementById("user").innerHTML = user;
+
             }
             else {
                 property =
@@ -593,6 +602,10 @@
             window.location.reload(false);
         }
 
+        function UpdateUserData() {
+            alert("aa");
+        }
+
     </script>
 </HEAD>
 
@@ -610,7 +623,7 @@
     <table class="page" width="100%" border=0 cellspacing=0 cellpadding=0 align=center>
         <tr>
             <td align=left style="width:40%;"><input type="button" value="p   r   e   v" class="button1" id="prev" onclick="location.href='<!--{prevUrl}-->'" /></td>
-            <td align=center style="width:20%;"><input type="button" value="h   o   m   e" class="button2" id="home" onclick="location.href='/db/home'" /></td>
+            <td align=center style="width:20%;"><input type="button" value="h   o   m   e" class="button2" id="home" onclick="location.href='<!--{homeUrl}-->'" /></td>
             <td align=left style="width:40%;"><input type="button" value="n   e   x   t" class="button1" id="next" onclick="location.href='<!--{nextUrl}-->'" /></td>
         </tr>
         <tr>
@@ -642,7 +655,7 @@
         </tr>
         <tr>
             <td align=left style="width:40%;"><input type="button" value="p   r   e   v" class="button1" id="prev2" onclick="location.href='<!--{prevUrl}-->'" /></td>
-            <td align=center style="width:20%;"><input type="button" value="h   o   m   e" class="button2" onclick="location.href='/db/home'" /></td>
+            <td align=center style="width:20%;"><input type="button" value="h   o   m   e" class="button2" onclick="location.href='<!--{homeUrl}-->" /></td>
             <td align=left style="width:40%;"><input type="button" value="n   e   x   t" class="button1" id="next2" onclick="location.href='<!--{nextUrl}-->'" /></td>
         </tr>
     </table>

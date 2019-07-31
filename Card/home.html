@@ -8,23 +8,23 @@
 
     <title>Card Home</title>
     <STYLE TYPE="text/css">
-                <!--
-                @font-face {
-                    font-family: Andale Mono;
-                    src: url('/fonts/andalemo.ttf') format('truetype');
-                }
+        <!--
+        @font-face {
+            font-family: Andale Mono;
+            src: url('/fonts/andalemo.ttf') format('truetype');
+        }
 
-                @font-face {
-                    font-family: Courier New;
-                    src: local('cour'), url('/fonts/cour.ttf') format('truetype');
-                }
+        @font-face {
+            font-family: Courier New;
+            src: local('cour'), url('/fonts/cour.ttf') format('truetype');
+        }
 
-                @font-face {
-                    font-family: Consolas;
-                    src: local('consolas'), url('/fonts/consola.ttf') format('truetype');
-                }
+        @font-face {
+            font-family: Consolas;
+            src: local('consolas'), url('/fonts/consola.ttf') format('truetype');
+        }
 
-                /*
+        /*
         @font-face{
             font-family: Consolas;
             src: local('consolas'), url('/fonts/consola.ttf') format('truetype');
@@ -41,57 +41,57 @@
         }
         */
 
-                table.reference {
-                    background-color: #ffffff;
-                    border: 1px solid #c3c3c3;
-                    border-collapse: collapse;
-                    font-family: Consolas, Arial, Monospace;
-                    font-size: 12px;
-                }
+        table.reference {
+            background-color: #ffffff;
+            border: 1px solid #c3c3c3;
+            border-collapse: collapse;
+            font-family: Consolas, Arial, Monospace;
+            font-size: 12px;
+        }
 
-                    table.reference th {
-                        background-color: #e5eecc;
-                        border: 1px solid #c3c3c3;
-                        padding: 3px;
-                        vertical-align: top;
-                    }
+            table.reference th {
+                background-color: #e5eecc;
+                border: 1px solid #c3c3c3;
+                padding: 3px;
+                vertical-align: top;
+            }
 
-                    table.reference td {
-                        border: 1px solid #c3c3c3;
-                        padding: 3px;
-                        vertical-align: top;
-                        text-align: center;
-                    }
+            table.reference td {
+                border: 1px solid #c3c3c3;
+                padding: 3px;
+                vertical-align: top;
+                text-align: center;
+            }
 
-                    table.reference a {
-                        text-decoration: none;
-                    }
+            table.reference a {
+                text-decoration: none;
+            }
 
-                h2.result, h2.result_head {
-                    color: #617f10;
-                    background-color: transparent;
-                    margin-top: 0px;
-                }
+        h2.result, h2.result_head {
+            color: #617f10;
+            background-color: transparent;
+            margin-top: 0px;
+        }
 
-                h2.result {
-                    font-size: 125%%;
-                }
+        h2.result {
+            font-size: 125%%;
+        }
 
-                h2.result_head {
-                    font-size: 140%%;
-                }
+        h2.result_head {
+            font-size: 140%%;
+        }
 
-                .page {
-                    font-family: Consolas, Arial, Monospace;
-                    font-size: 12px;
-                }
+        .page {
+            font-family: Consolas, Arial, Monospace;
+            font-size: 12px;
+        }
 
-                .stress {
-                    color: #003366;
-                    font-weight: bold;
-                }
+        .stress {
+            color: #003366;
+            font-weight: bold;
+        }
 
-                -->
+        -->
     </STYLE>
     <script type="text/javascript" src="js/summary.js"></script>
 
@@ -126,19 +126,33 @@
         }
 
         LoadFont();
-
+        /*
         var gSection = readCookie("section", "");
         var gCategory = readCookie("category", "");
         var gQueryBookmark = readCookie("querybookmark", "");
         var gQuerySearchMode = readCookie("querymode", "");
-        var gInfo = < !--{ info }-->;
-        var gType = readCookie("type", "");
-        var gBMode = readCookie("bmode", 0); // browser
-
         var gUser1Min = readCookie("user1Min", -1);
         var gUser1Max = readCookie("user1Max", -1);
         var gUser2Min = readCookie("user2Min", -1);
         var gUser2Max = readCookie("user2Max", -1);
+            */
+
+        var gType = readCookie("type", "");
+        var gBMode = readCookie("bmode", 0); // browser
+
+        var gSection = "<!--{section}-->";
+        var gCategory = < !--{ category }-->;
+        var gQueryTag = [< !--{ querytag }-->];
+        var gQueryBookmark = < !--{ querybookmark }-->;
+        var gQuerySearchMode = < !--{ querymode }-->;
+        var gInfo = < !--{ info }-->;
+        var gType = < !--{ type }-->;
+        var gCurUrl = "<!--{curUrl}-->";
+        var gUser1Min = < !--{ user1min }-->;
+        var gUser1Max = < !--{ user1max }-->;
+        var gUser2Min = < !--{ user2min }-->;
+        var gUser2Max = < !--{ user2max }-->;
+
 
         var gQueryTag = [];
         var s = readCookie("querytag", "");
@@ -271,11 +285,10 @@
             setCookie("user2Min", gUser2Min);
             setCookie("user2Max", gUser2Max);
 
-            s = "home";
-
+            //  s = "home";
+            s = "home?sec={0}&cate={1}&bk={2}&smode={3}&type={4}&user1min={5}&user1max={6}&user2min={7}&user2max={8}".format(gSection, gCategory, gQueryBookmark, gQuerySearchMode, gType, gUser1Min,
+                gUser1Max, gUser2Min, gUser2Max) + tag;
             window.location = s;
-
-
         }
 
         function zoom() {
@@ -474,7 +487,9 @@
                     tag += "&tag_{0}={0}".format(item["id"]);
                 }
             }
-            xmlhttp._url = "sec={0}&cate={1}{2}{3}{4}&len={5}".format(section, cate, bookmark, tag, searchMode, 200);
+            user = "&user1={0},{1}&user2={2},{3}".format(gUser1Min, gUser1Max, gUser2Min, gUser2Max);
+
+            xmlhttp._url = "sec={0}&cate={1}{2}{3}{4}{5}&len={6}".format(section, cate, bookmark, tag, searchMode, user, 200);
             query = "summary?" + xmlhttp._url;
             xmlhttp.open("GET", query, true);
             xmlhttp.send();

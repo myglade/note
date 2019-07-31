@@ -709,6 +709,10 @@ void HomeHandler(webserver::http_request* r, CString htmlTemplate)
     CString             id;
 	int					start = 0;
 	int					count = 1;
+    CString             user1Min = "-1";
+    CString             user1Max = "-1";
+    CString             user2Min = "-1";
+    CString             user2Max = "-1";
 
 	db = CDbManager::GetInstance();
 
@@ -745,10 +749,26 @@ void HomeHandler(webserver::http_request* r, CString htmlTemplate)
 	{
 		start = atoi(iter->second.c_str());
 	}
+
 	iter = r->params_.find("count");
 	if (iter != r->params_.end())
 		count = atoi(iter->second.c_str());
 
+    iter = r->params_.find("user1min");
+    if (iter != r->params_.end())
+        user1Min = iter->second.c_str();
+
+    iter = r->params_.find("user1max");
+    if (iter != r->params_.end())
+        user1Max = iter->second.c_str();
+
+    iter = r->params_.find("user2min");
+    if (iter != r->params_.end())
+        user2Min = iter->second.c_str();
+
+    iter = r->params_.find("user2max");
+    if (iter != r->params_.end())
+        user2Max = iter->second.c_str();
 
 	tagStr = "";
 	for(iter = r->params_.begin(); iter != r->params_.end(); iter++)
@@ -803,9 +823,16 @@ void HomeHandler(webserver::http_request* r, CString htmlTemplate)
 		else if (s == "count")
 			parser.AddString(count);
         else if (s == "curUrl")
-        {
             parser.AddString(r->url_.c_str());
-        }
+        else if (s == "user1min")
+            parser.AddString(user1Min);
+        else if (s == "user1max")
+            parser.AddString(user1Max);
+        else if (s == "user2min")
+            parser.AddString(user2Min);
+        else if (s == "user2max")
+            parser.AddString(user2Max);
+
 	}		
 	delete buf;
 	
