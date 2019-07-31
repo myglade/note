@@ -601,7 +601,7 @@ int CDbManager::GetDbListAsJson(std::string &s)
 }
 
 int CDbManager::Query(StringMapArray &result, int contentType, LPCTSTR db, int category, 
-		int bookmark, CUIntArray &tagList, int up, int down, 
+		int bookmark, CUIntArray &tagList, pair<int,int> user1, pair<int,int> user2, 
         int tagSearchMode, LPCTSTR sort, int index, int count)
 {
 	DbMap::iterator		iter;
@@ -615,7 +615,7 @@ int CDbManager::Query(StringMapArray &result, int contentType, LPCTSTR db, int c
 	if (OpenDb(iter->second) == -1)
 		return - 1;
 
-	return iter->second->db->Query(result, contentType, category, bookmark, tagList, up, down, 
+	return iter->second->db->Query(result, contentType, category, bookmark, tagList, user1, user2, 
             tagSearchMode, sort, index, count);
 }
 
@@ -637,7 +637,8 @@ int CDbManager::Query(StringMapArray &result, LPCTSTR db, LPCTSTR id,
 }
 
 int CDbManager::GetSummaryAsJson(std::string &s, LPCTSTR db, int category, 
-		int bookmark, CUIntArray &tagList, int up, int down, int tagSearchMode, LPCTSTR sort,
+		int bookmark, CUIntArray &tagList, pair<int, int> user1, pair<int, int> user2, 
+        int tagSearchMode, LPCTSTR sort,
         CString lineFeed, bool stressHead, int start, int count)
 {
 	DbMap::iterator		iter;
@@ -652,7 +653,7 @@ int CDbManager::GetSummaryAsJson(std::string &s, LPCTSTR db, int category,
 		return - 1;
 
 	return iter->second->db->GetSummaryAsJson(s, category, 
-		bookmark, tagList, up, down, tagSearchMode, sort, lineFeed, stressHead, start, count);
+		bookmark, tagList, user1, user2, tagSearchMode, sort, lineFeed, stressHead, start, count);
 }
 
 int CDbManager::UpdateTag(LPCTSTR db, unsigned int id, 
@@ -686,7 +687,7 @@ int CDbManager::UpdateTag(LPCTSTR db, unsigned int id,
     return res;
 }
 
-int CDbManager::UpdateUpDown(LPCTSTR db, unsigned int id, int up, int down)
+int CDbManager::UpdateUserFields(LPCTSTR db, unsigned int id, int user1, int user2)
 {
     DbMap::iterator		iter;
 
@@ -699,7 +700,7 @@ int CDbManager::UpdateUpDown(LPCTSTR db, unsigned int id, int up, int down)
     if (OpenDb(iter->second) == -1)
         return -1;
 
-    int res = iter->second->db->UpdateUpDown(id, up, down);
+    int res = iter->second->db->UpdateUserFields(id, user1, user2);
     if (res == 0)
     {
         SyncW2O(iter->second);

@@ -19,6 +19,7 @@ extern CString g_html_template;
 // declare 	lock before any variable declaration for real synchro
 //
 #define SORT	"ASC"
+#define DEFAULT_RANGE {-1,-1}
 
 using namespace json;
 
@@ -323,7 +324,7 @@ int CDb::CreateTable()
 		"CREATE TABLE data(id INTEGER PRIMARY KEY AUTOINCREMENT, itime INTEGER, mtime INTEGER, category INTEGER,"
 		"bookmark INTEGER, tag VARCHAR(255), keyImage INTEGER, contentImage INTEGER, "
 		"dictKey TEXT, key BLOB, content BLOB, keyCompressed, contentCompressed INTEGER, "
-        "up INTEGER DEFAULT 0, down INTEGER DEFAULT 0);") == -1)
+        "user1 INTEGER DEFAULT 0, user2 INTEGER DEFAULT 0);") == -1)
 		return -1;
 
 	if (ExecuteSql(
@@ -336,7 +337,16 @@ int CDb::CreateTable()
 	{
 		return -1;
 	}
-	if (ExecuteSql("CREATE INDEX IDX_ITIME on data(itime);") == -1)
+    if (ExecuteSql("CREATE INDEX IDX_USER1 on data(user1);") == -1)
+    {
+        return -1;
+    }
+    if (ExecuteSql("CREATE INDEX IDX_USER2 on data(user2);") == -1)
+    {
+        return -1;
+    }
+
+    if (ExecuteSql("CREATE INDEX IDX_ITIME on data(itime);") == -1)
 	{
 		return -1;
 	}
@@ -1061,7 +1071,7 @@ int CDb::DeleteItem()
 }
 
 int CDb::LoadData(CppSQLite3Query &q, BOOL raw, int contentType, int category, 
-	int bookmark, CUIntArray &tagList, int up, int down, 
+	int bookmark, CUIntArray &tagList, pair<int,int> user1, pair<int,int> user2,
     int tagSearchMode, LPCTSTR sort, int start, int count)
 {
 	char		query[1024];
@@ -1070,7 +1080,7 @@ int CDb::LoadData(CppSQLite3Query &q, BOOL raw, int contentType, int category,
 	CString		content;
 	int			total;
 	Lock		lock(m_mutex);
-    char		updown[1024];
+    CString     user;
 
 	q.finalize();
 	CreateTagField(tagList, tag, tagSearchMode);
@@ -1094,28 +1104,34 @@ int CDb::LoadData(CppSQLite3Query &q, BOOL raw, int contentType, int category,
 	else
 		return -1;
 
-    _sntprintf(updown, 1024, "AND up >= %d AND down >= %d ", up, down);
+    if (user1.first >= 0 && user1.second >= 0 && user1.first <= user1.second) {
+        user.Format(" AND (%d <= user1 AND user1 <= %d) ", user1.first, user1.second);
+    }
+
+    if (user2.first >= 0 && user2.second >= 0 && user2.first <= user2.second) {
+        user.Format("%s AND (%d <= user1 AND user1 <= %d) ", user, user2.first, user2.second);
+    }
 
     /* get total */
 	if (bookmark == 1)
 	{
 		if (category == -1)
 			_sntprintf(query, 1024, 
-			"SELECT count(*) FROM data WHERE bookmark=1 %s %s;", updown, tag);
+			"SELECT count(*) FROM data WHERE bookmark=1 %s %s;", user, tag);
 		else
 			_sntprintf(query, 1024, 
 				"SELECT count(*) FROM data WHERE category=%d AND bookmark=1 %s %s ;", 
-				category, updown, tag);
+				category, user, tag);
 	}
 	else
 	{
 		if (category == -1)
 			_sntprintf(query, 1024, 
-				"SELECT count(*) FROM data WHERE 1 %s %s;", updown, tag);
+				"SELECT count(*) FROM data WHERE 1 %s %s;", user, tag);
 		else
 			_sntprintf(query, 1024, 
 				"SELECT count(*) FROM data WHERE category=%d %s %s;", 
-				category, updown, tag);
+				category, user, tag);
 	}
 	total = m_db.execScalar(query);
 	if (total == 0)
@@ -1139,19 +1155,19 @@ int CDb::LoadData(CppSQLite3Query &q, BOOL raw, int contentType, int category,
 			if (category == -1)
 				_sntprintf(query, 1024, 
 					"SELECT a.id,itime,mtime,category,bookmark,tag,"
-				    "keyImage,contentImage,%s,keyCompressed,contentCompressed,up,down FROM data a "
+				    "keyImage,contentImage,%s,keyCompressed,contentCompressed,user1,user2 FROM data a "
 				    "INNER JOIN category b ON a.category = b.id "
 					"WHERE bookmark=1 %s %s ORDER BY b.name, itime %s %s;", 
-					content, updown, tag, sort, limit);
+					content, user, tag, sort, limit);
 			else
 				_sntprintf(query, 1024, 
 					"SELECT a.id,itime,mtime,category,bookmark,tag,"
-				    "keyImage,contentImage,%s,keyCompressed,contentCompressed,up,down FROM data a "
+				    "keyImage,contentImage,%s,keyCompressed,contentCompressed,user1,user2 FROM data a "
 				    "INNER JOIN category b ON a.category = b.id "
 					"WHERE category=%d AND bookmark=1 %s %s ORDER BY b.name, itime %s %s;", 
 					content,
 					category,
-                    updown,
+                    user,
 					tag, 
 					sort,
 					limit);
@@ -1161,19 +1177,19 @@ int CDb::LoadData(CppSQLite3Query &q, BOOL raw, int contentType, int category,
 			if (category == -1)
 				_sntprintf(query, 1024, 
 					"SELECT a.id,itime,mtime,category,bookmark,tag,"
-				    "keyImage,contentImage,%s,keyCompressed,contentCompressed,up,down FROM data a "
+				    "keyImage,contentImage,%s,keyCompressed,contentCompressed,user1,user2 FROM data a "
 				    "INNER JOIN category b ON a.category = b.id "
 					"WHERE 1 %s %s ORDER BY b.name, itime %s %s;", 
-					content, updown, tag, sort, limit);
+					content, user, tag, sort, limit);
 			else
 				_sntprintf(query, 1024, 
 					"SELECT a.id,itime,mtime,category,bookmark,tag,"
-				    "keyImage,contentImage,%s,keyCompressed,contentCompressed,up,down FROM data a "
+				    "keyImage,contentImage,%s,keyCompressed,contentCompressed,user1,user2 FROM data a "
 				    "INNER JOIN category b ON a.category = b.id "
 					"WHERE category=%d %s %s ORDER BY b.name, itime %s %s;", 
 					content, 
 					category,
-                    updown,
+                    user,
 					tag, 
 					sort,
 					limit);
@@ -1188,19 +1204,19 @@ int CDb::LoadData(CppSQLite3Query &q, BOOL raw, int contentType, int category,
 		if (category == -1)
 			_sntprintf(query, 1024, 
 				"SELECT a.id,itime,mtime,b.name as category,bookmark,tag,"
-				"keyImage,contentImage,%s,keyCompressed,contentCompressed,up,down FROM data a "
+				"keyImage,contentImage,%s,keyCompressed,contentCompressed,user1,user2 FROM data a "
 				"INNER JOIN category b ON a.category = b.id "
 				"WHERE bookmark=1 %s %s ORDER BY b.name, itime %s %s;", 
-				content, updown, tag, sort, limit);
+				content, user, tag, sort, limit);
 		else
 			_sntprintf(query, 1024, 
 				"SELECT a.id,itime,mtime,b.name as category,bookmark,tag,"
-				"keyImage,contentImage,%s,keyCompressed,contentCompressed,up,down FROM data a "
+				"keyImage,contentImage,%s,keyCompressed,contentCompressed,user1,user2 FROM data a "
 				"INNER JOIN category b ON a.category = b.id "
 				"WHERE category=%d AND bookmark=1 %s %s ORDER BY b.name, itime %s %s;", 
 				content,
 				category,
-                updown,
+                user,
 				tag, 
 				sort,
 				limit);
@@ -1210,19 +1226,19 @@ int CDb::LoadData(CppSQLite3Query &q, BOOL raw, int contentType, int category,
 		if (category == -1)
 			_sntprintf(query, 1024, 
 				"SELECT a.id,itime,mtime,b.name as category,bookmark,tag,"
-				"keyImage,contentImage,%s,keyCompressed,contentCompressed,up,down FROM data a "
+				"keyImage,contentImage,%s,keyCompressed,contentCompressed,user1,user2 FROM data a "
 				"INNER JOIN category b ON a.category = b.id "
 				"WHERE 1 %s %s ORDER BY b.name, itime %s %s;", 
-				content, updown, tag, sort, limit);
+				content, user, tag, sort, limit);
 		else
 			_sntprintf(query, 1024, 
 				"SELECT a.id,itime,mtime,b.name as category,bookmark,tag,"
-				"keyImage,contentImage,%s,keyCompressed,contentCompressed,up,down FROM data a "
+				"keyImage,contentImage,%s,keyCompressed,contentCompressed,user1,user2 FROM data a "
 				"INNER JOIN category b ON a.category = b.id "
 				"WHERE category=%d %s %s ORDER BY b.name, itime %s %s;", 
 				content, 
 				category,
-                updown,
+                user,
 				tag, 
 				sort,
 				limit);
@@ -1315,7 +1331,8 @@ int CDb::SearchKey(CppSQLite3Query &q, CString key)
 int CDb::LoadDataFromCurrentSetting(CppSQLite3Query &q, int start, int count)
 {
 	return LoadData(q, TRUE, CONTENT_TYPE_BOTH,
-		m_curCategory, m_curBookmarkMode, m_curTag, 0, 0, m_curTagSearchMode, m_sort, start, count);
+		m_curCategory, m_curBookmarkMode, m_curTag, DEFAULT_RANGE, DEFAULT_RANGE, 
+        m_curTagSearchMode, m_sort, start, count);
 }
 
 
@@ -1921,7 +1938,7 @@ void CDb::DecodeTagString(LPCTSTR src, CNames &names)
 }
 
 int CDb::Query(StringMapArray &result, int contentType, int category, 
-	int bookmark, CUIntArray &tagList, int up, int down, int tagSearchMode, 
+	int bookmark, CUIntArray &tagList, pair<int, int> user1, pair<int, int> user2, int tagSearchMode,
     LPCTSTR sort, int start, int count)
 {
 	Lock				lock(m_mutex);
@@ -1936,7 +1953,7 @@ int CDb::Query(StringMapArray &result, int contentType, int category,
 
 
 	result.clear();
-	total = LoadData(q, FALSE, contentType, category, bookmark, tagList, up, down, 
+	total = LoadData(q, FALSE, contentType, category, bookmark, tagList, user1, user2, 
             tagSearchMode, sort, start, count);
 	if (total <= 0)
 		return 0;
@@ -2093,7 +2110,8 @@ int CDb::Query(StringMapArray &result, LPCTSTR id, BOOL useCategory, CString sor
 	if (index < 0)
 		return -1;
 
-	total = LoadData(q, TRUE, CONTENT_TYPE_KEY, category, 0, tagList, 0, 0, 0, sort, index, 1);
+	total = LoadData(q, TRUE, CONTENT_TYPE_KEY, category, 0, tagList, 
+                DEFAULT_RANGE, DEFAULT_RANGE, 0, sort, index, 1);
 	if (total <= 0)
 		return 0;
 
@@ -2218,7 +2236,8 @@ int CDb::GetSummary(StringMapArray &result, BOOL categoryName,
 	result.clear();
 	// error or total 0
 	total = LoadData(q, TRUE, CONTENT_TYPE_KEY,
-		             m_curCategory, m_curBookmarkMode, m_curTag, 0, 0, m_curTagSearchMode, m_sort, -1, 0);
+		             m_curCategory, m_curBookmarkMode, m_curTag, 
+                     DEFAULT_RANGE, DEFAULT_RANGE, m_curTagSearchMode, m_sort, -1, 0);
 	if (total <= 0) 
 		return 0;
 
@@ -2318,7 +2337,8 @@ int CDb::GetSummary(int category, int bookmark, CUIntArray &tagList, int tagSear
 //	total = LoadData(q, TRUE, CONTENT_TYPE_KEY,
 //		             -1, 0, tagList, m_sort, -1, 0);
 	total = LoadData(q, TRUE, CONTENT_TYPE_KEY,
-		            category, bookmark, tagList, 0, 0, tagSearchMode, m_sort, -1, 0);
+		            category, bookmark, tagList, 
+                    DEFAULT_RANGE, DEFAULT_RANGE, tagSearchMode, m_sort, -1, 0);
 	if (total <= 0) 
 		return 0;
 
@@ -2458,7 +2478,8 @@ int CDb::SearchKey(StringMapArray &result, CString &key, CString lineFeed, bool 
 }
 
 int CDb::GetSummaryAsJson(std::string &s, int category, 
-	int bookmark, CUIntArray &tagList, int up, int down, int tagSearchMode, LPCTSTR sort, 
+	int bookmark, CUIntArray &tagList, pair<int, int> user1, pair<int, int> user2, 
+    int tagSearchMode, LPCTSTR sort,
     CString lineFeed, bool stressHead, int maxLen, int start, int count)
 {
 	Lock				lock(m_mutex);
@@ -2476,7 +2497,7 @@ int CDb::GetSummaryAsJson(std::string &s, int category,
     CString             str;
 
 	s = "{}";
-	total = LoadData(q, FALSE, CONTENT_TYPE_KEY, category, bookmark, tagList, up, down, tagSearchMode,
+	total = LoadData(q, FALSE, CONTENT_TYPE_KEY, category, bookmark, tagList, user1, user2, tagSearchMode,
 		sort, start, count);
 	if (total <= 0)
 		total = 0;
@@ -2665,15 +2686,27 @@ int CDb::UpdateTag(unsigned int id,
 	return 0;
 }
 
-int CDb::UpdateUpDown(unsigned int id, int up, int down)
+int CDb::UpdateUserFields(unsigned int id, int user1, int user2)
 {
     Lock	lock(m_mutex);
     char	query[2048];
     int		total = 2048;
 
-    _sntprintf(query, total, "UPDATE data SET mtime=%u, up=up+%d, down=down+%d WHERE id=%u",
-        (unsigned int)time(0), up, down, id);
-
+    if (user1 >= 0 && user2 >= 0) {
+        _sntprintf(query, total, "UPDATE data SET mtime=%u, user1=%1, user2=%1 WHERE id=%u",
+            (unsigned int)time(0), user1, user2, id);
+    }
+    else if (user1 >= 0) {
+        _sntprintf(query, total, "UPDATE data SET mtime=%u, user1=%1 WHERE id=%u",
+            (unsigned int)time(0), user1, id);
+    }
+    else if (user2 >= 0) {
+        _sntprintf(query, total, "UPDATE data SET mtime=%u, user2=%1 WHERE id=%u",
+            (unsigned int)time(0), user2, id);
+    }
+    else
+        return 0;
+    
     m_error = "";
     try
     {
@@ -3040,7 +3073,8 @@ int CDb::SetNumbering()
 
     // error or total 0
     total = LoadData(q, TRUE, CONTENT_TYPE_KEY,
-        m_curCategory, m_curBookmarkMode, m_curTag, 0, 0, m_curTagSearchMode, m_sort, -1, 0);
+        m_curCategory, m_curBookmarkMode, m_curTag, DEFAULT_RANGE, DEFAULT_RANGE, 
+        m_curTagSearchMode, m_sort, -1, 0);
     if (total <= 0)
         return 0;
 
@@ -3171,7 +3205,8 @@ int CDb::ExportToHtml(BOOL exportContent)
 
     // error or total 0
     total = LoadData(q, TRUE, CONTENT_TYPE_BOTH,
-        m_curCategory, m_curBookmarkMode, m_curTag, 0, 0, m_curTagSearchMode, m_sort, -1, 0);
+        m_curCategory, m_curBookmarkMode, m_curTag, DEFAULT_RANGE, 
+        DEFAULT_RANGE, m_curTagSearchMode, m_sort, -1, 0);
     if (total <= 0)
         return 0;
 
@@ -3282,8 +3317,8 @@ void CDb::reset_itime()
 
 void CDb::AddColumns()
 {
-    if (ExecuteSql("ALTER TABLE data ADD COLUMN up INTEGER DEFAULT 0; " 
-                   "ALTER TABLE data ADD COLUMN down INTEGER DEFAULT 0; ") == -1)
+    if (ExecuteSql("ALTER TABLE data ADD COLUMN user1 INTEGER DEFAULT 0; " 
+                   "ALTER TABLE data ADD COLUMN user2 INTEGER DEFAULT 0; ") == -1)
     {
         return;
     }

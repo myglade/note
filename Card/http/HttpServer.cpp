@@ -11,7 +11,7 @@ void DbHandler(webserver::http_request* r, CString page);
 void HomeHandler(webserver::http_request* r, CString htmlTemplate);
 void SummaryHandler(webserver::http_request* r);
 void UpdateHandler(webserver::http_request* r, bool onlyBookmark = false);
-void UpdateUpDown(webserver::http_request* r);
+void UpdateUserFields(webserver::http_request* r);
 void MakeSummary(webserver::http_request* r, string &res);
 void CreateJsFileForSummary(webserver::http_request* r);
 void LoadFile(webserver::http_request* r, string file = "");
@@ -280,7 +280,7 @@ void Handler(webserver::http_request* r)
 	}
 	else if (r->path_ == "/db/updateox")
 	{
-        UpdateUpDown(r);
+        UpdateUserFields(r);
 		return;
 	}
     else if (r->path_ == "/")
@@ -346,6 +346,32 @@ void LoadFile(webserver::http_request* r, string path)
     }
 
 }
+
+void GetRange(string t, pair<int, int>& r) {
+    int v;
+
+    auto pos = t.find(',');
+    if (pos == -1) {
+        v = stoi(t);
+        r.first = r.second = v;
+    }
+    else {
+        string t1 = t.substr(0, pos);
+        string t2 = t.substr(pos + 1);
+
+        if (!t1.empty() && !t2.empty()) {
+            r.first = stoi(t1);
+            r.second = stoi(t2);
+        }
+        else if (!t1.empty()) {
+            r.second = r.first = stoi(t1);
+        }
+        else
+            r.second = r.first = stoi(t2);
+    }
+}
+
+
 /*
 /db/query?type=key&sec=it&cate=1&bk=1&tag_1=1&tag_2=2&sort=1&start=0&count=1
 
@@ -374,8 +400,8 @@ void DbHandler(webserver::http_request* r, CString page)
 	char *				buf;
 	CString				s;
     CString             id;
-    int                 up = -1;
-    int                 down = -1;
+    pair<int, int>       user1 = { -1,-1 };
+    pair<int, int>       user2 = { -1,-1 };
 
 	db = CDbManager::GetInstance();
 	iter = r->params_.find("type");
@@ -423,13 +449,15 @@ void DbHandler(webserver::http_request* r, CString page)
 	if (iter != r->params_.end())
 		searchMode = atoi(iter->second.c_str());
 
-    iter = r->params_.find("up");
-    if (iter != r->params_.end())
-        up = atoi(iter->second.c_str());
+    iter = r->params_.find("user1");
+    if (iter != r->params_.end()) {
+        GetRange(iter->second, user1);
+    }
     
-    iter = r->params_.find("down");
-    if (iter != r->params_.end())
-        down = atoi(iter->second.c_str());
+    iter = r->params_.find("user2");
+    if (iter != r->params_.end()) {
+        GetRange(iter->second, user2);
+    }
 
 	iter = r->params_.find("sort");
 	if (iter != r->params_.end())
@@ -452,7 +480,7 @@ void DbHandler(webserver::http_request* r, CString page)
 	int		total;
     
     if (id == "")
-        total = db->Query(result, type, section, cate, bookmark, tags, up, down,
+        total = db->Query(result, type, section, cate, bookmark, tags, user1, user2,
             searchMode, sort, start - 1, count);
     else
     {
@@ -525,7 +553,27 @@ void DbHandler(webserver::http_request* r, CString page)
 					parser.AddString(iter->second.c_str());
 			}
 		}
-		else if (s == "bookmark")
+        else if (s == "user1")
+        {
+            if (result.size() > 0)
+            {
+                StringMap	&sm = result[0];
+                iter = sm.find("user1");
+                if (iter != sm.end())
+                    parser.AddString(iter->second.c_str());
+            }
+        }
+        else if (s == "user2")
+        {
+            if (result.size() > 0)
+            {
+                StringMap	&sm = result[0];
+                iter = sm.find("user2");
+                if (iter != sm.end())
+                    parser.AddString(iter->second.c_str());
+            }
+        }
+        else if (s == "bookmark")
 		{
 			if (result.size() > 0)
 			{
@@ -701,6 +749,7 @@ void HomeHandler(webserver::http_request* r, CString htmlTemplate)
 	if (iter != r->params_.end())
 		count = atoi(iter->second.c_str());
 
+
 	tagStr = "";
 	for(iter = r->params_.begin(); iter != r->params_.end(); iter++)
 	{
@@ -805,8 +854,7 @@ void MakeSummary(webserver::http_request* r, string &res)
 	CString				sort = "ASC";
     int                 searchMode = 0;
     int                 len = 100;
-    int                 up = 0;
-    int                 down = 0;
+    pair<int, int>       user1 = { -1, -1 }, user2 = { -1, -1 };
 
 	db = CDbManager::GetInstance();
 
@@ -840,13 +888,15 @@ void MakeSummary(webserver::http_request* r, string &res)
 	if (iter != r->params_.end())
 		searchMode = atoi(iter->second.c_str());
 
-    iter = r->params_.find("up");
-    if (iter != r->params_.end())
-        up = atoi(iter->second.c_str());
+    iter = r->params_.find("user1");
+    if (iter != r->params_.end()) {
+        GetRange(iter->second, user1);
+    }
 
-    iter = r->params_.find("down");
-    if (iter != r->params_.end())
-        down = atoi(iter->second.c_str());
+    iter = r->params_.find("user2");
+    if (iter != r->params_.end()) {
+        GetRange(iter->second, user2);
+    }
 
     iter = r->params_.find("sort");
 	if (iter != r->params_.end())
@@ -855,7 +905,7 @@ void MakeSummary(webserver::http_request* r, string &res)
 			sort = "DESC";
 	}
 
-	int total = db->GetSummaryAsJson(s, section, cate, bookmark, tags, up, down, 
+	int total = db->GetSummaryAsJson(s, section, cate, bookmark, tags, user1, user2, 
         searchMode, sort, LINE_FEED, true, len);
 
 	ConvUtf8(s, res);
@@ -938,7 +988,7 @@ void UpdateHandler(webserver::http_request* r, bool onlyBookmark)
 }
 
 
-void UpdateUpDown(webserver::http_request* r)
+void UpdateUserFields(webserver::http_request* r)
 {
     StringMap::const_iterator iter;
     CDbManager *		db;
@@ -961,17 +1011,17 @@ void UpdateUpDown(webserver::http_request* r)
         return MakeErrorResponse(r);
     id = (unsigned int)atoi(iter->second.c_str());
 
-    int up = 0, down = 0;
+    int user1 = -1, user2 = -1;
 
-    iter = r->params_.find("up");
+    iter = r->params_.find("user1");
     if (iter != r->params_.end())
-        up = atoi(iter->second.c_str());
+        user1 = atoi(iter->second.c_str());
 
-    iter = r->params_.find("down");
+    iter = r->params_.find("user2");
     if (iter != r->params_.end())
-        down = atoi(iter->second.c_str());
+        user2 = atoi(iter->second.c_str());
 
-    if (db->UpdateUpDown(section, id, up, down) == 0)
+    if (db->UpdateUserFields(section, id, user1, user2) == 0)
     {
         r->answer_ = "success";
     }

@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <utility>
 
 #include "sqlite/CppSQLite3.h"
 #include "RtfParser/RtfParser.h"
@@ -26,6 +27,8 @@
 #define VALUE_UPDATE		(1 << 3)
 #define TAG_UPDATE			(1 << 4)
 #define LEVEL_UPDATE		(1 << 5)
+
+using namespace std;
 
 struct CName
 {
@@ -105,7 +108,7 @@ public:
 					DbRtfImages &contentImageList);
 	virtual int DeleteItem();
 	virtual int LoadData(CppSQLite3Query &q, BOOL raw, int contentType, int category,
-			int bookmark, CUIntArray &tagList, int up, int down, 
+			int bookmark, CUIntArray &tagList, pair<int, int> user1, pair<int, int> user2,
             int tagSearchMode, LPCTSTR sort, int start, int count);
 	virtual int LoadData(CppSQLite3Query &q, BOOL raw, int contentType,
 			unsigned int id, unsigned int itime, LPCTSTR sort);
@@ -167,7 +170,7 @@ public:
 	virtual void DecodeTagString(LPCTSTR tagStr, CNames &names);
 
 	virtual int Query(StringMapArray &result, int contentType, int category,
-			int bookmark, CUIntArray &tagList, int up, int down, 
+			int bookmark, CUIntArray &tagList, pair<int, int> user1, pair<int, int> user2,
             int tagSearchMode, LPCTSTR sort, int index, int count = 1);
 	virtual int Query(StringMapArray &result, LPCTSTR id, BOOL useCategory, CString sort, int &index);
 
@@ -179,14 +182,14 @@ public:
                     StringMapArray &result, BOOL categoryName,
                     CString lineFeed, bool stressHead);
 	virtual int GetSummaryAsJson(std::string &s, int category,
-			int bookmark, CUIntArray &tagList, int up, int down, int tagSearchMode, LPCTSTR sort, 
+			int bookmark, CUIntArray &tagList, pair<int, int> user1, pair<int, int> user2, int tagSearchMode, LPCTSTR sort,
             CString lineFeed, bool stressHead, int maxLen, int start = -1, int count = -1);
 	virtual int GetCategoryListAsJson(std::string &s);
 	virtual int SearchKey(StringMapArray &result, CString &key,
             CString lineFeed, bool stressHead);
 	virtual int GetTagListAsJson(std::string &s);
 	virtual int UpdateTag(unsigned int id, int mask, int bookmark, CUIntArray &tag);
-    virtual int UpdateUpDown( unsigned int id, int up, int down);
+    virtual int UpdateUserFields( unsigned int id, int user1, int user2);
 
     int ExportToHtml(BOOL exportContent = TRUE);
     int SetNumbering();

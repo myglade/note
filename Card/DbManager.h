@@ -153,7 +153,7 @@ public:
 
 	int GetDbListAsJson(std::string &s);
 	int Query(StringMapArray &result, int contentType, LPCTSTR db, int category, 
-			int bookmark, CUIntArray &tagList, int up, int down, 
+			int bookmark, CUIntArray &tagList, pair<int, int> user1, pair<int, int> user2,
             int tagSearchMode, LPCTSTR sort, int index, int count = 1);
     int Query(StringMapArray &result, LPCTSTR db, LPCTSTR id, BOOL useCategory, CString sort, int &index);
 
@@ -161,11 +161,11 @@ public:
             CString lineFeed, bool stressHead);
 	int GetContentInfoAsJson(std::string &s);
 	int GetSummaryAsJson(std::string &s, LPCTSTR db, int category, 
-		int bookmark, CUIntArray &tagList, int up, int down, int tagSearchMode, LPCTSTR sort,
+		int bookmark, CUIntArray &tagList, pair<int, int> user1, pair<int, int> user2, int tagSearchMode, LPCTSTR sort,
         CString lineFeed, bool stressHead, int start = -1, int count = -1);
 	int UpdateTag(LPCTSTR db, unsigned int id, 
 				   int mask, int bookmark, CUIntArray &tag);
-    int UpdateUpDown(LPCTSTR db, unsigned int id, int up, int down);
+    int UpdateUserFields(LPCTSTR db, unsigned int id, int user1, int user2);
 
 
 	void SyncW2O(DbInfo *info);
