@@ -278,7 +278,7 @@ void Handler(webserver::http_request* r)
 		UpdateHandler(r, true);
 		return;
 	}
-	else if (r->path_ == "/db/updateox")
+	else if (r->path_ == "/db/updateuserdata")
 	{
         UpdateUserFields(r);
 		return;
@@ -400,8 +400,7 @@ void DbHandler(webserver::http_request* r, CString page)
 	char *				buf;
 	CString				s;
     CString             id;
-    pair<int, int>       user1 = { -1,-1 };
-    pair<int, int>       user2 = { -1,-1 };
+    int                 user1max = -1, user1min = -1, user2min = -1, user2max = -1;
 
 	db = CDbManager::GetInstance();
 	iter = r->params_.find("type");
@@ -449,14 +448,24 @@ void DbHandler(webserver::http_request* r, CString page)
 	if (iter != r->params_.end())
 		searchMode = atoi(iter->second.c_str());
 
-    iter = r->params_.find("user1");
+    iter = r->params_.find("user1min");
     if (iter != r->params_.end()) {
-        GetRange(iter->second, user1);
+        user1min = atoi(iter->second.c_str());
     }
     
-    iter = r->params_.find("user2");
+    iter = r->params_.find("user1max");
     if (iter != r->params_.end()) {
-        GetRange(iter->second, user2);
+        user1max = atoi(iter->second.c_str());
+    }
+
+    iter = r->params_.find("user2min");
+    if (iter != r->params_.end()) {
+        user2min = atoi(iter->second.c_str());
+    }
+
+    iter = r->params_.find("user2max");
+    if (iter != r->params_.end()) {
+        user2max = atoi(iter->second.c_str());
     }
 
 	iter = r->params_.find("sort");
@@ -480,7 +489,8 @@ void DbHandler(webserver::http_request* r, CString page)
 	int		total;
     
     if (id == "")
-        total = db->Query(result, type, section, cate, bookmark, tags, user1, user2,
+        total = db->Query(result, type, section, cate, bookmark, tags, { user1min, user1max }, 
+            { user2min, user2max },
             searchMode, sort, start - 1, count);
     else
     {
@@ -591,7 +601,15 @@ void DbHandler(webserver::http_request* r, CString page)
 			parser.AddString(count);
 		else if (s == "sort")
 			parser.AddString(sort);
-		else if (s == "info")
+        else if (s == "user1min")
+            parser.AddString(user1min);
+        else if (s == "user1max")
+            parser.AddString(user1max);
+        else if (s == "user2min")
+            parser.AddString(user2min);
+        else if (s == "user2max")
+            parser.AddString(user2max);
+        else if (s == "info")
 		{
 			string		info;
 
@@ -709,10 +727,10 @@ void HomeHandler(webserver::http_request* r, CString htmlTemplate)
     CString             id;
 	int					start = 0;
 	int					count = 1;
-    CString             user1Min = "-1";
-    CString             user1Max = "-1";
-    CString             user2Min = "-1";
-    CString             user2Max = "-1";
+    CString             user1Min = "0";
+    CString             user1Max = "100";
+    CString             user2Min = "0";
+    CString             user2Max = "100";
 
 	db = CDbManager::GetInstance();
 
@@ -915,14 +933,24 @@ void MakeSummary(webserver::http_request* r, string &res)
 	if (iter != r->params_.end())
 		searchMode = atoi(iter->second.c_str());
 
-    iter = r->params_.find("user1");
+    iter = r->params_.find("user1min");
     if (iter != r->params_.end()) {
-        GetRange(iter->second, user1);
+        user1.first = atoi(iter->second.c_str());
     }
 
-    iter = r->params_.find("user2");
+    iter = r->params_.find("user1max");
     if (iter != r->params_.end()) {
-        GetRange(iter->second, user2);
+        user1.second = atoi(iter->second.c_str());
+    }
+
+    iter = r->params_.find("user2min");
+    if (iter != r->params_.end()) {
+        user2.first = atoi(iter->second.c_str());
+    }
+
+    iter = r->params_.find("user2max");
+    if (iter != r->params_.end()) {
+        user2.second = atoi(iter->second.c_str());
     }
 
     iter = r->params_.find("sort");

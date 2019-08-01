@@ -18,6 +18,11 @@
     src: local('cour'), url('/fonts/cour.ttf') format('truetype');  
 }
 
+@font-face{  
+    font-family: Consolas;  
+    src: local('consolas'), url('/fonts/consola.ttf') format('truetype');  
+}
+
 /*
 @font-face{  
     font-family: Consolas;  
@@ -135,6 +140,11 @@ var gQuerySearchMode = <!--{querymode}-->;
 var gInfo = <!--{info}-->;
 var gType = <!--{type}-->;
 var gCurUrl = "<!--{curUrl}-->";
+var gUser1Min = <!--{user1min}-->;
+var gUser1Max = <!--{user1max}-->;
+var gUser2Min = <!--{user2min}-->;
+var gUser2Max = <!--{user2max}-->;
+		
 var tagListG = new Array();
 var gUrl;
 var gBMode = 0;		// browser
@@ -268,8 +278,14 @@ function reloadPage()
             tag += "&tag_{0}={0}".format(item["id"]);
         }
     }
-	
-    s = "{5}?sec={0}&cate={1}&bk={2}&smode={3}&type={4}".format(gSection, gCategory, gQueryBookmark, gQuerySearchMode, gType, gPageName) + tag;
+
+	gUser1Min = getElementById("user1Min").value;
+	gUser1Max = getElementById("user1Max").value;
+	gUser2Min = getElementById("user2Min").value;
+	gUser2Max = getElementById("user2Max").value;
+			
+    s = "{5}?sec={0}&cate={1}&bk={2}&smode={3}&type={4}&user1min={6}&user1max={7}&user2min={8}&user2max={9}".format(gSection, gCategory, gQueryBookmark, gQuerySearchMode, gType, gPageName, gUser1Min,
+                gUser1Max, gUser2Min, gUser2Max) + tag;
 	window.location = s;
 	
 }
@@ -413,6 +429,11 @@ function load()
  	var s = getElementById('hzoom');
 	s.selectedIndex = readCookie("hzoom", 0);
 	
+	getElementById("user1Min").value = gUser1Min;
+	getElementById("user1Max").value = gUser1Max;
+	getElementById("user2Min").value = gUser2Min;
+	getElementById("user2Max").value = gUser2Max;
+			
     //loadSummaryFromJavascript();
 	loadSummary();
 }
@@ -466,7 +487,9 @@ function loadSummary()
             tag += "&tag_{0}={0}".format(item["id"]);
         }
     }
-    xmlhttp._url = "sec={0}&cate={1}{2}{3}{4}&len={5}".format(section, cate, bookmark, tag, searchMode, -100);
+    user = "&user1min={0}&user1max={1}&user2min={2}&user2max={3}".format(gUser1Min, gUser1Max, gUser2Min, gUser2Max);
+
+    xmlhttp._url = "sec={0}&cate={1}{2}{3}{4}{5}&len={6}".format(section, cate, bookmark, tag, searchMode, user, -100);
     query = "summary?" + xmlhttp._url;
     xmlhttp.open("GET", query, true);
     xmlhttp.send();
@@ -698,9 +721,44 @@ function DisplaySummary(str, url)
             </div>
         </TD>
     </TR>
+
+	<TR>
+		<TD STYLE='width:5%;'><input type="button" value="Search" class="button1" id="prev2" onclick="reloadPage()" /></TD>
+
+		<TD>
+			<table>
+				<tr>
+					<TD><B>Total&nbsp;</B></TD>
+					<td>min</td>
+					<td><input type="number" id="user1Min" min="-1" max="100" value="-1" style="width: 3em;" /></td>
+					<td>max</td>
+					<td><input type="number" id="user1Max" min="-1" max="100" value="99" style="width: 3em;" /></td>
+				</tr>
+			</table>
+		</TD>
+		<TD>
+			<table>
+				<tr>
+					<TD><B>Failure&nbsp;</B></TD>
+					<td>min</td>
+					<td><input type="number" id="user2Min" min="-1" max="100" value="-1" style="width: 3em;" /></td>
+					<td>max</td>
+					<td><input type="number" id="user2Max" min="-1" max="100" value="99" style="width: 3em;" /></td>
+				</tr>
+			</table>
+		</TD>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	</TR>	
+	
     </div>
 </TABLE>
 </FORM>
+<p>
+<p>
+<A href="/"  target="_parent"  class="page">Home</A>
+<br/>
+<A href="home"  target="_parent"  class="page">To One View Mode</A>
 
 <P>
 <h2 class="result"><div id="result">Result</div></h2>

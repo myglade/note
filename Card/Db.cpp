@@ -1109,7 +1109,7 @@ int CDb::LoadData(CppSQLite3Query &q, BOOL raw, int contentType, int category,
     }
 
     if (user2.first >= 0 && user2.second >= 0 && user2.first <= user2.second) {
-        user.Format("%s AND (%d <= user1 AND user1 <= %d) ", user, user2.first, user2.second);
+        user.Format("%s AND (%d <= user2 AND user2 <= %d) ", user, user2.first, user2.second);
     }
 
     /* get total */
@@ -2693,15 +2693,15 @@ int CDb::UpdateUserFields(unsigned int id, int user1, int user2)
     int		total = 2048;
 
     if (user1 >= 0 && user2 >= 0) {
-        _sntprintf(query, total, "UPDATE data SET mtime=%u, user1=%1, user2=%1 WHERE id=%u",
+        _sntprintf(query, total, "UPDATE data SET mtime=%u, user1=%d, user2=%d WHERE id=%u",
             (unsigned int)time(0), user1, user2, id);
     }
     else if (user1 >= 0) {
-        _sntprintf(query, total, "UPDATE data SET mtime=%u, user1=%1 WHERE id=%u",
+        _sntprintf(query, total, "UPDATE data SET mtime=%u, user1=%d WHERE id=%u",
             (unsigned int)time(0), user1, id);
     }
     else if (user2 >= 0) {
-        _sntprintf(query, total, "UPDATE data SET mtime=%u, user2=%1 WHERE id=%u",
+        _sntprintf(query, total, "UPDATE data SET mtime=%u, user2=%d WHERE id=%u",
             (unsigned int)time(0), user2, id);
     }
     else

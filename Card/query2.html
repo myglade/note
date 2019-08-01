@@ -14,6 +14,11 @@
                 }
 
                 @font-face {
+                    font-family: Consolas;
+                    src: local('consolas'), url('/fonts/consola.ttf') format('truetype');
+                }
+
+                @font-face {
                     font-family: Courier New;
                     src: local('cour'), url('/fonts/cour.ttf') format('truetype');
                 }
@@ -189,28 +194,30 @@
         // keyword
         // key, content,(summary,1,10), info
 
-        var gType = < !--{ type }-->;
-        var gSection = "<!--{section}-->";
-        var gCategory = < !--{ category }-->;
-        var gTag = [< !--{ tag }-->];
-        var gBookmark = < !--{ bookmark }-->;
-        var gQueryTag = [< !--{ querytag }-->];
-        var gQueryBookmark = < !--{ querybookmark }-->;
-        var gTotal = < !--{ total }-->;
-        var gStart = < !--{ start }-->;
-        var gCount = < !--{ count }-->;
-        var gSort = "<!--{sort}-->";
-        var gInfo = < !--{ info }-->;
-        var gITime = < !--{ itime }-->;
-        var gId = < !--{ id }-->;
-        var gQuerySearchMode = < !--{ querymode }-->;
-        var gItemCateory = "<!--{itemcategory}-->";
-        var gHideTag = 0;
-        var gCurUrl = "<!--{curUrl}-->";
-        var gPrevUrl = "<!--{prevUrl}-->";
-        var gNextUrl = "<!--{nextUrl}-->";
-        var gHomeUrl = "<!--{homeUrl}-->";
-
+		var gType = <!--{type}-->;
+		var gSection = "<!--{section}-->";
+		var gCategory = <!--{category}-->;
+		var gTag = [<!--{tag}-->];
+		var gBookmark = <!--{bookmark}-->;
+		var gQueryTag = [<!--{querytag}-->];
+		var gQueryBookmark = <!--{querybookmark}-->;
+		var gTotal = <!--{total}-->;
+		var gStart = <!--{start}-->;
+		var gCount = <!--{count}-->;
+		var gSort = "<!--{sort}-->";
+		var gInfo = <!--{info}-->;
+		var gITime = <!--{itime}-->;
+		var gId = <!--{id}-->;
+		var gQuerySearchMode = <!--{querymode}-->;
+		var gItemCateory = "<!--{itemcategory}-->";
+		var gHideTag = 0;
+		var gCurUrl = "<!--{curUrl}-->";
+		var gPrevUrl = "<!--{prevUrl}-->";
+		var gNextUrl = "<!--{nextUrl}-->";
+		var gHomeUrl = "<!--{homeUrl}-->";
+		var gUser1 = <!--{user1}-->;
+		var gUser2 = <!--{user2}-->;
+		
         function getElementById(name) {
             if (document.getElementById) {
                 return document.getElementById(name);
@@ -230,7 +237,7 @@
             return s;
         };
 
-        function createCookie(name, value, days) {
+        function setCookie(name, value, days) {
             if (days) {
                 var date = new Date();
                 date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
@@ -253,15 +260,15 @@
 
 
         function eraseCookie(name) {
-            createCookie(name, "", -1);
+            setCookie(name, "", -1);
         }
 
         function zoom() {
             var s = getElementById('zoom');
 
             getElementById("mytable").style.zoom = s[s.selectedIndex].value + "%";
-            createCookie("zoom", s.selectedIndex, 3650);
-            createCookie("zoom_v", s[s.selectedIndex].value + "%", 3650);
+            setCookie("zoom", s.selectedIndex, 3650);
+            setCookie("zoom_v", s[s.selectedIndex].value + "%", 3650);
         }
 
         function ChangeTag() {
@@ -325,7 +332,8 @@
         }
 
         function onHome() {
-            window.location = gHomeUrl;
+
+            window.location = "/db/home";
             /*
                 // home url
                 tag = ''
@@ -390,27 +398,34 @@
             gQueryTag.sort();
 
             if (gHideTag == 0) {
-                property =
-                    "<TABLE class=\"page\" border=\"1\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n" +
-                    "   <tr>\n" +
-                    "       <td colspan=5> \n" +
-                    "            <div id=\"desc\" align=left></div>\n" +
-                    "        </td>\n" +
-                    "    </tr>\n" +
-                    "    <tr>\n" +
-                    "        <td>&nbsp;</td>\n" +
-                    "    </tr>\n" +
-                    "    <tr>\n" +
-                    "        <td colspan=5>\n" +
-                    "            <div id=\"property1\"></div>\n" +
-                    "        </td>\n" +
-                    "    </tr>\n" +
-                    "    <tr>\n" +
-                    "        <td colspan=5>\n" +
-                    "            <div id=\"user\"></div>\n" +
-                    "        </td>\n" +
-                    "    </tr>\n" +
-                    "</TABLE>\n";
+				property = `
+<TABLE class="page" border="0" cellpadding="0" cellspacing="0" width="100%">
+	<tr>
+		<td>
+			<div id="desc" align=left></div>
+		</td>
+		<td>
+			<td></td>
+		</td>
+	</tr>
+	<tr>
+		<td colspan=5>
+			<td>&nbsp;</td>
+		</td>
+	</tr>		
+	<tr>
+		<td colspan=5>
+			<div id="property1"></div>
+		</td>
+	</tr>				
+	<tr>
+		<td>
+			<div id="user"></div>
+		</td>
+	</tr>
+	`;
+				
+					
                 getElementById("property").innerHTML = property;
                 property1 = "<table border=\"0\" cellspacing=0 cellpadding=0 align=center width=\"100%\">\n" +
                     "<tr><td>\n" +
@@ -441,18 +456,22 @@
                 for (var i = 0; i < gTag.length; i++) {
                     getElementById("tag_" + gTag[i]).checked = 1;
                 }
+				
+				user = `
+<table border="0" cellspacing=2 cellpadding=5 align=center width="100%">				
+	<tr>
+		<td width="150"> Total: <label id="total">100</label> / Fail: <label id="fail">100</label>  </td>
+		<td >
+		<input name='successbtn' id='successbtn' value="Success" type='button' onclick='UpdateSuccess()' style="vertical-align:middle" />
+		<input name='failbtn' id='failbtn' value="Failure" type='button' onclick='UpdateFailure()' style="vertical-align:middle" />
+		</td>
 
-                user = "<table border=\"0\" cellspacing=0 cellpadding=0 align=center width=\"100%\">\n" +
-                    "<tr><td colspan=5>\n" +
-                    "    <input name='fail' id='fail' value=\"0\" type='button' onchange='UpdateUserData()' style=\"vertical-align:middle\" />X\n" +
-                    "</td>\n<td colspan=5>\n" +
-                    "    <input name='fail' id='fail' value=\"0\" type='button' onchange='UpdateUserData()' style=\"vertical-align:middle\" />X\n" +
-                    "</td>\n" +
-                    "<td>&nbsp;&nbsp;&nbsp;&nbsp; Failure</td>\n" +
-                    "</tr></table>\n";
-
+	</tr>	
+</table>	
+				`;
                 getElementById("user").innerHTML = user;
-
+				getElementById("total").innerHTML = gUser1;
+				getElementById("fail").innerHTML = gUser2;
             }
             else {
                 property =
@@ -602,10 +621,42 @@
             window.location.reload(false);
         }
 
-        function UpdateUserData() {
-            alert("aa");
-        }
+		function UpdateSuccess() {
+			gUser1 += 1;
+			UpdateUserFields();
+		}
 
+		function UpdateFailure() {
+			gUser1 += 1;
+			gUser2 += 1;
+
+			UpdateUserFields();
+		}
+
+		function UpdateUserFields() {
+            var xmlhttp;
+            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            }
+            else {// code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+
+			xmlhttp.onreadystatechange=function()
+            {
+                if (xmlhttp.readyState==4 && xmlhttp.status==200)
+                {
+                    getElementById("total").innerHTML = gUser1;
+					getElementById("fail").innerHTML = gUser2;
+                }
+            }
+
+            query = "updateuserdata?sec={0}&id={1}&user1={2}&user2={3}".format(gSection, gId, gUser1, gUser2);
+            xmlhttp.open("GET", query, false);
+            xmlhttp.send();
+			
+		}
+		
     </script>
 </HEAD>
 
@@ -655,7 +706,7 @@
         </tr>
         <tr>
             <td align=left style="width:40%;"><input type="button" value="p   r   e   v" class="button1" id="prev2" onclick="location.href='<!--{prevUrl}-->'" /></td>
-            <td align=center style="width:20%;"><input type="button" value="h   o   m   e" class="button2" onclick="location.href='<!--{homeUrl}-->" /></td>
+            <td align=center style="width:20%;"><input type="button" value="h   o   m   e" class="button2" onclick="location.href='<!--{homeUrl}-->'" /></td>
             <td align=left style="width:40%;"><input type="button" value="n   e   x   t" class="button1" id="next2" onclick="location.href='<!--{nextUrl}-->'" /></td>
         </tr>
     </table>

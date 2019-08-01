@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN">
 <HTML>
 <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
@@ -126,42 +126,22 @@
         }
 
         LoadFont();
-        /*
-        var gSection = readCookie("section", "");
-        var gCategory = readCookie("category", "");
-        var gQueryBookmark = readCookie("querybookmark", "");
-        var gQuerySearchMode = readCookie("querymode", "");
-        var gUser1Min = readCookie("user1Min", -1);
-        var gUser1Max = readCookie("user1Max", -1);
-        var gUser2Min = readCookie("user2Min", -1);
-        var gUser2Max = readCookie("user2Max", -1);
-            */
 
         var gType = readCookie("type", "");
         var gBMode = readCookie("bmode", 0); // browser
 
         var gSection = "<!--{section}-->";
-        var gCategory = < !--{ category }-->;
-        var gQueryTag = [< !--{ querytag }-->];
-        var gQueryBookmark = < !--{ querybookmark }-->;
-        var gQuerySearchMode = < !--{ querymode }-->;
-        var gInfo = < !--{ info }-->;
-        var gType = < !--{ type }-->;
+        var gCategory = <!--{category}-->;
+        var gQueryTag = [<!--{querytag}-->];
+        var gQueryBookmark = <!--{querybookmark}-->;
+        var gQuerySearchMode = <!--{querymode}-->;
+        var gInfo = <!--{info}-->;
+        var gType = <!--{type}-->;
         var gCurUrl = "<!--{curUrl}-->";
-        var gUser1Min = < !--{ user1min }-->;
-        var gUser1Max = < !--{ user1max }-->;
-        var gUser2Min = < !--{ user2min }-->;
-        var gUser2Max = < !--{ user2max }-->;
-
-
-        var gQueryTag = [];
-        var s = readCookie("querytag", "");
-        if (s) {
-            gQueryTag = readCookie("querytag", "").split(",");
-        }
-
-
-        //#var gCurUrl = "<!--{curUrl}-->";
+        var gUser1Min = <!--{user1min}-->;
+        var gUser1Max = <!--{user1max}-->;
+        var gUser2Min = <!--{user2min}-->;
+        var gUser2Max = <!--{user2max}-->;
 
         var tagListG = new Array();
         var gUrl;
@@ -265,26 +245,22 @@
                 gBMode = "0";
                 gType = "0";
             }
-
-            setCookie("type", gType);
-            setCookie("bmode", gBMode);
-
-            tag = [];
-            for (var i = 0; i < gInfo[gSection]["tag"].length; i++) {
-                item = gInfo[gSection]["tag"][i];
-                if (getElementById("tag_" + item["id"]).checked) {
-                    tag.push(item["id"]);
-                }
-            }
-
-            setCookie("querytag", tag.join());
-
-            setCookie("querytag", tag.join());
-            setCookie("user1Min", gUser1Min);
-            setCookie("user1Max", gUser1Max);
-            setCookie("user2Min", gUser2Min);
-            setCookie("user2Max", gUser2Max);
-
+			
+			tag = '';
+			for(var i = 0; i < gInfo[gSection]["tag"].length; i++)
+			{
+				item = gInfo[gSection]["tag"][i];
+				if (getElementById("tag_" + item["id"]).checked)
+				{
+					tag += "&tag_{0}={0}".format(item["id"]);
+				}
+			}
+			
+			gUser1Min = getElementById("user1Min").value;
+			gUser1Max = getElementById("user1Max").value;
+			gUser2Min = getElementById("user2Min").value;
+			gUser2Max = getElementById("user2Max").value;
+			
             //  s = "home";
             s = "home?sec={0}&cate={1}&bk={2}&smode={3}&type={4}&user1min={5}&user1max={6}&user2min={7}&user2max={8}".format(gSection, gCategory, gQueryBookmark, gQuerySearchMode, gType, gUser1Min,
                 gUser1Max, gUser2Min, gUser2Max) + tag;
@@ -409,6 +385,11 @@
             var s = getElementById('hzoom');
             s.selectedIndex = readCookie("hzoom", 0);
 
+			getElementById("user1Min").value = gUser1Min;
+			getElementById("user1Max").value = gUser1Max;
+			getElementById("user2Min").value = gUser2Min;
+			getElementById("user2Max").value = gUser2Max;
+			
             //loadSummaryFromJavascript();
             loadSummary();
         }
@@ -487,7 +468,7 @@
                     tag += "&tag_{0}={0}".format(item["id"]);
                 }
             }
-            user = "&user1={0},{1}&user2={2},{3}".format(gUser1Min, gUser1Max, gUser2Min, gUser2Max);
+            user = "&user1min={0}&user1max={1}&user2min={2}&user2max={3}".format(gUser1Min, gUser1Max, gUser2Min, gUser2Max);
 
             xmlhttp._url = "sec={0}&cate={1}{2}{3}{4}{5}&len={6}".format(section, cate, bookmark, tag, searchMode, user, 200);
             query = "summary?" + xmlhttp._url;
@@ -653,27 +634,27 @@
                     </TD>
                 </TR>
                 <TR>
-                    <TD STYLE='width:5%;'><input type="button" value="Search" class="button1" id="prev2" onclick="" /></TD>
+                    <TD STYLE='width:5%;'><input type="button" value="Search" class="button1" id="prev2" onclick="reloadPage()" /></TD>
 
                     <TD>
                         <table>
                             <tr>
-                                <TD><B>Wrong&nbsp;</B></TD>
+                                <TD><B>Total&nbsp;</B></TD>
                                 <td>min</td>
-                                <td><input type="number" id="user1Min" min="-1" max="20" value="-1" style="width: 3em;" /></td>
+                                <td><input type="number" id="user1Min" min="-1" max="100" value="-1" style="width: 3em;" /></td>
                                 <td>max</td>
-                                <td><input type="number" id="user1Max" min="-1" max="20" value="-1" style="width: 3em;" /></td>
+                                <td><input type="number" id="user1Max" min="-1" max="100" value="99" style="width: 3em;" /></td>
                             </tr>
                         </table>
                     </TD>
                     <TD>
                         <table>
                             <tr>
-                                <TD><B>NO&nbsp;</B></TD>
+                                <TD><B>Failure&nbsp;</B></TD>
                                 <td>min</td>
-                                <td><input type="number" id="user1Min" min="-1" max="20" value="-1" style="width: 3em;" /></td>
+                                <td><input type="number" id="user2Min" min="-1" max="100" value="-1" style="width: 3em;" /></td>
                                 <td>max</td>
-                                <td><input type="number" id="user1Max" min="-1" max="20" value="-1" style="width: 3em;" /></td>
+                                <td><input type="number" id="user2Max" min="-1" max="100" value="99" style="width: 3em;" /></td>
                             </tr>
                         </table>
                     </TD>
