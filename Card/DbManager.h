@@ -36,6 +36,8 @@ typedef std::map<std::string, DbInfo *> DbMap;
 typedef std::map<__time64_t, CacheInfo> CacheMap;
 
 #define DB_TAG_CHANGE       0
+#define DB_OUT_OF_SYNC      1
+#define DB_SYNC             2
 
 class CDbListener
 {
@@ -169,7 +171,11 @@ public:
 
 
 	void SyncW2O(DbInfo *info);
-	BOOL SyncO2W(LPCTSTR file);
+	void NotifyChanges(LPCTSTR file);
+    void SyncO2W();
+    void PushForSync();
+    BOOL HasPushList() { return m_pushList.size() > 0 ? TRUE : FALSE;  }
+
 	int CopyFile(LPCTSTR oldFile, LPCTSTR newFile);
 	void Compact();
 
@@ -191,7 +197,11 @@ public:
 	static CDbManager *		m_dbManager_instance;
 
 private:
-	DbMap				m_dbMap;
+    Mutex				m_mutex;
+    Mutex				m_mutexPush;
+    std::unordered_set<std::string> m_syncList;
+    std::unordered_set<DbInfo *> m_pushList;
+    DbMap				m_dbMap;
 	DbInfo *			m_curDb;
 	CString 			m_oldDb;
 	BOOL				m_useWorkingFolder;

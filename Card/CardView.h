@@ -20,6 +20,9 @@
 
 #define MAX_HISTORY     100
 
+#define WM_UPDATE_VIEW 		(WM_USER+3001)
+#define PUSHFORSYNC_TIMER   1600
+
 using namespace std;
 struct ViewInfo
 {
@@ -94,6 +97,8 @@ private:
 	// for navigation
 	ViewList			m_prevView;
 	ViewList			m_nextView;
+
+    int                 m_pushForSyncTimer;
 // Operations
 public:
 
@@ -137,6 +142,7 @@ public:
 	void GotoById(LPCTSTR db, LPCTSTR id, BOOL setHistory, BOOL delayUpdate);
 	void SetHistory();
     void toClipboard(CString &s);
+    void TriggerPushForSyncTimer();
 
     virtual void DbNotify(int msg);
 
@@ -192,12 +198,14 @@ public:
 	afx_msg void OnEditTag();
 	afx_msg void OnCbnCloseupItemTagCombo();
 	afx_msg void OnOpenReq();
+
 	LRESULT  OnResizerUnhook(WPARAM wParam, LPARAM lParam);
 	LRESULT  OnResizerSize(WPARAM wParam, LPARAM lParam);
 	LRESULT  OnResizerPortionChange(WPARAM wParam, LPARAM lParam);
 	LRESULT  OnFileNotification(WPARAM wParam, LPARAM lParam);
 	LRESULT  OnLinkClick(WPARAM wParam, LPARAM lParam);
 	LRESULT  OnLinkSet(WPARAM wParam, LPARAM lParam);
+    LRESULT  OnUpdateView(WPARAM wParam, LPARAM lParam);
 
 protected:
 public:
@@ -226,6 +234,8 @@ public:
     afx_msg void OnUpdateEditMoveto(CCmdUI *pCmdUI);
     afx_msg void OnEditSetnumbering();
     afx_msg void OnEditExporttohtml();
+    afx_msg void OnPushForSync();
+    afx_msg void OnUpdatePushForSync(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in CardView.cpp

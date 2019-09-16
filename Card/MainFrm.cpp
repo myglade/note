@@ -5,6 +5,7 @@
 #include "Card.h"
 
 #include "MainFrm.h"
+#include "DbManager.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -407,3 +408,14 @@ void CMainFrame::WriteWindowPlacement(WINDOWPLACEMENT *pwp)
 	AfxGetApp()->WriteProfileString(szSection, szWindowPos, szBuffer);
 }
 
+BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
+{
+    if (pMsg->message == WM_KEYDOWN || pMsg->message == WM_LBUTTONDOWN)
+    {
+        auto db = CDbManager::GetInstance();
+
+        db->SyncO2W();
+    }
+
+    return CFrameWnd::PreTranslateMessage(pMsg);
+}

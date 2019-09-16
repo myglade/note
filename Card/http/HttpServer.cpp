@@ -803,8 +803,11 @@ void HomeHandler(webserver::http_request* r, CString htmlTemplate)
 		}
 	}
 
-    if (file.Open(htmlTemplate + ".html", CFile::modeRead) == FALSE)
+    CFileException ex;
+    if (file.Open(htmlTemplate + ".html", CFile::modeRead, &ex) == FALSE)
 	{
+        //MessageBox(NULL, ex.GetErrorMessage(), "", MB_OK);
+        ex.ReportError();
 		return MakeErrorResponse(r);
 	}
 	buf = new char[(int) file.GetLength() + 1];

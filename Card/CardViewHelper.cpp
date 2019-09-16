@@ -614,7 +614,12 @@ LRESULT  CCardView::OnFileNotification(WPARAM wParam, LPARAM lParam)
 		return 0;
 
 	TRACE("Notify = %s\n", *name);
+    m_db.NotifyChanges((LPCTSTR)*name);
+    delete name;
 
+    return 0;
+
+    /*
     NotifySet::iterator     it;
 
     it = m_notifySet.find((LPCTSTR) *name);
@@ -633,6 +638,7 @@ LRESULT  CCardView::OnFileNotification(WPARAM wParam, LPARAM lParam)
 
 	delete name;
 	return 0;
+    */
 }
 
 
@@ -660,5 +666,25 @@ void CCardView::DbNotify(int msg)
     case DB_TAG_CHANGE:
 	    PostMessage(WM_COMMAND, IDD_DB_CHANGE);
         break;
+    case DB_OUT_OF_SYNC:
+        GetDocument()->SetTitle(m_db.GetCurDbName() + " (UnSync)");
+        break;
+    case DB_SYNC:
+        PostMessage(WM_UPDATE_VIEW, 0, 0);
+        break;
     }
+}
+
+LRESULT CCardView::OnUpdateView(WPARAM wParam, LPARAM lParam)
+{
+    if (m_db.GetCurDb() != NULL)
+    {
+        UpdateSection();
+        UpdateCategory();
+        UpdateTag();
+        UpdateKeyListView();
+    }
+    DisplayText();
+
+    return 0;
 }

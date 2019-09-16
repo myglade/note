@@ -55,6 +55,7 @@ public:
 	afx_msg void OnSizing(UINT fwSide, LPRECT pRect);
 	virtual void ActivateFrame(int nCmdShow = -1);
 	afx_msg void OnClose();
+    virtual BOOL PreTranslateMessage(MSG* pMsg);
 };
 
 

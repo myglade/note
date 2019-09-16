@@ -106,7 +106,8 @@ std::string urlDecode(const std::string toDecode) {
 IMPLEMENT_DYNCREATE(CCardView, CFormView)
 
 BEGIN_MESSAGE_MAP(CCardView, CFormView)
-	ON_MESSAGE(WM_FILE_NOTIFY, OnFileNotification)
+    ON_MESSAGE(WM_UPDATE_VIEW, OnUpdateView)
+    ON_MESSAGE(WM_FILE_NOTIFY, OnFileNotification)
 	ON_MESSAGE(WM_RESIZER_UNHOOK, OnResizerUnhook)
 	ON_MESSAGE(WM_RESIZER_SIZE, OnResizerSize)
 	ON_MESSAGE(WM_RESIZER_PORTION_CHANGE, OnResizerPortionChange)
@@ -184,6 +185,8 @@ BEGIN_MESSAGE_MAP(CCardView, CFormView)
     ON_UPDATE_COMMAND_UI(ID_EDIT_MOVETO, &CCardView::OnUpdateEditMoveto)
     ON_COMMAND(ID_EDIT_SETNUMBERING, &CCardView::OnEditSetnumbering)
     ON_COMMAND(ID_EDIT_EXPORTTOHTML, &CCardView::OnEditExporttohtml)
+    ON_COMMAND(IDC_PUSH_FOR_SYNC, &CCardView::OnPushForSync)
+    ON_UPDATE_COMMAND_UI(IDC_PUSH_FOR_SYNC, &CCardView::OnUpdatePushForSync)
 END_MESSAGE_MAP()
 
 // CCardView construction/destruction
@@ -207,6 +210,7 @@ CCardView::CCardView()
 	m_dbFolder = "db";
     m_currentTimer = 1000;
     m_searchView = NULL;
+    m_pushForSyncTimer = -1;
 }
 
 CCardView::~CCardView()
@@ -216,6 +220,9 @@ CCardView::~CCardView()
 //		m_keyListView->CloseWindow();
 //		delete m_keyListView;
 	}
+
+    if (m_pushForSyncTimer != -1)
+        KillTimer(m_pushForSyncTimer);
 }
 
 void CCardView::DoDataExchange(CDataExchange* pDX)
@@ -635,6 +642,7 @@ int CCardView::SetItem()
 		}
 	}
 
+    TriggerPushForSyncTimer();
 	return res;
 }
 
@@ -1586,6 +1594,15 @@ void CCardView::GotoById(LPCTSTR db, LPCTSTR id, BOOL setHistory, BOOL delayUpda
     m_bookmarkBtn->SetCheck(m_bookmarkMode);
 }
 
+void CCardView::TriggerPushForSyncTimer()
+{
+    if (m_pushForSyncTimer != -1)
+        KillTimer(m_pushForSyncTimer);
+
+    m_pushForSyncTimer = SetTimer(PUSHFORSYNC_TIMER, 1 * 60 * 1000, 0);
+    TRACE("Trigger PushForSyncTimer\n");
+}
+
 void CCardView::OnTimer(UINT_PTR nIDEvent)
 {
     if (nIDEvent == 1)
@@ -1604,8 +1621,17 @@ void CCardView::OnTimer(UINT_PTR nIDEvent)
         m_bookmarkBtn->SetCheck(m_bookmarkMode);
         KillTimer(1);
     }
+    else if (nIDEvent == PUSHFORSYNC_TIMER) {
+        TRACE("Get push sync event by timer\n");
+        m_db.PushForSync();
+        if (m_pushForSyncTimer != -1)
+            KillTimer(m_pushForSyncTimer);
+
+        m_pushForSyncTimer = -1;
+    }
     else if (nIDEvent >= 1000 && nIDEvent <= 5000)
     {
+/*
         NotifyMap::iterator     it;
 
         it = m_notifyMap.find(nIDEvent);
@@ -1634,6 +1660,7 @@ void CCardView::OnTimer(UINT_PTR nIDEvent)
 	    }
 	    DisplayText();
 	    TRACE("Notify Handled = %s\n", file);
+*/
         KillTimer(nIDEvent);
         return;
     }
@@ -1866,4 +1893,21 @@ void CCardView::OnEditSetnumbering()
 void CCardView::OnEditExporttohtml()
 {
     m_db.ExportToHtml();
+}
+
+
+void CCardView::OnPushForSync()
+{
+    if (m_pushForSyncTimer != -1) {
+        KillTimer(m_pushForSyncTimer);
+        m_pushForSyncTimer = -1;
+    }
+
+    m_db.PushForSync();
+}
+
+
+void CCardView::OnUpdatePushForSync(CCmdUI *pCmdUI)
+{
+    pCmdUI->Enable(m_db.HasPushList());
 }

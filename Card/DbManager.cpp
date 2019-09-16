@@ -154,93 +154,169 @@ void CDbManager::SyncW2O(DbInfo *info)
 	if (info == NULL || m_useWorkingFolder == FALSE || info->orgPath == "")
 		return;
 
-	CFileFind		finder;
+    Lock		lock(m_mutexPush);
 
-	BOOL bWorking = finder.FindFile(info->path.c_str());
-	if (bWorking == FALSE)
-	{
-		DeleteFile(info->orgPath.c_str());
-		return;
-	}
-
-	bWorking = finder.FindNextFile();
-	finder.GetLastWriteTime(info->lastWriteTime);
-
-	CopyFile(info->path.c_str(), info->orgPath.c_str());
+    m_pushList.insert(info);
 }
 
-BOOL CDbManager::SyncO2W(LPCTSTR file)
+void CDbManager::PushForSync()
 {
-	if (file == NULL || m_useWorkingFolder == FALSE)
-		return FALSE;
+    std::unordered_set<DbInfo *> pushList;
 
-	CFileFind			finder;
-	DbMap::iterator		iter;
-	DbInfo	*			info;
+    {
+        Lock		lock(m_mutexPush);
 
-	BOOL bWorking = finder.FindFile(file);
-	if (bWorking == FALSE)
-	{
-		if (DeleteDbByFile(file) == 0)
-			return TRUE;
-		return FALSE;
-	}
-	bWorking = finder.FindNextFile();
-	iter = m_dbMap.find((LPCTSTR) finder.GetFileTitle());
-	if (iter == m_dbMap.end())
-	{
-		info = new DbInfo();
-		info->name = finder.GetFileTitle();
-		info->path = m_workingDbFolder + finder.GetFileName();
-		info->orgPath = finder.GetFilePath();
-		info->status = DB_STATUS_CLOSE;
-		finder.GetLastWriteTime(info->lastWriteTime);
-		CopyFile(finder.GetFilePath(), info->path.c_str());
+        if (m_pushList.empty())
+            return;
 
-		if (OpenDb(info) == -1)
-		{
-			delete info;
-			return FALSE;
-		}
-		m_dbMap[info->name] = info;
-	}
-	else
-	{
-		CTime		time;
+        pushList = m_pushList;
+        m_pushList.clear();
+    }
 
-		info = iter->second;
-        
-		finder.GetLastWriteTime(time);
-		if (time == info->lastWriteTime)
+    for (auto info : pushList) {
+        CFileFind		finder;
+
+        BOOL bWorking = finder.FindFile(info->path.c_str());
+        if (bWorking == FALSE)
+        {
+            DeleteFile(info->orgPath.c_str());
+            continue;
+        }
+
+        bWorking = finder.FindNextFile();
+        finder.GetLastWriteTime(info->lastWriteTime);
+
+        CopyFile(info->path.c_str(), info->orgPath.c_str());
+        TRACE("Copy %s\n", info->orgPath.c_str());
+    }
+}
+
+void CDbManager::NotifyChanges(LPCTSTR file)
+{
+    Lock		lock(m_mutex);
+
+    if (file == NULL || m_useWorkingFolder == FALSE)
+        return;
+
+    TRACE("Sync notified\n");
+    
+    CFileFind			finder;
+    if (finder.FindFile(file) == TRUE) {
+        CTime		time;
+        DbInfo	*			info;
+        DbMap::iterator		iter;
+
+        finder.FindNextFile();
+        iter = m_dbMap.find((LPCTSTR)finder.GetFileTitle());
+        info = iter->second;
+        finder.GetLastWriteTime(time);
+        if (time == info->lastWriteTime)
         {
             TRACE("Same file. Skip\n");
-			return FALSE;
+            return;
         }
-		if (time < info->lastWriteTime)
-		{
-		//	MessageBox(NULL, "Original file is out of date than working file",
-		//		"Warning", MB_OK);
-            TRACE("Original file is out of date than working file\n");
-			return FALSE;
-		}
-        
-		CloseDb(info, TRUE);
-		CopyFile(finder.GetFilePath(), info->path.c_str());
+    }
 
-		if (OpenDb(info) == -1)
-		{
-			return FALSE;
-		}
+    m_syncList.insert(file);
+    if (m_dbListener)
+    {
+        m_dbListener->DbNotify(DB_OUT_OF_SYNC);
+    }
 
-		if (m_curDb != info)
-			return FALSE;
-
-		m_curDb->db->UpdateCurData();
-		TRACE("Load DB = %s\n", m_curDb->name);
-	}
-
-	return TRUE;
+    return;
 }
+
+void CDbManager::SyncO2W()
+{
+    std::unordered_set<std::string> syncList;
+
+    {
+        Lock		lock(m_mutex);
+
+        if (m_useWorkingFolder == FALSE || m_syncList.empty()) {
+            return;
+        }
+
+        TRACE("Start to sync\n");
+
+        syncList = m_syncList;
+        m_syncList.clear();
+    }
+
+    for (auto db : syncList) {
+        LPCTSTR file = db.c_str();
+        CFileFind			finder;
+        DbMap::iterator		iter;
+        DbInfo	*			info;
+
+        BOOL bWorking = finder.FindFile(file);
+        if (bWorking == FALSE)
+        {
+            DeleteDbByFile(file);
+            continue;
+        }
+
+        bWorking = finder.FindNextFile();
+        iter = m_dbMap.find((LPCTSTR)finder.GetFileTitle());
+        if (iter == m_dbMap.end())
+        {
+            info = new DbInfo();
+            info->name = finder.GetFileTitle();
+            info->path = m_workingDbFolder + finder.GetFileName();
+            info->orgPath = finder.GetFilePath();
+            info->status = DB_STATUS_CLOSE;
+            finder.GetLastWriteTime(info->lastWriteTime);
+            CopyFile(finder.GetFilePath(), info->path.c_str());
+
+            if (OpenDb(info) == -1)
+            {
+                delete info;
+                continue;
+            }
+            m_dbMap[info->name] = info;
+        }
+        else
+        {
+            CTime		time;
+
+            info = iter->second;
+            finder.GetLastWriteTime(time);
+            if (time == info->lastWriteTime)
+            {
+                TRACE("Same file. Skip\n");
+                continue;
+            }
+            if (time < info->lastWriteTime)
+            {
+                //	MessageBox(NULL, "Original file is out of date than working file",
+                //		"Warning", MB_OK);
+                TRACE("Original file is out of date than working file\n");
+                continue;
+            }
+
+            CloseDb(info, TRUE);
+            CopyFile(finder.GetFilePath(), info->path.c_str());
+
+            if (OpenDb(info) == -1)
+            {
+                continue;
+            }
+
+            if (m_curDb != info)
+                continue;
+
+            m_curDb->db->UpdateCurData();
+            TRACE("Load DB = %s\n", m_curDb->name);
+        }
+    }
+    if (m_dbListener)
+    {
+        m_dbListener->DbNotify(DB_SYNC);
+    }
+
+    return;
+}
+
 
 int CDbManager::CreateDb(LPCTSTR name, BOOL dictMode)
 {
@@ -539,6 +615,7 @@ int CDbManager::GetContentInfoAsJson(std::string &s)
 	DbMap::iterator		iter;
 
 	obj.Clear();
+    SyncO2W();
 
 	for(iter = m_dbMap.begin(); iter != m_dbMap.end(); iter++)
 	{
@@ -612,6 +689,8 @@ int CDbManager::Query(StringMapArray &result, int contentType, LPCTSTR db, int c
 	if (iter == m_dbMap.end())
 		return -1;
 
+    SyncO2W();
+
 	if (OpenDb(iter->second) == -1)
 		return - 1;
 
@@ -630,7 +709,8 @@ int CDbManager::Query(StringMapArray &result, LPCTSTR db, LPCTSTR id,
 	if (iter == m_dbMap.end())
 		return -1;
 
-	if (OpenDb(iter->second) == -1)
+    SyncO2W();
+    if (OpenDb(iter->second) == -1)
 		return - 1;
 
 	return iter->second->db->Query(result, id, useCategory, sort, index);
@@ -649,7 +729,8 @@ int CDbManager::GetSummaryAsJson(std::string &s, LPCTSTR db, int category,
 	if (iter == m_dbMap.end())
 		return -1;
 
-	if (OpenDb(iter->second) == -1)
+    SyncO2W();
+    if (OpenDb(iter->second) == -1)
 		return - 1;
 
 	return iter->second->db->GetSummaryAsJson(s, category, 
@@ -667,10 +748,11 @@ int CDbManager::UpdateTag(LPCTSTR db, unsigned int id,
 	if (iter == m_dbMap.end())
 		return -1;
 	
-	if (OpenDb(iter->second) == -1)
+    SyncO2W();
+    if (OpenDb(iter->second) == -1)
 		return - 1;
 
-	int res = iter->second->db->UpdateTag(id, mask, bookmark, tag);
+    int res = iter->second->db->UpdateTag(id, mask, bookmark, tag);
 	if (res == 0)
     {
 		SyncW2O(iter->second);
@@ -697,6 +779,7 @@ int CDbManager::UpdateUserFields(LPCTSTR db, unsigned int id, int user1, int use
     if (iter == m_dbMap.end())
         return -1;
 
+    SyncO2W();
     if (OpenDb(iter->second) == -1)
         return -1;
 
@@ -1857,3 +1940,4 @@ void CDbManager::RemoveTab(CString &src)
 	src = temp;
 	delete temp;
 }
+

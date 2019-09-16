@@ -3261,6 +3261,133 @@ int CDb::ExportToHtml(BOOL exportContent)
 
     return total;
 }
+/*
+int CDb::ExportToHtml(StringMapArray &result, int category,
+    int bookmark, CUIntArray &tagList, pair<int, int> user1, pair<int, int> user2, int tagSearchMode,
+    LPCTSTR sort, int start, int count)
+{
+    Lock				lock(m_mutex);
+    CppSQLite3Query		q;
+    int					total;
+    CNames				names;
+    CRtfParser			parser;
+    CHtmlListener		listener;
+    RtfImageList	    imageList;
+    CString				tag;
+    CString             str;
+
+
+    result.clear();
+    total = LoadData(q, FALSE, 2, category, 0, tagList, { 0,0 }, { 0,0 },
+        tagSearchMode, "ASC", 0);
+    if (total <= 0)
+        return 0;
+
+    while (!q.eof())
+    {
+        StringMap	sm;
+
+        for (int i = 0; i < q.numFields(); i++)
+        {
+            if (strcmp(q.fieldName(i), "tag") == 0)
+            {
+                DecodeTagString(q.getStringField(i), names);
+                tag = "";
+
+                CString		s;
+                for (int j = 0; j < names.GetCount(); j++)
+                {
+                    if (j == 0)
+                    {
+                        tag.Format("%d", names[j].id);
+                    }
+                    else
+                    {
+                        s.Format(",%d", names[j].id);
+                        tag += s;
+                    }
+                }
+                sm["tag"] = tag;
+            }
+            else if (strcmp(q.fieldName(i), "key") == 0)
+            {
+                if (m_dictMode)
+                {
+                    sm[q.fieldName(i)] = String(q.getStringField(i));
+                    continue;
+                }
+
+                LoadImage(q.getIntField("id"), 0, imageList);
+
+                if (q.getIntField("keyCompressed") == 0)
+                {
+                    str = q.getStringField(i);
+                }
+                else
+                {
+                    int     len = 0;
+                    auto    p = q.getBlobField("key", len);
+
+                    Decompress(p, len, str);
+                }
+
+                if (parser.OpenFromString(str, &imageList) == -1)
+                {
+                    return -1;
+                }
+                if (parser.Parse(&listener, "0") == -1)
+                {
+                    return -1;
+                }
+                sm[q.fieldName(i)] = listener.m_text;
+                ResetImageList(imageList);
+            }
+            else if (strcmp(q.fieldName(i), "content") == 0)
+            {
+                LoadImage(q.getIntField("id"), 1, imageList);
+
+                if (q.getIntField("contentCompressed") == 0)
+                {
+                    str = q.getStringField(i);
+                }
+                else
+                {
+                    int     len = 0;
+                    auto    p = q.getBlobField("content", len);
+
+                    Decompress(p, len, str);
+                }
+
+                if (parser.OpenFromString(str, &imageList) == -1)
+                {
+                    return -1;
+                }
+                if (parser.Parse(&listener, "1") == -1)
+                {
+                    return -1;
+                }
+                sm[q.fieldName(i)] = listener.m_text;
+                ResetImageList(imageList);
+            }
+            else if (strcmp(q.fieldName(i), "keyCompressed") == 0 ||
+                strcmp(q.fieldName(i), "contentCompressed") == 0)
+            {
+                continue;
+            }
+            else
+            {
+                sm[q.fieldName(i)] = q.getStringField(i);
+            }
+        }
+        sm["css"] = (LPCTSTR)listener.GetCss();
+        listener.ClearCss();
+
+        result.push_back(sm);
+        q.nextRow();
+    }
+    return total;
+}
+*/
 
 void CDb::reset_itime()
 {
