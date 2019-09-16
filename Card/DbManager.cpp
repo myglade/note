@@ -149,14 +149,20 @@ int CDbManager::Init(LPCTSTR orgFolder, LPCTSTR workingFolder)
 	return 0;
 }
 
-void CDbManager::SyncW2O(DbInfo *info)
+void CDbManager::SyncW2O(DbInfo *info, bool now)
 {
 	if (info == NULL || m_useWorkingFolder == FALSE || info->orgPath == "")
 		return;
 
-    Lock		lock(m_mutexPush);
+    {
+        Lock		lock(m_mutexPush);
 
-    m_pushList.insert(info);
+        m_pushList.insert(info);
+    }
+
+    if (now) {
+        PushForSync();
+    }
 }
 
 void CDbManager::PushForSync()
@@ -755,7 +761,7 @@ int CDbManager::UpdateTag(LPCTSTR db, unsigned int id,
     int res = iter->second->db->UpdateTag(id, mask, bookmark, tag);
 	if (res == 0)
     {
-		SyncW2O(iter->second);
+		SyncW2O(iter->second, true);
         if (GetCurDbName() == db)
         {
             if (m_dbListener)
@@ -786,7 +792,7 @@ int CDbManager::UpdateUserFields(LPCTSTR db, unsigned int id, int user1, int use
     int res = iter->second->db->UpdateUserFields(id, user1, user2);
     if (res == 0)
     {
-        SyncW2O(iter->second);
+        SyncW2O(iter->second, true);
         if (GetCurDbName() == db)
         {
             if (m_dbListener)

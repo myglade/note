@@ -170,7 +170,7 @@ public:
     int UpdateUserFields(LPCTSTR db, unsigned int id, int user1, int user2);
 
 
-	void SyncW2O(DbInfo *info);
+	void SyncW2O(DbInfo *info, bool now = false);
 	void NotifyChanges(LPCTSTR file);
     void SyncO2W();
     void PushForSync();
