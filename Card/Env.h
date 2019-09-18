@@ -14,6 +14,8 @@
 #define WEBSERVER_PORT			"webserver_port"
 #define CACHE_SIZE				"cache_size"
 #define URL                     "url"
+#define ALLOW_IMMEDIATE_PUSH    "allow_immediate_push"
+#define PUSH_INTERVAL           "push_interval"
 
 #define WINDOW_SETTING_SECTION	"Settings"
 

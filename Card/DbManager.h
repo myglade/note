@@ -38,6 +38,8 @@ typedef std::map<__time64_t, CacheInfo> CacheMap;
 #define DB_TAG_CHANGE       0
 #define DB_OUT_OF_SYNC      1
 #define DB_SYNC             2
+#define DB_TRIGGER_PUSH     3
+#define DB_UPDATE_PUSH_FOR_SYNC 4
 
 class CDbListener
 {

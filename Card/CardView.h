@@ -20,7 +20,8 @@
 
 #define MAX_HISTORY     100
 
-#define WM_UPDATE_VIEW 		(WM_USER+3001)
+#define WM_DB_CHANGE 		(WM_USER+3001)
+
 #define PUSHFORSYNC_TIMER   1600
 
 using namespace std;
@@ -142,7 +143,7 @@ public:
 	void GotoById(LPCTSTR db, LPCTSTR id, BOOL setHistory, BOOL delayUpdate);
 	void SetHistory();
     void toClipboard(CString &s);
-    void TriggerPushForSyncTimer();
+    void TriggerPush();
 
     virtual void DbNotify(int msg);
 
@@ -205,7 +206,7 @@ public:
 	LRESULT  OnFileNotification(WPARAM wParam, LPARAM lParam);
 	LRESULT  OnLinkClick(WPARAM wParam, LPARAM lParam);
 	LRESULT  OnLinkSet(WPARAM wParam, LPARAM lParam);
-    LRESULT  OnUpdateView(WPARAM wParam, LPARAM lParam);
+    LRESULT  OnDbStatusChange(WPARAM wParam, LPARAM lParam);
 
 protected:
 public:
@@ -236,6 +237,7 @@ public:
     afx_msg void OnEditExporttohtml();
     afx_msg void OnPushForSync();
     afx_msg void OnUpdatePushForSync(CCmdUI *pCmdUI);
+    CButton m_syncButton;
 };
 
 #ifndef _DEBUG  // debug version in CardView.cpp

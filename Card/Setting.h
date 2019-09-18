@@ -57,4 +57,6 @@ public:
 	CButton m_contentSizeTagBtn;
 	CButton m_addImage2FcBtn;
     CString m_url;
+    BOOL m_allowImmediatePush;
+    UINT m_pushInterval;
 };

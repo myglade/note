@@ -160,8 +160,19 @@ void CDbManager::SyncW2O(DbInfo *info, bool now)
         m_pushList.insert(info);
     }
 
-    if (now) {
-        PushForSync();
+
+    BOOL allow = GetEnv(PROFILE_SECTION, ALLOW_IMMEDIATE_PUSH, 0);
+    if (now && allow) {
+        if (m_dbListener)
+        {
+            m_dbListener->DbNotify(DB_TRIGGER_PUSH);
+        }
+    }
+    else {
+        if (m_dbListener)
+        {
+            m_dbListener->DbNotify(DB_UPDATE_PUSH_FOR_SYNC);
+        }
     }
 }
 

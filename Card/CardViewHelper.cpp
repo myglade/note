@@ -661,30 +661,58 @@ void CCardView::SetHistory()
 
 void CCardView::DbNotify(int msg)
 {
-    switch(msg)
+    PostMessage(WM_DB_CHANGE, msg, 0);
+}
+
+LRESULT CCardView::OnDbStatusChange(WPARAM wParam, LPARAM lParam)
+{
+    switch (wParam)
     {
     case DB_TAG_CHANGE:
-	    PostMessage(WM_COMMAND, IDD_DB_CHANGE);
+        OnDbChange();
         break;
     case DB_OUT_OF_SYNC:
         GetDocument()->SetTitle(m_db.GetCurDbName() + " (UnSync)");
         break;
     case DB_SYNC:
-        PostMessage(WM_UPDATE_VIEW, 0, 0);
+        if (m_db.GetCurDb() != NULL)
+        {
+            UpdateSection();
+            UpdateCategory();
+            UpdateTag();
+            UpdateKeyListView();
+        }
+        DisplayText();
+        break;
+    case DB_TRIGGER_PUSH:
+        OnPushForSync();
+        break;
+    case DB_UPDATE_PUSH_FOR_SYNC:
+        m_syncButton.EnableWindow(m_db.HasPushList());
         break;
     }
-}
 
-LRESULT CCardView::OnUpdateView(WPARAM wParam, LPARAM lParam)
-{
-    if (m_db.GetCurDb() != NULL)
-    {
-        UpdateSection();
-        UpdateCategory();
-        UpdateTag();
-        UpdateKeyListView();
-    }
-    DisplayText();
 
     return 0;
+}
+
+void CCardView::TriggerPush()
+{
+    TRACE("Push for sync\n");
+    if (m_pushForSyncTimer != -1)
+        KillTimer(m_pushForSyncTimer);
+
+    m_pushForSyncTimer = -1;
+    m_db.PushForSync();
+    m_syncButton.EnableWindow(m_db.HasPushList());
+
+    int pushInterval = GetEnv(PROFILE_SECTION, PUSH_INTERVAL, 300);
+    if (pushInterval == 0) {
+        TRACE("No Schedule PushForSyncTimer\n");
+        return;
+    }
+
+    m_pushForSyncTimer = SetTimer(PUSHFORSYNC_TIMER, pushInterval * 1000, 0);
+
+    TRACE("Schedule PushForSyncTimer. sec %d\n", pushInterval);
 }

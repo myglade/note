@@ -106,7 +106,7 @@ std::string urlDecode(const std::string toDecode) {
 IMPLEMENT_DYNCREATE(CCardView, CFormView)
 
 BEGIN_MESSAGE_MAP(CCardView, CFormView)
-    ON_MESSAGE(WM_UPDATE_VIEW, OnUpdateView)
+    ON_MESSAGE(WM_DB_CHANGE, OnDbStatusChange)
     ON_MESSAGE(WM_FILE_NOTIFY, OnFileNotification)
 	ON_MESSAGE(WM_RESIZER_UNHOOK, OnResizerUnhook)
 	ON_MESSAGE(WM_RESIZER_SIZE, OnResizerSize)
@@ -227,13 +227,14 @@ CCardView::~CCardView()
 
 void CCardView::DoDataExchange(CDataExchange* pDX)
 {
-	CFormView::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_CATEGORY, m_itemCategory);
-	DDX_Control(pDX, IDC_STATIC_PLACEMENT2, m_keyPlacement);
-	DDX_Control(pDX, IDC_STATIC_PLACEMENT3, m_valuePlacement);
-	DDX_Text(pDX, IDC_EDIT1, m_info);
-	DDX_Check(pDX, IDC_BOOKMARK, m_itemBookmark);
-	DDX_Control(pDX, IDC_TAG_COMBO, m_itemTagCombo);
+    CFormView::DoDataExchange(pDX);
+    DDX_Control(pDX, IDC_CATEGORY, m_itemCategory);
+    DDX_Control(pDX, IDC_STATIC_PLACEMENT2, m_keyPlacement);
+    DDX_Control(pDX, IDC_STATIC_PLACEMENT3, m_valuePlacement);
+    DDX_Text(pDX, IDC_EDIT1, m_info);
+    DDX_Check(pDX, IDC_BOOKMARK, m_itemBookmark);
+    DDX_Control(pDX, IDC_TAG_COMBO, m_itemTagCombo);
+    DDX_Control(pDX, IDC_PUSH_FOR_SYNC, m_syncButton);
 }
 
 BOOL CCardView::PreCreateWindow(CREATESTRUCT& cs)
@@ -281,6 +282,7 @@ void CCardView::OnInitialUpdate()
 	}
 
 	m_bookmarkBtn->SetCheck(m_bookmarkMode);
+    TriggerPush();
 
 //	GetInfo(m_info);
 //	UpdateData(0);
@@ -642,7 +644,6 @@ int CCardView::SetItem()
 		}
 	}
 
-    TriggerPushForSyncTimer();
 	return res;
 }
 
@@ -1594,15 +1595,6 @@ void CCardView::GotoById(LPCTSTR db, LPCTSTR id, BOOL setHistory, BOOL delayUpda
     m_bookmarkBtn->SetCheck(m_bookmarkMode);
 }
 
-void CCardView::TriggerPushForSyncTimer()
-{
-    if (m_pushForSyncTimer != -1)
-        KillTimer(m_pushForSyncTimer);
-
-    m_pushForSyncTimer = SetTimer(PUSHFORSYNC_TIMER, 1 * 60 * 1000, 0);
-    TRACE("Trigger PushForSyncTimer\n");
-}
-
 void CCardView::OnTimer(UINT_PTR nIDEvent)
 {
     if (nIDEvent == 1)
@@ -1622,12 +1614,7 @@ void CCardView::OnTimer(UINT_PTR nIDEvent)
         KillTimer(1);
     }
     else if (nIDEvent == PUSHFORSYNC_TIMER) {
-        TRACE("Get push sync event by timer\n");
-        m_db.PushForSync();
-        if (m_pushForSyncTimer != -1)
-            KillTimer(m_pushForSyncTimer);
-
-        m_pushForSyncTimer = -1;
+        TriggerPush();
     }
     else if (nIDEvent >= 1000 && nIDEvent <= 5000)
     {
@@ -1898,12 +1885,7 @@ void CCardView::OnEditExporttohtml()
 
 void CCardView::OnPushForSync()
 {
-    if (m_pushForSyncTimer != -1) {
-        KillTimer(m_pushForSyncTimer);
-        m_pushForSyncTimer = -1;
-    }
-
-    m_db.PushForSync();
+    TriggerPush();
 }
 
 
