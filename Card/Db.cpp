@@ -3177,6 +3177,7 @@ int CDb::SetNumbering()
     return total;
 }
 
+#if 0
 int CDb::ExportToHtml(BOOL exportContent)
 {
     Lock				lock(m_mutex);
@@ -3261,59 +3262,47 @@ int CDb::ExportToHtml(BOOL exportContent)
 
     return total;
 }
-/*
-int CDb::ExportToHtml(StringMapArray &result, int category,
-    int bookmark, CUIntArray &tagList, pair<int, int> user1, pair<int, int> user2, int tagSearchMode,
-    LPCTSTR sort, int start, int count)
+
+#endif
+
+int CDb::ExportToHtml(BOOL exportContent)
 {
     Lock				lock(m_mutex);
-    CppSQLite3Query		q;
-    int					total;
-    CNames				names;
-    CRtfParser			parser;
     CHtmlListener		listener;
-    RtfImageList	    imageList;
-    CString				tag;
+    CString				s;
+    CppSQLite3Query		q;
+    int					total = 0;
     CString             str;
+    char			    dir[512];
+    CString			    fileName;
+    CString			    path, media_path;
+    RtfImageList	    imageList;
 
+    GetCurrentDirectory(512, dir);
 
-    result.clear();
-    total = LoadData(q, FALSE, 2, category, 0, tagList, { 0,0 }, { 0,0 },
-        tagSearchMode, "ASC", 0);
+    path = dir;
+    SHCreateDirectoryEx(NULL, media_path, NULL);
+
+    fileName = path + "\\db\\db_export.html";
+
+    // error or total 0
+    total = LoadData(q, TRUE, CONTENT_TYPE_BOTH,
+                     m_curCategory, m_curBookmarkMode, m_curTag,
+                     DEFAULT_RANGE, DEFAULT_RANGE, m_curTagSearchMode, m_sort, -1, 0);
     if (total <= 0)
         return 0;
 
-    while (!q.eof())
+    while(!q.eof())
     {
         StringMap	sm;
+        CRtfParser			parser;
 
-        for (int i = 0; i < q.numFields(); i++)
+        for(int i = 0; i < q.numFields(); i++)
         {
-            if (strcmp(q.fieldName(i), "tag") == 0)
-            {
-                DecodeTagString(q.getStringField(i), names);
-                tag = "";
-
-                CString		s;
-                for (int j = 0; j < names.GetCount(); j++)
-                {
-                    if (j == 0)
-                    {
-                        tag.Format("%d", names[j].id);
-                    }
-                    else
-                    {
-                        s.Format(",%d", names[j].id);
-                        tag += s;
-                    }
-                }
-                sm["tag"] = tag;
-            }
-            else if (strcmp(q.fieldName(i), "key") == 0)
+            if (strcmp(q.fieldName(i), "key") == 0)
             {
                 if (m_dictMode)
                 {
-                    sm[q.fieldName(i)] = String(q.getStringField(i));
                     continue;
                 }
 
@@ -3339,8 +3328,8 @@ int CDb::ExportToHtml(StringMapArray &result, int category,
                 {
                     return -1;
                 }
-                sm[q.fieldName(i)] = listener.m_text;
-                ResetImageList(imageList);
+                s += listener.m_text;
+                s += "<hr>";
             }
             else if (strcmp(q.fieldName(i), "content") == 0)
             {
@@ -3366,28 +3355,46 @@ int CDb::ExportToHtml(StringMapArray &result, int category,
                 {
                     return -1;
                 }
-                sm[q.fieldName(i)] = listener.m_text;
+                s += listener.m_text;
+                s += "<p><p><p><hr class='new5'><p><p><p>";
                 ResetImageList(imageList);
             }
-            else if (strcmp(q.fieldName(i), "keyCompressed") == 0 ||
-                strcmp(q.fieldName(i), "contentCompressed") == 0)
-            {
-                continue;
-            }
-            else
-            {
-                sm[q.fieldName(i)] = q.getStringField(i);
-            }
         }
-        sm["css"] = (LPCTSTR)listener.GetCss();
-        listener.ClearCss();
 
-        result.push_back(sm);
         q.nextRow();
     }
+
+    s = listener.GetCss() + s;
+
+    string binding ="db\\binding.html";
+    CFile			file;
+
+    if (file.Open(binding.c_str(), CFile::modeRead) == FALSE)
+    {
+        return 0;
+    }
+    char* buf;
+
+    buf = new char[(int)file.GetLength() + 1];
+    file.Read(buf, (int)file.GetLength());
+    buf[file.GetLength()] = 0;
+    file.Close();
+
+    CString t = buf;
+    delete buf;
+
+    t.Replace("<!--{content}-->", s);
+
+    if (file.Open(fileName, CFile::modeCreate | CFile::modeWrite) == FALSE)
+        return -1;
+
+    file.Write((LPCTSTR)t, t.GetLength());
+    file.Close();
+
+
     return total;
 }
-*/
+
 
 void CDb::reset_itime()
 {

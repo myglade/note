@@ -68,6 +68,8 @@
 #define IDC_EDIT8                       1029
 #define IDC_COMBO2                      1030
 #define IDC_STRING                      1030
+#define IDC_CHECK4                      1030
+#define IDC_EDIT9                       1031
 #define ID_FILE_SAVE_IOS                32785
 #define ID_VIEW_PREV                    32786
 #define ID_VIEW_NEXT                    32787
