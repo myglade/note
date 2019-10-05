@@ -3275,15 +3275,13 @@ int CDb::ExportToHtml(BOOL exportContent)
     CString             str;
     char			    dir[512];
     CString			    fileName;
-    CString			    path, media_path;
+    CString			    path;
     RtfImageList	    imageList;
 
     GetCurrentDirectory(512, dir);
 
     path = dir;
-    SHCreateDirectoryEx(NULL, media_path, NULL);
-
-    fileName = path + "\\db\\db_export.html";
+    SHCreateDirectoryEx(NULL, path + "\\export", NULL);
 
     // error or total 0
     total = LoadData(q, TRUE, CONTENT_TYPE_BOTH,
@@ -3365,11 +3363,11 @@ int CDb::ExportToHtml(BOOL exportContent)
     }
 
     s = listener.GetCss() + s;
+    CString binding = "db\\binding.html";
 
-    string binding ="db\\binding.html";
     CFile			file;
 
-    if (file.Open(binding.c_str(), CFile::modeRead) == FALSE)
+    if (file.Open(binding, CFile::modeRead) == FALSE)
     {
         return 0;
     }
@@ -3385,8 +3383,30 @@ int CDb::ExportToHtml(BOOL exportContent)
 
     t.Replace("<!--{content}-->", s);
 
-    if (file.Open(fileName, CFile::modeCreate | CFile::modeWrite) == FALSE)
-        return -1;
+    fileName = path + "\\export\\db_export.html";
+
+    {
+        CppSQLite3Query q;
+
+        if (ExecuteSql(q, "SELECT name FROM category WHERE id=%d;", m_curCategory) == -1)
+            return -1;
+
+        if (!q.eof())
+        {
+            CString t = q.getStringField(0);
+            t.Replace("/", "-");
+            fileName.Format("export\\%s.html", t);
+        }
+    }
+
+    if (file.Open(fileName, CFile::modeCreate | CFile::modeWrite) == FALSE) {
+        ::MessageBox(NULL, "db_export.html. Fail to create file. " + fileName, "Error", MB_OK);
+
+        fileName = path + "\\export\\db_export.html";
+        if (file.Open(fileName, CFile::modeCreate | CFile::modeWrite) == FALSE) {
+            return -1;
+        }
+    }
 
     file.Write((LPCTSTR)t, t.GetLength());
     file.Close();

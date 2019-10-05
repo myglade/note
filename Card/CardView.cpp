@@ -221,8 +221,8 @@ CCardView::~CCardView()
 //		delete m_keyListView;
 	}
 
-    if (m_pushForSyncTimer != -1)
-        KillTimer(m_pushForSyncTimer);
+//    if (m_pushForSyncTimer != -1)
+//        KillTimer(m_pushForSyncTimer);
 }
 
 void CCardView::DoDataExchange(CDataExchange* pDX)
