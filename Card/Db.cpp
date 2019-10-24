@@ -697,7 +697,7 @@ int CDb::CreateItem(int category, int bookmark, CUIntArray &tag,
 
 	// 1      2       3        4         5     6            7           8       9     10
 	// itime, mtime, category, bookmark, tag, keyImage, contentImage, dictKey, key, content
-	CppSQLite3Statement stmt = m_db.compileStatement("insert into data values(NULL,?,?,?,?,?,?,?,?,?,?,1,1);");
+	CppSQLite3Statement stmt = m_db.compileStatement("insert into data values(NULL,?,?,?,?,?,?,?,?,?,?,1,1,0,0);");
 
 	stmt.bind(1, itime);
 	stmt.bind(2, t);
