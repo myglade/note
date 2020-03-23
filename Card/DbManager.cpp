@@ -634,6 +634,8 @@ int CDbManager::GetContentInfoAsJson(std::string &s)
 	obj.Clear();
     SyncO2W();
 
+    vector<string> hideTags = GetHideTags();
+
 	for(iter = m_dbMap.begin(); iter != m_dbMap.end(); iter++)
 	{
 		DbInfo *info = iter->second;
@@ -659,6 +661,9 @@ int CDbManager::GetContentInfoAsJson(std::string &s)
 		info->db->GetTagList(names);
 		for(int j = 0; j < names.GetCount(); j++)
 		{
+            if (IsTagToHide(hideTags, names[j].name))
+                continue;
+
 			item["name"] = String((LPCTSTR) names[j].name);
 			item["id"] = Number(names[j].id);
 			list.Insert(item);

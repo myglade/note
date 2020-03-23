@@ -270,7 +270,7 @@ BEGIN
     LTEXT           "Dictionary Mode",IDC_STATIC,26,93,57,8
     EDITTEXT        IDC_EDIT5,87,91,40,12,ES_AUTOHSCROLL | ES_READONLY
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME,15,312,186,1,WS_EX_STATICEDGE
-    LTEXT           "URL Host",IDC_STATIC,20,320,33,8
+    LTEXT           "Tags to hide",IDC_STATIC,20,320,75,8
     EDITTEXT        IDC_EDIT8,18,332,183,14,ES_AUTOHSCROLL
     CONTROL         "Allow immediate push for sync",IDC_CHECK4,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,223,165,10
     LTEXT           "Next push interval for sync (sec)",IDC_STATIC,23,241,118,8

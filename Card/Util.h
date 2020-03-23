@@ -3,6 +3,12 @@
 #include "afxwin.h"
 #include <string>
 #include <map>
+#include <vector>
+#include <iostream>
+#include <sstream>
+#include "Env.h"
+
+using namespace std;
 
 class Mutex
 {
@@ -343,6 +349,35 @@ inline int UrlDecode(const char *source, char *dest)
 	return dest - start;
 }  
 
+inline vector<string> GetHideTags()
+{
+    vector<string> tags;
+    string str = GetEnv(PROFILE_SECTION, HIDE_TAGS, "");
+
+    if (str.empty())
+        return tags;
+
+    istringstream ss(str);
+    string t;
+
+    while (getline(ss, t, ',')) {
+        if (t.empty())
+            continue;
+
+        tags.push_back(t);
+    }
+
+    return tags;
+}
+
+inline bool IsTagToHide(vector<string>& tags, CString& s) {
+    for (auto& t : tags) {
+        if (t == (LPCTSTR) s)
+            return true;
+    }
+
+    return false;
+}
 
 namespace Util
 {

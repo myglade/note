@@ -1958,6 +1958,8 @@ int CDb::Query(StringMapArray &result, int contentType, int category,
 	if (total <= 0)
 		return 0;
 
+    vector<string> hideTags = GetHideTags();
+
 	while(!q.eof())
 	{
 		StringMap	sm;
@@ -1968,11 +1970,15 @@ int CDb::Query(StringMapArray &result, int contentType, int category,
 			{
 				DecodeTagString(q.getStringField(i), names);
 				tag = "";
+                int tagCount = 0;
 
 				CString		s;
 				for(int j = 0; j < names.GetCount(); j++)
 				{
-					if (j == 0)
+                    if (IsTagToHide(hideTags, names[j].name))
+                        continue;
+                    
+                    if (tagCount == 0)
 					{
 						tag.Format("%d", names[j].id);
 					}
@@ -1981,6 +1987,8 @@ int CDb::Query(StringMapArray &result, int contentType, int category,
 						s.Format(",%d", names[j].id);
 						tag += s;
 					}
+
+                    tagCount++;
 				}
 				sm["tag"] = tag;
 			}
@@ -2115,6 +2123,8 @@ int CDb::Query(StringMapArray &result, LPCTSTR id, BOOL useCategory, CString sor
 	if (total <= 0)
 		return 0;
 
+    vector<string> hideTags = GetHideTags();
+
 	while(!q.eof())
 	{
 		StringMap	sm;
@@ -2125,11 +2135,15 @@ int CDb::Query(StringMapArray &result, LPCTSTR id, BOOL useCategory, CString sor
 			{
 				DecodeTagString(q.getStringField(i), names);
 				tag = "";
+                int tagCount = 0;
 
 				CString		s;
 				for(int j = 0; j < names.GetCount(); j++)
 				{
-					if (j == 0)
+                    if (IsTagToHide(hideTags, names[j].name))
+                        continue;
+                    
+                    if (tagCount == 0)
 					{
 						tag.Format("%d", names[j].id);
 					}
@@ -2138,6 +2152,8 @@ int CDb::Query(StringMapArray &result, LPCTSTR id, BOOL useCategory, CString sor
 						s.Format(",%d", names[j].id);
 						tag += s;
 					}
+
+                    tagCount++;
 				}
 				sm["tag"] = tag;
 			}
@@ -2511,6 +2527,8 @@ int CDb::GetSummaryAsJson(std::string &s, int category,
 	}
 
 	list.Clear();
+    vector<string> hideTags = GetHideTags();
+
 	while(!q.eof())
 	{
 		item.Clear();
@@ -2521,15 +2539,22 @@ int CDb::GetSummaryAsJson(std::string &s, int category,
 			{
 				DecodeTagString(CString(q.getStringField(i)), names);
 				tag = "";
+                int tagCount = 0;
+
 				for(int j = 0; j < names.GetCount(); j++)
 				{
-					if (j == 0)
+                    if (IsTagToHide(hideTags, names[j].name))
+                        continue;
+
+					if (tagCount == 0)
 						tag = names[j].name;
 					else
 					{
 						tag += ",";
 						tag +=  names[j].name;
 					}
+
+                    tagCount++;
 				}
 				item["tag"] = String((LPCTSTR) tag);
 			}
