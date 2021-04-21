@@ -277,6 +277,8 @@
     <ClInclude Include="sqlite\sqlite3.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Server\DbManager.py" />
+    <None Include="..\Server\sqlite3_x64.dll" />
     <None Include="ClassDiagram.cd" />
     <None Include="fhome.html" />
     <None Include="home2.html" />
