@@ -535,6 +535,7 @@
       <Filter>html_template</Filter>
     </None>
     <None Include="ClassDiagram.cd" />
+    <None Include="..\Server\sqlite3_x64.dll" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Card.rc">
