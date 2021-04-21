@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Card", "Card\Card.vcxproj", "{60B24E55-0922-45C8-ABBE-E0E4693F61B1}"
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Server", "Server\Server.pyproj", "{4421D7A5-6437-4B36-9321-A1B690DB7488}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,15 +33,6 @@ Global
 		{60B24E55-0922-45C8-ABBE-E0E4693F61B1}.Template|Mixed Platforms.Build.0 = Template|Win32
 		{60B24E55-0922-45C8-ABBE-E0E4693F61B1}.Template|Win32.ActiveCfg = Template|Win32
 		{60B24E55-0922-45C8-ABBE-E0E4693F61B1}.Template|Win32.Build.0 = Template|Win32
-		{4421D7A5-6437-4B36-9321-A1B690DB7488}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4421D7A5-6437-4B36-9321-A1B690DB7488}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{4421D7A5-6437-4B36-9321-A1B690DB7488}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{4421D7A5-6437-4B36-9321-A1B690DB7488}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4421D7A5-6437-4B36-9321-A1B690DB7488}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{4421D7A5-6437-4B36-9321-A1B690DB7488}.Release|Win32.ActiveCfg = Release|Any CPU
-		{4421D7A5-6437-4B36-9321-A1B690DB7488}.Template|Any CPU.ActiveCfg = Debug|Any CPU
-		{4421D7A5-6437-4B36-9321-A1B690DB7488}.Template|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{4421D7A5-6437-4B36-9321-A1B690DB7488}.Template|Win32.ActiveCfg = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
