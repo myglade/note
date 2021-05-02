@@ -6,16 +6,16 @@ Created on Apr 29, 2014
 
 def import_class(cl):
     d = cl.rfind(".")
-    classname = cl[d+1:len(cl)]
+    classname = cl[d + 1:len(cl)]
     m = __import__(cl[0:d], globals(), locals(), [classname])
     return getattr(m, classname)
 
 class NullFmt(object):
     def __init__(self, obj):
-        print obj
+        print(obj)
     
     def __call__(self, obj):
-        print obj
+        print(obj)
         
 class ExceptionFmt(Exception):
     def __init__(self, *message, **kwarg):
@@ -49,10 +49,9 @@ class TestError(ExceptionFmt):
         return self.message
            
         
-###### 
+######
 ## Test
 
-           
 def test(err):
     obj = import_class("Format.TestError")
     a = obj("test...")
@@ -64,6 +63,6 @@ if __name__ == '__main__':
     try:
         test(ExceptionFmt)
     except TestError:
-        print "db error"
+        print("db error")
 
-    print "done"
+    print("done")

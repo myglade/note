@@ -5,13 +5,14 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>4421d7a5-6437-4b36-9321-a1b690db7488</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>db\Section.py</StartupFile>
+    <StartupFile>db\Db.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>Server</Name>
     <RootNamespace>Server</RootNamespace>
+    <TestFramework>Pytest</TestFramework>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -56,11 +57,12 @@
     <Compile Include="Test.py" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="sqlite3_x64.dll" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="db\" />
     <Folder Include="Util\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="sqlite3.def" />
+    <Content Include="sqlite3.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />

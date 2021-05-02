@@ -12,11 +12,11 @@
 #include "SearchResult.h"
 #include "CheckComboBox.h"
 #include "WndResizer.h"
-#include "Editor.h"
 #include "DirectoryChanges.h"
 #include "DbDirChangeHandler.h"
 #include <list>
 #include <map>
+#include "CEXPLORER2.h"
 
 #define MAX_HISTORY     100
 
@@ -56,16 +56,14 @@ public:
 private:
 	CWndResizer			m_resizer;
 
-	CStatic				m_keyPlacement;
-	CStatic				m_valuePlacement;
 	BOOL				m_readOnlyMode;
 	BOOL				m_testMode;
 	CString				m_info;
 	BOOL				m_itemBookmark;
 	CCheckComboBox		m_itemTagCombo;
 
-	CEditor				m_content;
-	CEditor				m_key;
+	CEXPLORER2			m_content;
+	CEXPLORER2			m_key;
 	CComboBox			m_itemCategory;
 	CComboBox *			m_category;
 	CComboBox *			m_section;
@@ -204,8 +202,6 @@ public:
 	LRESULT  OnResizerSize(WPARAM wParam, LPARAM lParam);
 	LRESULT  OnResizerPortionChange(WPARAM wParam, LPARAM lParam);
 	LRESULT  OnFileNotification(WPARAM wParam, LPARAM lParam);
-	LRESULT  OnLinkClick(WPARAM wParam, LPARAM lParam);
-	LRESULT  OnLinkSet(WPARAM wParam, LPARAM lParam);
     LRESULT  OnDbStatusChange(WPARAM wParam, LPARAM lParam);
 
 protected:

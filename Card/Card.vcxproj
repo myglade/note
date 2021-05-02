@@ -134,6 +134,7 @@
     <ClCompile Include="CardView.cpp" />
     <ClCompile Include="CardViewHelper.cpp" />
     <ClCompile Include="Category.cpp" />
+    <ClCompile Include="CEXPLORER2.cpp" />
     <ClCompile Include="CheckComboBox.cpp" />
     <ClCompile Include="CreateSection.cpp" />
     <ClCompile Include="Db.cpp" />
@@ -171,19 +172,6 @@
     <ClCompile Include="ResizableLib\ResizableSheet.cpp" />
     <ClCompile Include="ResizableLib\ResizableSheetEx.cpp" />
     <ClCompile Include="ResizableLib\ResizableState.cpp" />
-    <ClCompile Include="RulerRichEditCtrl\FontComboBox.cpp" />
-    <ClCompile Include="RulerRichEditCtrl\LineSpacing.cpp" />
-    <ClCompile Include="RulerRichEditCtrl\OleRichEditCtrl.cpp" />
-    <ClCompile Include="RulerRichEditCtrl\RRECRuler.cpp" />
-    <ClCompile Include="RulerRichEditCtrl\RRECToolbar.cpp" />
-    <ClCompile Include="RulerRichEditCtrl\RulerRichEdit.cpp" />
-    <ClCompile Include="RulerRichEditCtrl\RulerRichEditCtrl.cpp" />
-    <ClCompile Include="RulerRichEditCtrl\SizeComboBox.cpp" />
-    <ClCompile Include="RulerRichEditCtrl\StdGrfx.cpp" />
-    <ClCompile Include="RulerRichEditCtrl\External\ColourPicker.cpp" />
-    <ClCompile Include="RulerRichEditCtrl\External\ColourPopup.cpp" />
-    <ClCompile Include="RulerRichEditCtrl\External\StdioFileEx.cpp" />
-    <ClCompile Include="RulerRichEditCtrl\TextFile\TextFile.cpp" />
     <ClCompile Include="RtfParser\FcListener.cpp" />
     <ClCompile Include="RtfParser\HtmlListener.cpp" />
     <ClCompile Include="RtfParser\RtfImage.cpp" />
@@ -204,6 +192,7 @@
     <ClInclude Include="CardDoc.h" />
     <ClInclude Include="CardView.h" />
     <ClInclude Include="Category.h" />
+    <ClInclude Include="CEXPLORER2.h" />
     <ClInclude Include="CheckComboBox.h" />
     <ClInclude Include="CreateSection.h" />
     <ClInclude Include="Db.h" />
@@ -213,7 +202,6 @@
     <ClInclude Include="DbV3.h" />
     <ClInclude Include="DelayedDirectoryChangeHandler.h" />
     <ClInclude Include="DirectoryChanges.h" />
-    <ClInclude Include="Editor.h" />
     <ClInclude Include="Env.h" />
     <ClInclude Include="Goto.h" />
     <ClInclude Include="Input.h" />
@@ -243,21 +231,6 @@
     <ClInclude Include="ResizableLib\ResizableSheet.h" />
     <ClInclude Include="ResizableLib\ResizableSheetEx.h" />
     <ClInclude Include="ResizableLib\ResizableState.h" />
-    <ClInclude Include="RulerRichEditCtrl\FontComboBox.h" />
-    <ClInclude Include="RulerRichEditCtrl\ids.h" />
-    <ClInclude Include="RulerRichEditCtrl\LineSpacing.h" />
-    <ClInclude Include="RulerRichEditCtrl\OleRichEditCtrl.h" />
-    <ClInclude Include="RulerRichEditCtrl\resource.h" />
-    <ClInclude Include="RulerRichEditCtrl\RRECRuler.h" />
-    <ClInclude Include="RulerRichEditCtrl\RRECToolbar.h" />
-    <ClInclude Include="RulerRichEditCtrl\RulerRichEdit.h" />
-    <ClInclude Include="RulerRichEditCtrl\RulerRichEditCtrl.h" />
-    <ClInclude Include="RulerRichEditCtrl\SizeComboBox.h" />
-    <ClInclude Include="RulerRichEditCtrl\StdGrfx.h" />
-    <ClInclude Include="RulerRichEditCtrl\External\ColourPicker.h" />
-    <ClInclude Include="RulerRichEditCtrl\External\ColourPopup.h" />
-    <ClInclude Include="RulerRichEditCtrl\External\StdioFileEx.h" />
-    <ClInclude Include="RulerRichEditCtrl\TextFile\TextFile.h" />
     <ClInclude Include="RtfParser\FcListener.h" />
     <ClInclude Include="RtfParser\HtmlListener.h" />
     <ClInclude Include="RtfParser\RtfImage.h" />
@@ -289,8 +262,6 @@
     <None Include="res\Card.rc2" />
     <None Include="res\CardDoc.ico" />
     <None Include="res\Toolbar.bmp" />
-    <None Include="RulerRichEditCtrl\RulerRichEditCtrl.aps" />
-    <None Include="RulerRichEditCtrl\toolbar.bmp" />
     <None Include="json\elements.inl" />
     <None Include="json\reader.inl" />
     <None Include="json\writer.inl" />
@@ -304,7 +275,6 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Card.rc" />
-    <ResourceCompile Include="RulerRichEditCtrl\RulerRichEditCtrl.rc" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="sqlite\sqlite3.lib" />

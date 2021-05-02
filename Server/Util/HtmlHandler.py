@@ -8,9 +8,9 @@ class HtmlHandler(HTMLParser):
         if tag != 'img':
             return
 
-        print "Start tag:", tag
+        print("Start tag:", tag)
         for attr in attrs:
-            print "     attr:", attr
+            print("     attr:", attr)
             if attr[0] == 'src':
                 url = attr[1]
                 if not url.startswith('http'):

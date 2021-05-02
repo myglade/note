@@ -308,64 +308,39 @@ void CCardView::CreateEditors()
 	CRect	rect, rect2;
 	CString	font;
 	
-	m_keyPlacement.GetWindowRect(rect);
-	m_keyPlacement.ShowWindow(SW_HIDE);
-	ScreenToClient(rect);
-	m_valuePlacement.GetWindowRect(rect2);
-	m_valuePlacement.ShowWindow(SW_HIDE);
-	ScreenToClient(rect2);
+	//m_keyPlacement.GetWindowRect(rect);
+	//m_keyPlacement.ShowWindow(SW_HIDE);
+	//ScreenToClient(rect);
+	//m_valuePlacement.GetWindowRect(rect2);
+	//m_valuePlacement.ShowWindow(SW_HIDE);
+	//ScreenToClient(rect2);
 
-	rect.top++;
-	//m_dictMode = TRUE;
-	if (m_dictMode)
-	{
-		rect.bottom = rect.top + DICT_KEY_HEIGHT;
-		m_key.CreateEdit(ES_AUTOHSCROLL | WS_BORDER | WS_TABSTOP | 
-			WS_CHILD | WS_VISIBLE, rect, this, 10100, 
-			 "Arial", 10, FALSE);
-	}
-	else
-	{
-		m_key.CreateRichEdit(WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-			rect, this, 10100, 
-			"Courier New", 10, TRUE, TRUE );
-		m_key.ShowToolbar(!m_readOnlyMode);
-	}
-	m_key.ShowRuler(false);
+	//rect.top++;
 
-	rect2.top = rect.bottom + 10;
-	m_content.CreateRichEdit(WS_TABSTOP | WS_CHILD | WS_VISIBLE, rect2, this, 10101, 
-		font, 10, TRUE, TRUE );
-	m_content.ShowRuler(false);
-	m_content.ShowToolbar(!m_readOnlyMode);
+	m_key.Navigate(_T("http://naver.github.io/smarteditor2/demo/"), NULL, NULL, NULL, NULL);
+	m_content.Navigate(_T("http://naver.github.io/smarteditor2/demo/"), NULL, NULL, NULL, NULL);
+	auto id1 = m_key.GetDlgCtrlID();
+	auto id2 = m_content.GetDlgCtrlID();
 
 	BOOL bOk;
 	m_resizer.Unhook();
 	m_resizer.Hook(this);
 
-	if (m_dictMode)
-	{
-		bOk = m_resizer.SetAnchor(10101, ANCHOR_ALL);
-		ASSERT( bOk == TRUE);
-		bOk = m_resizer.SetAnchor(10100, ANCHOR_HORIZONTALLY);
-	}
-	else
-	{
-		bOk = m_resizer.CreateSplitContainer(_T("OutterSplit"), 10100, 10101 );
-		ASSERT( bOk == TRUE);
-		CSize size(100, 60); // cy member will be ignored
-		bOk = m_resizer.SetMinimumSize(10100, size);
+	bOk = m_resizer.CreateSplitContainer(_T("OutterSplit"), id1, id2 );
+	ASSERT( bOk == TRUE);
+	CSize size(100, 60); // cy member will be ignored
+	bOk = m_resizer.SetMinimumSize(id1, size);
 
-		bOk = m_resizer.SetMinimumSize(10101, size);
-		ASSERT( bOk == TRUE);
+	bOk = m_resizer.SetMinimumSize(id2, size);
+	ASSERT( bOk == TRUE);
 
-		bOk = m_resizer.SetShowSplitterGrip(_T("OutterSplit"), TRUE );
-		ASSERT( bOk == TRUE);
-		bOk = m_resizer.SetAnchor(_T("OutterSplit"), ANCHOR_ALL);
-		bOk = m_resizer.InvokeOnResized();
-	}
-	bOk = m_resizer.SetAnchor(IDC_STATIC_PLACEMENT3, ANCHOR_ALL);
-	bOk = m_resizer.SetAnchor(IDC_STATIC_PLACEMENT2, ANCHOR_ALL);
+	bOk = m_resizer.SetShowSplitterGrip(_T("OutterSplit"), TRUE );
+	ASSERT( bOk == TRUE);
+	bOk = m_resizer.SetAnchor(_T("OutterSplit"), ANCHOR_ALL);
+	bOk = m_resizer.InvokeOnResized();
+
+	bOk = m_resizer.SetAnchor(IDC_EXPLORER2, ANCHOR_ALL);
+	bOk = m_resizer.SetAnchor(IDC_EXPLORER3, ANCHOR_ALL);
 	bOk = m_resizer.InvokeOnResized();
 	
 	CRect	r;

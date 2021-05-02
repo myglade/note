@@ -111,8 +111,6 @@ BEGIN_MESSAGE_MAP(CCardView, CFormView)
 	ON_MESSAGE(WM_RESIZER_UNHOOK, OnResizerUnhook)
 	ON_MESSAGE(WM_RESIZER_SIZE, OnResizerSize)
 	ON_MESSAGE(WM_RESIZER_PORTION_CHANGE, OnResizerPortionChange)
-	ON_MESSAGE(WM_LINK_CLICK, OnLinkClick)
-	ON_MESSAGE(WM_LINK_SET, OnLinkSet)
 	ON_COMMAND(ID_REQUEST, &CCardView::OnOpenReq)
 	ON_COMMAND(ID_FILE_SAVE_IOS, &CCardView::OnFileSaveIos)
 	ON_COMMAND(ID_EDIT_ADDITEM, &CCardView::OnEditAdditem)
@@ -227,14 +225,15 @@ CCardView::~CCardView()
 
 void CCardView::DoDataExchange(CDataExchange* pDX)
 {
-    CFormView::DoDataExchange(pDX);
-    DDX_Control(pDX, IDC_CATEGORY, m_itemCategory);
-    DDX_Control(pDX, IDC_STATIC_PLACEMENT2, m_keyPlacement);
-    DDX_Control(pDX, IDC_STATIC_PLACEMENT3, m_valuePlacement);
-    DDX_Text(pDX, IDC_EDIT1, m_info);
-    DDX_Check(pDX, IDC_BOOKMARK, m_itemBookmark);
-    DDX_Control(pDX, IDC_TAG_COMBO, m_itemTagCombo);
-    DDX_Control(pDX, IDC_PUSH_FOR_SYNC, m_syncButton);
+	CFormView::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_CATEGORY, m_itemCategory);
+
+	DDX_Text(pDX, IDC_EDIT1, m_info);
+	DDX_Check(pDX, IDC_BOOKMARK, m_itemBookmark);
+	DDX_Control(pDX, IDC_TAG_COMBO, m_itemTagCombo);
+	DDX_Control(pDX, IDC_PUSH_FOR_SYNC, m_syncButton);
+	DDX_Control(pDX, IDC_EXPLORER2, m_key);
+	DDX_Control(pDX, IDC_EXPLORER3, m_content);
 }
 
 BOOL CCardView::PreCreateWindow(CREATESTRUCT& cs)
@@ -270,9 +269,6 @@ void CCardView::OnInitialUpdate()
 	m_tagCombo = &frame->m_tag;
     m_orBtn = &frame->m_orBtn;
 
-	m_content.SetReadOnly(m_readOnlyMode);
-	m_key.SetReadOnly(m_readOnlyMode);
-
 	if (m_db.GetCurDb() != NULL)
 	{
 		UpdateSection();
@@ -288,7 +284,7 @@ void CCardView::OnInitialUpdate()
 //	UpdateData(0);
 
 	DisplayText();
-	m_key.SetFocus();
+	///m_key.SetFocus();
 }
 
 LRESULT  CCardView::OnResizerUnhook(WPARAM wParam, LPARAM lParam)
@@ -322,152 +318,7 @@ LRESULT  CCardView::OnResizerSize(WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-LRESULT  CCardView::OnLinkClick(WPARAM wParam, LPARAM lParam)
-{
-    CString s = *((CString *) lParam);
 
-//    CString t = s.Left(7).MakeLower();
-
-    int i = s.Find(':');
-
-    if (i == -1) 
-    {
-        TRACE("Invalid Protocol");
-        return 0;
-    }
-
-    CString t = s.Left(i).MakeLower();
-    TRACE("%s\n", s);
-
-    if (t != "http" && t != "https" && t != "card" && t != "onenote")
-        return 0;
-
-    if (t == "card")
-    {
-        t = s.Mid(7);
-
-        int curPos = 0;
-        CString id, db, key, value;
-        CString resToken= t.Tokenize(_T("&"),curPos);
-        while (resToken != _T(""))
-        {
-            int     pos = 0;
-            key = resToken.Tokenize(_T("="), pos);
-            value = resToken.Tokenize(_T("="), pos);
-
-            if (key == "sec")
-                db = value;
-            else if (key == "id")
-                id = value;
-
-            resToken = t.Tokenize(_T("% #"), curPos);
-        }; 
-
-		GotoById(db, id, TRUE, TRUE);
-    }
-    else
-    {
-        ShellExecute(NULL, "Open", s, NULL, NULL, SW_SHOW);
-    }
-
-    return 0;
-}
-
-LRESULT  CCardView::OnLinkSet(WPARAM wParam, LPARAM lParam)
-{
-    CLinkSelect             dlg;
-    CRulerRichEditCtrl *    ctl = (CRulerRichEditCtrl *) lParam;
-    CString *               s = (CString *) wParam;
-
-    if (ctl == NULL || s == NULL)
-        return 0;
-
-    dlg.m_display = *s;
-    dlg.m_db = &m_db;
-    if (dlg.DoModal() != IDOK)
-        return 0;
-
-    TRACE("%s", dlg.m_address_onenote);
-    if (dlg.m_display != "" || dlg.m_address != "") 
-    {
-        ctl->SetLink(dlg.m_display, dlg.m_address);
-        return 0;
-    }
-    else if (dlg.m_address_onenote != "")
-    {
-        int curPos = 0;
-        CString http, onenote;
-
-        CString s = dlg.m_address_onenote.Tokenize(_T("\r\n"), curPos);
-        while (s != _T(""))
-        {
-            int i = s.Find(':');
-            if (i != -1) 
-            {
-                CString t = s.Left(i);
-
-                if (t == "https" || t == "http")
-                    http = s;
-                else if (t == "onenote")
-                    onenote = s;
-            }
-            s = dlg.m_address_onenote.Tokenize(_T("\r\n"), curPos);
-        };
-
-        CString title;
-
-        if (http != "") 
-        {
-            if (dlg.m_display == "") 
-            {
-                int i = http.Find(".one");
-                i = http.Find("%2F", i);
-                if (i != -1) 
-                {
-                    int start = i + strlen("%2F");
-                    int end = http.Find("%7C", start);
-
-                    title = http.Mid(start, end - start);
-                }
-               
-                title = CString("Onenote Online: ") + title;
-                title = urlDecode((LPCTSTR) title).c_str();
-            }
-            else 
-            {
-                 title.Format("Onenote Online: %s", dlg.m_display);
-            }
-
-            //ctl->SetLink(title, http, true);
-        }
-        if (onenote != "") 
-        {
-            if (dlg.m_display == "") 
-            {
-                int i = onenote.Find(".one");
-                i = onenote.Find("#", i);
-                if (i != -1) 
-                {
-                    int start = i + 1;
-                    int end = onenote.Find("&", start);
-
-                    title = onenote.Mid(start, end - start);
-                }
-               
-                title = CString("Onenote: ") + title;
-                title = urlDecode((LPCTSTR) title).c_str();
-            }
-            else 
-            {
-                 title.Format("Onenote: %s", dlg.m_display);
-            }
-
-            ctl->SetLink(title, onenote, true);
-        }    
-    }
-
-    return 0;
-}
 
 void  CCardView::OnOpenReq()
 {
@@ -541,34 +392,14 @@ int CCardView::SetItem()
 
 	if (m_add == 1)
 	{
-		if ((m_itemTagChange || m_itemBookmarkChange || m_itemCategoryChange 
-			|| m_key.GetModify() 
-			|| m_content.GetModify()))
+		if ((m_itemTagChange || m_itemBookmarkChange || m_itemCategoryChange))
 		{
-			m_key.GetText(key);
 
-			if (m_dictMode)
-            {
-                if (key == "")
-			    {
-				    MessageBox("Key is Empty");
-				    return 0;
-			    }
-                m_content.SetAllFont("Arial");
-                m_content.GetText(desc);
-                m_db.NormailizeDicText(desc, key);
-            }
-            else
-            {
-			    m_content.GetText(desc);
-            }
 
 			m_db.AddItem(cate, m_itemBookmark, tagList, key, desc);
 
 			res = 1;
 			m_add = 0;
-			m_key.SetModify(0);
-			m_content.SetModify(0);
 			m_itemBookmarkChange = FALSE;
 			m_itemCategoryChange = FALSE;
 			m_itemTagChange = FALSE;
@@ -582,39 +413,10 @@ int CCardView::SetItem()
 	}
 	else
 	{
-		if (m_itemCategoryChange || m_itemBookmarkChange || m_itemTagChange ||
-			m_key.GetModify() || 
-			m_content.GetModify())
+		if (m_itemCategoryChange || m_itemBookmarkChange || m_itemTagChange)
 		{
 			int mask = 0;
 
-			if (m_key.GetModify())
-			{
-				m_key.GetText(key);
-				if (m_dictMode && key == "")
-				{
-					MessageBox("Key is Empty");
-					return 0;
-				}
-			}
-			else if (m_dictMode)
-				m_key.GetText(key);
-
-			if (m_content.GetModify())
-			{
-			    if (m_dictMode)
-                {
-                    m_content.SetAllFont("Arial");
-                    m_content.GetText(desc);
-                    m_db.NormailizeDicText(desc, key);
-                }
-                else
-                    m_content.GetText(desc);
-			}
-			else
-			{
-				desc = "";
-			}
 
 			if (m_itemCategoryChange)
 				mask |= CATEGORY_UPDATE;
@@ -625,17 +427,13 @@ int CCardView::SetItem()
 			if (m_itemTagChange)
 				mask |= TAG_UPDATE;
 
-			if (m_key.GetModify())
-				mask |= KEY_UPDATE;
+			//if (m_key.GetModify())
+			//	mask |= KEY_UPDATE;
 
-			if (m_content.GetModify())
-				mask |= VALUE_UPDATE;
 
 			m_db.UpdateItem(mask, cate, m_itemBookmark, tagList, key, desc);
 			res = 2;
 			m_add = 0;
-			m_key.SetModify(0);
-			m_content.SetModify(0);
 			m_itemCategoryChange = FALSE;
 			m_itemBookmarkChange = FALSE;
 			m_itemTagChange = FALSE;
@@ -653,14 +451,8 @@ void CCardView::DisplayText(BOOL blank)
 
 	if (blank || m_db.GetItemCount() == 0)
 	{
-		m_key.SelectAll();
-		m_key.Clear();
-		m_content.SelectAll();
-		m_content.Clear();
 		m_itemTagCombo.SelectAll(false);
 		m_itemBookmark = 0;
-		m_key.ReplaceSel("");
-		m_content.ReplaceSel("");
 	    if (m_db.GetCurCategory() == -1)
 		    m_itemCategory.SetCurSel(0);
 	    else
@@ -672,7 +464,6 @@ void CCardView::DisplayText(BOOL blank)
 #if _DEBUG
 		m_db.GetCurKey(s);
         Save("curKey.rtf", s);
-		m_key.SetText(s);
 		m_db.GetCurContent(s);
         Save("curContent.rtf", s);
 #else
@@ -681,7 +472,7 @@ void CCardView::DisplayText(BOOL blank)
 		m_db.GetCurContent(s);
 #endif
 
-		m_content.SetText(s);
+
 
 		if (m_db.GetCurItemCategory() == -1)
 			m_itemCategory.SetCurSel(0);
@@ -693,19 +484,6 @@ void CCardView::DisplayText(BOOL blank)
 		SetTagList(m_itemTagCombo, m_db.GetCurItemTag());
 	}
 
-	if (m_add == 1 || m_db.GetItemCount() > 0)
-	{
-		m_key.SetReadOnly(FALSE);
-		m_content.SetReadOnly(FALSE);
-	}
-	else //if (m_add == 0 && (m_db.GetItemCount() == 0))
-	{
-		m_key.SetReadOnly(TRUE);
-		m_content.SetReadOnly(TRUE);
-	}
-
-	m_key.SetModify(0);
-	m_content.SetModify(0);
 	m_itemCategoryChange = FALSE; 
 	m_itemBookmarkChange = FALSE;
 	m_itemTagChange = FALSE;
@@ -724,14 +502,7 @@ void CCardView::DisplayText(BOOL blank)
 
 void CCardView::ShowContent(int bShow)
 {
-	if (bShow)
-	{
-		m_content.ShowWindow(SW_SHOWNORMAL);
-	}
-	else
-	{
-		m_content.ShowWindow(SW_HIDE);
-	}
+
 }
 
 // CCardView message handlers
@@ -759,7 +530,6 @@ void CCardView::OnEditAdditem()
 	}
 
 	DisplayText(1);
-	m_key.SetFocus();
 }
 
 void CCardView::OnEditRemoveitem()
@@ -777,8 +547,7 @@ void CCardView::OnEditRemoveitem()
 
 void CCardView::OnEditSave()
 {
-	if (m_itemCategoryChange || m_itemBookmarkChange || m_itemTagChange ||
-		m_key.GetModify() || m_content.GetModify())
+	if (m_itemCategoryChange || m_itemBookmarkChange || m_itemTagChange)
 	{
         BOOL  updateDisplay = false;
 
@@ -1065,8 +834,6 @@ void CCardView::OnCbnSelchangeSection()
 	m_dictMode = m_db.IsDictMode(m_db.GetCurDb());
 	if (m_dictMode != oldMode)
 	{
-		m_key.DestroyWindow();
-		m_content.DestroyWindow();
 		CreateEditors();
 	}
 	DisplayText();
@@ -1158,10 +925,6 @@ void CCardView::OnViewReadonlymode()
 {
 	m_readOnlyMode = !m_readOnlyMode;
 
-	m_content.SetReadOnly(m_readOnlyMode);
-	m_key.SetReadOnly(m_readOnlyMode);
-	m_key.ShowToolbar(!m_readOnlyMode);
-	m_content.ShowToolbar(!m_readOnlyMode);
 }
 
 
@@ -1236,19 +999,15 @@ void CCardView::OnViewTestmode()
 	{
 		m_readOnlyMode = TRUE;
 		ShowContent(FALSE);
-		m_content.SetReadOnly(m_readOnlyMode);
-		m_key.SetReadOnly(m_readOnlyMode);
-		m_key.ShowToolbar(FALSE);
-		m_content.ShowToolbar(FALSE);
+		//m_content.SetReadOnly(m_readOnlyMode);
+		//m_content.ShowToolbar(FALSE);
 //		m_readOnlyBtn->SetCheck(m_readOnlyMode);
 	}
 	else
 	{
 		ShowContent(TRUE);
-		m_content.SetReadOnly(m_readOnlyMode);
-		m_key.SetReadOnly(m_readOnlyMode);
-		m_key.ShowToolbar(!m_readOnlyMode);
-		m_content.ShowToolbar(!m_readOnlyMode);
+		//m_content.SetReadOnly(m_readOnlyMode);
+		//m_content.ShowToolbar(!m_readOnlyMode);
 	}
 }
 
@@ -1291,8 +1050,7 @@ void CCardView::OnEditSetting()
 
 	if (m_dictMode != oldMode)
 	{
-		m_key.DestroyWindow();
-		m_content.DestroyWindow();
+		//m_content.DestroyWindow();
 		CreateEditors();
 	}
 
@@ -1350,8 +1108,7 @@ void CCardView::OnUpdateViewNext(CCmdUI *pCmdUI)
 
 void CCardView::OnUpdateEditSave(CCmdUI *pCmdUI)
 {
-	if (m_key.GetModify() ||
-		m_content.GetModify() ||
+	if (
 		m_itemCategoryChange || 
 		m_itemBookmarkChange ||
 		m_itemTagChange)
@@ -1450,48 +1207,53 @@ BOOL CCardView::PreTranslateMessage(MSG* pMsg)
 
 void CCardView::OnEditCopy()
 {
-	if (GetFocus() == m_key.GetWnd())
-		m_key.Copy();
-	else if (GetFocus() == m_content.GetWnd())
-		m_content.Copy();
+	//if (GetFocus() == m_key.GetWnd())
+	//	m_key.Copy();
+	//else 
+	//if (GetFocus() == m_content.GetWnd())
+	//	m_content.Copy();
 }
 
 void CCardView::OnEditPaste()
 {
-	if (GetFocus() == m_key.GetWnd())
+	//if (GetFocus() == m_key.GetWnd())
 	{
-		m_key.Paste();
-		return;
+	//	m_key.Paste();
+	//	return;
 	}
-	else if (GetFocus() == m_content.GetWnd())
-	{
-		m_content.Paste();
-		return;
-	}
+	//else 
+	//if (GetFocus() == m_content.GetWnd())
+	//{
+	//	m_content.Paste();
+	//	return;
+	//}
 }
 
 void CCardView::OnEditCut()
 {
-	if (GetFocus() == m_key.GetWnd())
-		m_key.Cut();
-	else if (GetFocus() == m_content.GetWnd())
-		m_content.Cut();
+	//if (GetFocus() == m_key.GetWnd())
+	//	m_key.Cut();
+	//else 
+	//if (GetFocus() == m_content.GetWnd())
+	//	m_content.Cut();
 }
 
 void CCardView::OnEditUndo()
 {
-	if (GetFocus() == m_key.GetWnd())
-		m_key.Undo();
-	else if (GetFocus() == m_content.GetWnd())
-		m_content.Undo();
+	//if (GetFocus() == m_key.GetWnd())
+		//m_key.Undo();
+	//else 
+	//if (GetFocus() == m_content.GetWnd())
+	//	m_content.Undo();
 }
 
 void CCardView::OnEditSelectAll()
 {
-	if (GetFocus() == m_key.GetWnd())
-		m_key.SelectAll();
-	else if (GetFocus() == m_content.GetWnd())
-		m_content.SelectAll();
+	//if (GetFocus() == m_key.GetWnd())
+		//m_key.SelectAll();
+	//else 
+	//if (GetFocus() == m_content.GetWnd())
+	//	m_content.SelectAll();
 }
 
 void CCardView::GotoByitime(int itime)
@@ -1579,8 +1341,8 @@ void CCardView::GotoById(LPCTSTR db, LPCTSTR id, BOOL setHistory, BOOL delayUpda
                 SetTimer(1, 100, 0);
                 return;
             }
-	        m_key.DestroyWindow();
-	        m_content.DestroyWindow();
+	       // m_key.DestroyWindow();
+	       // m_content.DestroyWindow();
 	        CreateEditors();
 	    }
   	    m_section->SetCurSel(m_section->FindStringExact(0, m_db.GetCurDbName()));
@@ -1599,8 +1361,8 @@ void CCardView::OnTimer(UINT_PTR nIDEvent)
 {
     if (nIDEvent == 1)
     {
-	    m_key.DestroyWindow();
-	    m_content.DestroyWindow();
+	    //m_key.DestroyWindow();
+	    //m_content.DestroyWindow();
 	    CreateEditors();
 
  	    m_section->SetCurSel(m_section->FindStringExact(0, m_db.GetCurDbName()));
