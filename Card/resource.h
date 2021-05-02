@@ -70,6 +70,8 @@
 #define IDC_STRING                      1030
 #define IDC_CHECK4                      1030
 #define IDC_EDIT9                       1031
+#define IDC_EXPLORER2                   1033
+#define IDC_EXPLORER3                   1034
 #define ID_FILE_SAVE_IOS                32785
 #define ID_VIEW_PREV                    32786
 #define ID_VIEW_NEXT                    32787
@@ -129,9 +131,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        144
+#define _APS_NEXT_RESOURCE_VALUE        145
 #define _APS_NEXT_COMMAND_VALUE         32842
-#define _APS_NEXT_CONTROL_VALUE         1031
+#define _APS_NEXT_CONTROL_VALUE         1034
 #define _APS_NEXT_SYMED_VALUE           106
 #endif
 #endif
