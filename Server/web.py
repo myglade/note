@@ -10,9 +10,9 @@ import os.path
 import random
 
 app = Flask(__name__, 
-            static_folder='static', 
+            static_folder='', 
             static_url_path='',
-            template_folder='static')
+            template_folder='')
 
 import datetime
 import logging
