@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>4421d7a5-6437-4b36-9321-a1b690db7488</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>web.py</StartupFile>
+    <StartupFile>dispacher.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -25,6 +25,12 @@
   <ItemGroup>
     <Compile Include="db\Db.py" />
     <Compile Include="DbManager.py" />
+    <Compile Include="db\DbManager.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="dispacher.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Util\HtmlHandler.py">
       <SubType>Code</SubType>
     </Compile>
@@ -78,6 +84,7 @@
     <Folder Include="Util\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="db\README.txt" />
     <Content Include="editor\css\en_US\smart_editor2.css" />
     <Content Include="editor\css\en_US\smart_editor2_in.css" />
     <Content Include="editor\css\en_US\smart_editor2_items.css" />

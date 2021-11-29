@@ -7,7 +7,7 @@
 <title>네이버 :: Smart Editor 2 &#8482;</title>
 <link href="css/ko_KR/smart_editor2.css" rel="stylesheet" type="text/css">
 <style type="text/css">
-	body { margin: 10px; }
+	body { margin: 10px; height: 100%; }
 </style>
 <script type="text/javascript" src="./js/lib/jindo2.all.js" charset="utf-8"></script>
 <script type="text/javascript" src="./js/lib/jindo_component.js" charset="utf-8"></script>
@@ -16,7 +16,7 @@
 <script type="text/javascript" src="./js/smarteditor2.js" charset="utf-8"></script>
 
 </head>
-<body>
+<body style="height:100%">
 
 <!-- SE2 Markup Start -->	
 <div id="smart_editor2">
@@ -569,7 +569,7 @@
 		<div class="se2_input_area husky_seditor_editing_area_container">
 			
 			
-			<iframe src="about:blank" id="se2_iframe" name="se2_iframe" class="se2_input_wysiwyg" width="400" height="300" title="글쓰기 영역 : 도구 모음은 ALT+F10을, 도움말은 ALT+0을 누르세요." frameborder="0" style="display:block;"></iframe>
+			<iframe src="about:blank" id="se2_iframe" name="se2_iframe" class="se2_input_wysiwyg" width="400" height="100%" title="글쓰기 영역 : 도구 모음은 ALT+F10을, 도움말은 ALT+0을 누르세요." frameborder="0" style="display:block;"></iframe>
 			<textarea name="" rows="10" cols="100" title="HTML 편집 모드" class="se2_input_syntax se2_input_htmlsrc" style="display:none;outline-style:none;resize:none"> </textarea>
 			<textarea name="" rows="10" cols="100" title="TEXT 편집 모드" class="se2_input_syntax se2_input_text" style="display:none;outline-style:none;resize:none;"> </textarea>
 			
@@ -782,25 +782,75 @@
 <!-- SE2 Markup End -->
 
 <!--Example Start-->
-<div id="se2_sample" style="margin:10px 0;">
-	<input type="button" onclick="pasteHTML();" value="본문에 내용 넣기" />
-	<input type="button" onclick="showHTML();" value="본문 내용 가져오기" />
-	<input type="button" onclick="submitContents();" value="서버로 내용 전송" />
-	<input type="button" onclick="setDefaultFont();" value="기본 폰트 지정하기 (궁서_24)" />
+<div id="se2_sample" style="margin:10px 0;height:1000px">
+
+		<input type="button" onclick="pasteHTML();" value="1본문에 내용 넣기" />
+		<input type="button" onclick="showHTML();" value="본문 내용 가져오기" />
+		<input type="button" onclick="submitContents();" value="서버로 내용 전송" />
+		<input type="button" onclick="setDefaultFont();" value="기본 폰트 지정하기 (궁서_24)" />
+
+	<form action="sample/viewer/index" method="post">
+		<textarea name="ir1" id="ir1" rows="10" cols="100" style="width:100%; height:100%; display:none;">
+		<p>sss글 수정시 여기에 값을 넣어주면 됩니다.</p>
+			</textarea>
+	</form>
 	<form action="sample/viewer/index.php" method="post">
-		<textarea name="ir1" id="ir1" rows="10" cols="100" style="width:100%; height:500px; display:none;">
-			<p>sss글 수정시 여기에 값을 넣어주면 됩니다.</p>
-		</textarea>
+		<textarea name="ir2" id="ir2" rows="10" cols="100" style="width:100%; height:100%; display:none;">
+		<p>xxxxxxxxxxxxxxxxxxxxxxxxxxxx</p>
+			</textarea>
 	</form>
 </div>
 
-<script type="text/javascript">
-if(window.frameElement){
-	jindo.$("se2_sample").style.display = "none";
-}else{
-	var oEditor = createSEditor2(jindo.$("ir1"), {
+	<script type="text/javascript">
+	if(window.frameElement){
+		jindo.$("se2_sample").style.display = "none";
+	}else{
+		var oEditor = createSEditor2(jindo.$("ir1"), {
+			bUseToolbar : true,				// 툴바 사용 여부 (true:사용/ false:사용하지 않음)
+			bUseVerticalResizer : false,		// 입력창 크기 조절바 사용 여부 (true:사용/ false:사용하지 않음)
+			bUseModeChanger : true,			// 모드 탭(Editor | HTML | TEXT) 사용 여부 (true:사용/ false:사용하지 않음)
+			//bSkipXssFilter : true,		// client-side xss filter 무시 여부 (true:사용하지 않음 / 그외:사용)
+			//aAdditionalFontList : [["MS UI Gothic", "MS UI Gothic"], ["Comic Sans MS", "Comic Sans MS"],["TEST","TEST"]],	// 추가 글꼴 목록
+			fOnBeforeUnload : function(){
+				//예제 코드
+				//return "내용이 변경되었습니다.";
+			}
+		});
+
+		oEditor.run({
+			fnOnAppReady: function(){
+				//예제 코드
+				//oEditor.exec("PASTE_HTML", ["로딩이 완료된 후에 본문에 삽입되는 text입니다."]);
+			}
+		});
+
+		function pasteHTML() {
+			var sHTML = "<span style='color:#FF0000;'>이미지도 같은 방식으로 삽입합니다.<\/span>";
+			oEditor.exec("PASTE_HTML", [sHTML]);
+		}
+
+		function showHTML() {
+			var sHTML = oEditor.getIR();
+			alert(sHTML);
+		}
+
+		function submitContents() {
+			oEditor.exec("UPDATE_CONTENTS_FIELD");	// 에디터의 내용이 textarea에 적용됩니다.
+
+			// 에디터의 내용에 대한 값 검증은 이곳에서 document.getElementById("ir1").value를 이용해서 처리하면 됩니다.
+			//jindo.$("ir1").form.submit();
+		document.getElementById("ir1").form.submit();
+		}
+
+		function setDefaultFont() {
+			var sDefaultFont = '궁서';
+			var nFontSize = 24;
+			oEditor.setDefaultFont(sDefaultFont, nFontSize);
+		}
+
+	var oEditor2 = createSEditor2(jindo.$("ir2"), {
 		bUseToolbar : true,				// 툴바 사용 여부 (true:사용/ false:사용하지 않음)
-		bUseVerticalResizer : true,		// 입력창 크기 조절바 사용 여부 (true:사용/ false:사용하지 않음)
+		bUseVerticalResizer : false,		// 입력창 크기 조절바 사용 여부 (true:사용/ false:사용하지 않음)
 		bUseModeChanger : true,			// 모드 탭(Editor | HTML | TEXT) 사용 여부 (true:사용/ false:사용하지 않음)
 		//bSkipXssFilter : true,		// client-side xss filter 무시 여부 (true:사용하지 않음 / 그외:사용)
 		//aAdditionalFontList : [["MS UI Gothic", "MS UI Gothic"], ["Comic Sans MS", "Comic Sans MS"],["TEST","TEST"]],	// 추가 글꼴 목록
@@ -810,37 +860,14 @@ if(window.frameElement){
 		}
 	});
 	
-	oEditor.run({
+	oEditor2.run({
 		fnOnAppReady: function(){
 			//예제 코드
 			//oEditor.exec("PASTE_HTML", ["로딩이 완료된 후에 본문에 삽입되는 text입니다."]);
 		}
 	});
-	
-	function pasteHTML() {
-		var sHTML = "<span style='color:#FF0000;'>이미지도 같은 방식으로 삽입합니다.<\/span>";
-		oEditor.exec("PASTE_HTML", [sHTML]);
 	}
-	
-	function showHTML() {
-		var sHTML = oEditor.getIR();
-		alert(sHTML);
-	}
-	
-	function submitContents() {
-		oEditor.exec("UPDATE_CONTENTS_FIELD");	// 에디터의 내용이 textarea에 적용됩니다.
-	
-		// 에디터의 내용에 대한 값 검증은 이곳에서 document.getElementById("ir1").value를 이용해서 처리하면 됩니다.
-		jindo.$("ir1").form.submit();
-	}
-	
-	function setDefaultFont() {
-		var sDefaultFont = '궁서';
-		var nFontSize = 24;
-		oEditor.setDefaultFont(sDefaultFont, nFontSize);
-	}
-}
-</script>
-<!--Example End-->
+	</script>
+	<!--Example End-->
 </body>
 </html>

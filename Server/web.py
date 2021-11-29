@@ -22,10 +22,20 @@ import sys
 
 log = logging.getLogger(__name__)
 
-#@app.route("/index.html")
-def hello():
+@app.route("/note/store", methods = ['POST'])
+def store():
+    """
+    https://stackoverflow.com/questions/10434599/get-the-data-received-in-a-flask-request
+    
+    How to use json object
+    https://www.programcreek.com/python/example/64945/flask.request.get_json
+    """
+    data = request.get_json(True)
+
+
     #return render_template('index.html', rand=random.randint(1, 10000000))
-    return "aaaa"
+    resp = jsonify(success=True)
+    return resp
 
 @app.route('/media/<path:path>')
 def media_file(path):

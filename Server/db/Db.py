@@ -5,10 +5,13 @@ Created on Apr 9, 2014
 """
 
 import collections
+import os
 import sqlite3 as lite
 import sys
 import time
 from threading import Lock, Thread
+import hashlib
+import zlib
 
 from Util.Format import ExceptionFmt
 
@@ -24,6 +27,8 @@ execute parameter SUBSTITION PROBLEM
 http://stackoverflow.com/questions/228912/sqlite-parameter-substitution-problem
 
 """
+
+NOTE_DB = "note.db"
 
 PAGE_TYPE_A = 0
 PAGE_TYPE_B = 1
@@ -66,6 +71,9 @@ class Db(object):
         self.open()
 
     def open(self):
+        import os
+        cwd = os.getcwd()
+
         if self.isOpen:
             return
 
@@ -78,7 +86,6 @@ class Db(object):
         self.conn.row_factory = dict_factory
 
         if self.tableExists("env") == False:
-            self.createEnvTable()
             self.createTable()
 
         self.isOpen = True
@@ -91,12 +98,14 @@ class Db(object):
         self.conn.close()
         self.isOpen = False
 
+    def reset(self):
+        self.close()
+        os.remove(NOTE_DB)
+        self.open()
+
     def tableExists(self, table):
         cur = self.conn.cursor()
-        cur.execute(
-            "select count(*) as cnt from sqlite_master where type='table' and name='%s'"
-            % table
-        )
+        cur.execute("select count(*) as cnt from sqlite_master where type='table' and name='%s'" % table)
         row = cur.fetchone()
 
         if row == None or row["cnt"] == 0:
@@ -104,12 +113,6 @@ class Db(object):
 
         return True
 
-    def createEnvTable(self):
-        cur = self.conn.cursor()
-        cur.execute(
-            "CREATE TABLE env(key varchar(255) PRIMARY KEY, value varchar(255));"
-        )
-        self.conn.commit()
 
     def createTable(self):
         # if one of tables exist, skip
@@ -124,16 +127,17 @@ class Db(object):
         id : unique identifier
         seqId : ordered id.  It should be always recalculated when user data changes data order
 
+        note: NO page_a_id, page_b_id, 
+                page_a_id INTEGER,
+                page_b_id INTEGER
+
         """
 
-        cur.executescript(
-            """
+        cur.executescript("""
             CREATE TABLE note(
                 note_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 seq INTEGER,
-                mtime INTEGER,
-                page_a_id INTEGER,
-                page_b_id INTEGER
+                mtime INTEGER
             );
             CREATE INDEX IDX_NOTE_SEQ on note(seq);
 
@@ -142,6 +146,8 @@ class Db(object):
                 note_id INTEGER,
                 type CHAR, -- page-a?  page-b?
                 mtime INTEGER,
+                size INTEGER,
+                md5 CHAR(32),
                 compressed CHAR,
                 content BLOB,
                 UNIQUE(note_id, type),
@@ -150,7 +156,7 @@ class Db(object):
             CREATE VIRTUAL TABLE page_text USING fts4(note_id, page_id, content);
 
             CREATE TABLE edge(
-                a INTEGER,
+                a INTEGER, 
                 b INTEGER,
                 UNIQUE(a, b),
                 FOREIGN KEY(a) REFERENCES note(note_id) ON DELETE CASCADE,
@@ -213,8 +219,7 @@ class Db(object):
                 UNIQUE(key, value)
             );
 
-        """
-        )
+        """)
 
         self.conn.commit()
 
@@ -230,8 +235,7 @@ class Db(object):
 
     def resetTables(self, resetAll=False):
         cur = self.conn.cursor()
-        cur.executescript(
-            """
+        cur.executescript("""
             DROP TABLE IF EXISTS note;
             DROP TABLE IF EXISTS page;
             DROP TABLE IF EXISTS page_text;
@@ -240,16 +244,16 @@ class Db(object):
             DROP TABLE IF EXISTS note_property;
             DROP TABLE IF EXISTS tag;
             DROP TABLE IF EXISTS note_tag;
-        """
-        )
+            DROP TABLE IF EXISTS note_kv;
+        """)
 
         if resetAll == True:
-            cur.executescript(
-                """
+            cur.executescript("""
                 DROP TABLE IF EXISTS env;
-            """
-            )
+            """)
         self.conn.commit()
+        self.close()
+        self.open()
 
     def query_one(self, q):
         cur = self.conn.cursor()
@@ -261,6 +265,9 @@ class Db(object):
         cur.execute(q)
         return cur.fetchall()
 
+    def commit(self):
+        self.conn.commit()
+
     def execute(self, q, commit=True):
         cur = self.conn.cursor()
         res = cur.execute(q)
@@ -270,11 +277,11 @@ class Db(object):
         return (res.rowcount, res.lastrowid)
 
     def get_new_seq_id(self, table_name):
-        res = self.query_one(
-            f"SELECT seq FROM sqlite_sequence WHERE name='{table_name}'"
-        )
+        res = self.query_one(f"SELECT seq FROM sqlite_sequence WHERE name='{table_name}'")
+        if not res:
+            return 0
 
-        return int(res["seq"]) + 1
+        return int(res["seq"])
 
     def reset_auto_inc_start(self, table_name):
         self.execute(f"UPDATE FROM sqlite_sequence SET seq=0 WHERE name='{table_name}'")
@@ -307,11 +314,55 @@ class Db(object):
         with lock:
             return self.execute(query, commit)
 
+    def insert_bulk(self, table, columns, rows, commit=True):
+        col = ""
+        val = ""
+
+        for c in columns:
+            k = c.replace("'", "''")
+            if not col:
+                col = k
+            else:
+                col = f"{col},{k}"
+
+        s = ""
+        for row in rows:
+            if len(row) != len(columns):
+                raise ValueError("Column mismatch")
+
+            val = ""
+            for value in row:
+                if type(value) is str:
+                    v = value.replace("'", "''")
+                    v = "'" + v + "'"
+                else:
+                    v = str(value)
+
+                if not val:
+                    val = "(" + v
+                else:
+                    val = f"{val},{v}"
+
+            val += ")"
+            if s:
+                s += "," + val
+            else:
+                s = val
+
+        query = f"INSERT INTO {table} ({col}) VALUES {s}"
+
+        lock = Lock()
+        with lock:
+            return self.execute(query, commit)
+
     def update(self, table, dict, cond_key=["id", "seqId"], commit=True):
         update = ""
         cond = ""
 
         for key, value in dict.items():
+            if value is None:
+                continue
+
             k = key.replace("'", "''")
 
             if type(value) is str:
@@ -336,10 +387,14 @@ class Db(object):
 
         return self.execute(query, commit)
 
-    def delete(self, table, dict, commit=True):
+
+    def delete_and(self, table, dict, commit=True):
         cond = "TRUE"
 
         for key, value in dict.items():
+            if value is None:
+                continue
+
             k = key.replace("'", "''")
 
             if type(value) is str:
@@ -353,21 +408,43 @@ class Db(object):
         query = f"DELETE FROM {table} WHERE {cond}"
         self.execute(query, commit)
 
+
+    def delete_or(self, table, dict, commit=True):
+        cond = ""
+
+        for key, value in dict.items():
+            if value is None:
+                continue
+
+            k = key.replace("'", "''")
+
+            if type(value) is str:
+                v = value.replace("'", "''")
+                v = "'" + v + "'"
+            else:
+                v = str(value)
+
+            if cond == "":
+                cond =  f"{k}={v}"
+            else:
+                cond = f"{cond} OR {k}={v}"
+
+        query = f"DELETE FROM {table} WHERE {cond}"
+        self.execute(query, commit)
+
+
     #########################################################
     ###### note
     #########################################################
-    def add_note(self, seq=None, page_a=None, page_b=None):
+    def create_note(self, seq, pages):
         d = {"seq": 1, "mtime": time.time()}
 
         _, note_id = self.insert("note", d, False)
         if not seq:
             d["seq"] = note_id
 
-        if page_a:
-            d["page_a_id"] = self.add_page(note_id, page_a, PAGE_TYPE_A)
-
-        if page_b:
-            d["page_b_id"] = self.add_page(note_id, page_b, PAGE_TYPE_B)
+        for p in pages:
+            self.create_page(note_id, p)
 
         d["note_id"] = note_id
         # now commit
@@ -376,119 +453,176 @@ class Db(object):
         return note_id
 
     def delete_note(self, note_id):
-        self.delete("note", {"note_id": note_id})
+        self.delete_and("note", {"note_id": note_id})
 
     def get_note(self, note_id):
         res = {}
-        # note
-        q = f"SELECT * FROM note WHERE note_id={note_id}"
-        note = self.query_all(q) 
-
         # pages
-        pages = self.pages([note["page_a_id"], note["page_b_id"]])
-        for p in pages:
-            if p["type"] == 0: # page a
-                res["page_a"] = p
-            else:
-                res["page_b"] = p
+        self.get_pages(note_id, res)
 
         # edge
-        res["edge"] = self.get_edges(note_id)
+        res["edge"] = self.get_note_edges(note_id)
 
         # property
-        res["property"] = self.get_property(note_id)
+        res["property"] = self.get_property()
         res["note_property"] = self.get_note_property(note_id)
 
         # tag
-        res["tag"] = self.get_tag(note_id)
+        res["tag"] = self.get_tag()
         res["note_tag"] = self.get_note_tag(note_id)
 
         # kv
         res["kv"] = self.get_note_kv(note_id)
 
-        return kv   
+        return res   
 
     #########################################################
     ###### page
     #########################################################
-    def add_page(self, note_id, content, type):
-        d = {"note_id": note_id, "type": type, "mtime": time.time()}
+    def create_page(self, note_id, page):
+        d = {"note_id": note_id, "type": page["type"], "mtime": time.time()}
+
+        content = page["content"]
+        d["size"] = len(content)
+        d["md5"] = hashlib.md5(content.encode('utf-8')).hexdigest()
 
         d["compressed"] = 0
         d["content"] = content
+        # d["compressed"] = 1
+        # d["content"] = zlib.compress(content)
         _, page_id = self.insert("page", d, False)
 
         return page_id
 
-    # no need delete_page.   
-    def get_pages(self, page_ids):
-        t = str(page_ids)[1:-1]
-        q = f"SELECT * FROM page WHERE page_id IN ({t})"
-        res = self.query_all(q) 
-        if res["compressed"] == 1:
-            raise "Not supported"
+    def update_page(self, page_id, page):
+        d = {"page_id": page_id, "mtime": time.time()}
 
-        return res
+        content = page["content"]
+        d["compressed"] = 0
+        d["size"] = len(content)
+        d["md5"] = hashlib.md5(content.encode('utf-8')).hexdigest()
+        d["content"] = zlib.compress(content)
+        self.update("page", d, ["page_id"])
+
+        return
+
+    # no need delete_page.
+    def get_pages(self, note_id, res):
+        q = f"""
+            SELECT a.note_id,
+                   seq,
+                   a.mtime AS note_mtime,
+                   page_id,
+                   type,
+                   b.mtime AS page_mtime,
+                   size,
+                   md5,
+                   compressed,
+                   content
+              FROM page a
+                   JOIN
+                   note b ON a.note_id = b.note_id
+               WHERE b.note_id = {note_id};
+        """
+        pages = self.query_all(q) 
+        for p in pages:
+            if p["compressed"] == 1:
+                p["content"] = zlib.decompress(res["content"]) 
+            res["page_" + p["type"]] = p
+
+        return
 
     #########################################################
-    ###### note
+    ###### edge. connect pages. NOT DAG.  
     #########################################################
-    def add_edge(self, note_id_a, note_id_b):
-        d = {"a": note_id_a, "b": note_id_b}
-        self.insert("edge", d)
+    def update_note_edge(self, note_id, dst, commit=True):
+        # delete a -> b or b -> a.
 
-    def delete_edge(self, note_id_a, note_id_b):
-        d = {"a": note_id_a, "b": note_id_b}
-        self.delete("edge", d)
+        d = {"a": note_id, "b": note_id}
+        self.delete_or("edge", d, False)
 
-    def get_edges(self, note_id):
+        if not dst:
+            self.commit()
+            return
+
+        col = ["a", "b"]
+        rows = []
+
+        for v in dst: 
+            # connect both sides. 
+            rows.append((note_id, v))
+            rows.append((v, note_id))
+
+        self.insert_bulk("edge", col, rows, commit)
+
+
+    def get_note_edges(self, note_id):
         q = f"SELECT b FROM edge WHERE a = {note_id}"
         return self.query_all(q) 
 
     #########################################################
     ###### note
     #########################################################
-    def add_property(self, name, seq=None):
+    def create_property(self, name, seq=None):
         if not seq:
-            seq = self.get_new_seq_id("propety")
+            seq = self.get_new_seq_id("property")
 
         d = {"name": name, "seq": seq}
-        _, id = self.insert("propety", d)
+        _, id = self.insert("property", d)
         return id
 
-    def delete_property(self, name):
-        if not name:
+    def delete_property_by_id(self, property_id):
+        if not property_id:
             return
 
-        self.delete("property", {"name": name})
+        self.delete_and("property", {"property_id": property_id})
+
+    def update_property(self, property_id, name):
+        if not id or not name:
+            return
+
+        self.update("property", {"property_id": id, "name": name}, ["property_id"])
+
+    def update_property_all(self, properties, commit=True):
+        self.delete_and("property", {}, False)
+
+        col = ["seq", "name"]
+        rows = []
+        for prop in properties:
+            rows.append((prop["seq"], prop["name"]))
+
+        self.insert_bulk("property", col, rows, commit)
 
     def get_property(self):
-        q = f"SELECT * FROM property"
+        q = f"SELECT * FROM property ORDER BY seq"
         return self.query_all(q) 
 
     #########################################################
     ###### note
     #########################################################
-    def add_note_property(self, note_id, property_id):
-        d = {"note_id": note_id, "property_id": property_id}
+    def update_note_property(self, note_id, property_ids, commit=True):
+        d = {"note_id": note_id}
+        self.delete_and("note_property", d, False)
 
-        _, id = self.insert("note_property", d)
-        return id
+        if not property_ids:
+            self.commit()
+            return
 
-    def delete_note_property(self, note_id, property_id):
-        d = {"note_id": note_id, "property_id": property_id}
+        col = ["note_id", "property_id"]
+        rows = []
+        for id in property_ids:
+            rows.append((note_id, id))
 
-        self.delete("note_property", d)
+        self.insert_bulk("note_property", col, rows, commit)
 
     def get_note_property(self, note_id):
-        q = f""""
-        SELECT b.name FROM note_property a
-        JOIN property b
-        ON a.property_id = b.property_id
-        WHERE
-            a.note_id = {note_id}
-        ORDER BY
-            b.seq
+        q = f"""
+        SELECT b.name
+          FROM note_property a
+               JOIN
+               property b ON a.property_id = b.property_id
+         WHERE a.note_id = {note_id}
+         ORDER BY b.seq;
         """
         return self.query_all(q) 
 
@@ -496,7 +630,7 @@ class Db(object):
     #########################################################
     ###### note
     #########################################################
-    def add_tag(self, name, seq=None):
+    def create_tag(self, name, seq=None):
         if not seq:
             seq = self.get_new_seq_id("tag")
 
@@ -504,11 +638,27 @@ class Db(object):
         _, id = self.insert("tag", d)
         return id
 
-    def delete_tag(self, name):
-        if not name:
+    def delete_tag(self, tag_id):
+        if not tag_id:
             return
 
-        self.delete("tag", {"name": name})
+        self.delete_and("tag", {"tag_id": tag_id})
+
+    def update_tag(self, tag_id, name):
+        if not tag_id or not name:
+            return
+
+        self.update("tag", {"tag_id": tag_id, "name": name}, ["tag_id"])
+
+    def update_tag_all(self, tags, commit=True):
+        self.delete_and("tag", {}, False)
+
+        col = ["seq", "name"]
+        rows = []
+        for tag in tags:
+            rows.append((tag["seq"], tag["name"]))
+
+        self.insert_bulk("tag", col, rows, commit)
 
     def get_tag(self):
         q = f"SELECT * FROM tag"
@@ -517,53 +667,60 @@ class Db(object):
     #########################################################
     ###### note
     #########################################################
-    def add_note_tag(self, note_id, tag_id):
-        d = {"note_id": note_id, "tag_id": tag_id}
+    def update_note_tag(self, note_id, tag_ids, commit=True):
+        d = {"note_id": note_id}
+        self.delete_and("note_tag", d, False)
 
-        _, id = self.insert("note_tag", d)
+        if not tag_ids:
+            self.commit()
+            return
 
-    def delete_note_tag(self, note_id, tag_id):
-        d = {"note_id": note_id, "tag_id": tag_id}
+        col = ["note_id", "tag_id"]
+        rows = []
+        for id in tag_ids:
+            rows.append((note_id, id))
 
-        self.delete("note_tag", d)
+        self.insert_bulk("note_tag", col, rows, commit)
 
     def get_note_tag(self, note_id):
-        q = f""""
-        SELECT b.name FROM note_tag a
-        JOIN tag b
-        ON a.tag_id = b.tag_id
-        WHERE
-            a.note_id = {note_id}
-        ORDER BY
-            b.seq
+        q = f"""
+        SELECT b.name
+            FROM note_tag a
+                JOIN
+                tag b ON a.tag_id = b.tag_id
+            WHERE a.note_id = {note_id}
+            ORDER BY b.seq;
         """
         return self.query_all(q) 
 
     #########################################################
-    ###### note
+    ###### note_kv   Not paritial update
     #########################################################
-    def update_note_kv(self, note_id, key, value):
-        d = {"note_id": note_id, "key": key, "value": value}
+    def update_note_kv(self, note_id, kvs, commit=True):
+        # delete 
+        d = {"note_id": note_id}
+        self.delete_and("note_tag", d, False)
 
-        rowcount, _ = self.update("note_kv", d, ["note_id", "key"])
-        if rowcount == 0:
-            self.insert("note_kv", d)
+        if not kvs:
+            self.commit()
+            return
 
-    def delete_node_kv(self, note_id, key):
-        d = {"note_id": note_id, "key": key}
+        # add
+        col = ["note_id", "key", "value"]
+        rows = []
+        for kv in kvs:
+            rows.append((note_id, kv[0], kv[1]))
 
-        self.delete("note_tag", d)
+        self.insert_bulk("note_tag", col, rows, commit)
 
     def get_note_kv(self, note_id):
         q = f"SELECT key,value FROM note_kv WHERE note_id={note_id}"
         return self.query_all(q) 
 
+db = Db(NOTE_DB)
+
 ###################################################################
-
-
 if __name__ == "__main__":
-    db = Db("note.db")
-
     #   db.execute("delete from note")
     #db.add_note(page_a="aaaaa", page_b="bbbbb")
     #db.update_note_kv(2, "k1", "v1")
