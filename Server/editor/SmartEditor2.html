@@ -8,17 +8,6 @@
 	<script type="text/javascript" src="./js/lib/jindo_component.js" charset="utf-8"></script>
 </head>
 <body>
-
-	<div>
-		<button type="button" onclick="submitContents(this)">+</button>
-		<button type="button">-</button>
-		<button type="button" onclick="alert('Hello world!')">&laquo;</button>
-		<button type="button" onclick="alert('Hello world!')">&lsaquo;</button>
-		<button type="button" onclick="alert('Hello world!')">&rsaquo;</button>
-		<button type="button" onclick="alert('Hello world!')">&raquo;</button>
-	</div>
-	<p />
-	<hr />
 	<form action="/note/store" method="post">
 		<textarea name="ir1" id="ir1" rows="10" cols="100" style="width:100%; height:100%; display:none;"></textarea>
 		<!--textarea name="ir1" id="ir1" rows="10" cols="100" style="width:100%; height:412px; min-width:610px; display:none;"></textarea-->
@@ -42,7 +31,13 @@
 			<input type="button" onclick="setDefaultFont();" value="기본 폰트 지정하기 (궁서_24)" />
 		</p>
 	</form>
-
+    <script type="text/javascript">
+        var source = new EventSource('/stream');
+        source.onmessage = function (event) {
+            if (event.data == "reload")
+                window.location.reload();
+        };
+    </script>
 
 	<script type="text/javascript">
         var oEditors = [];

@@ -1,46 +1,101 @@
 from flask import (
-    Flask, 
+    Flask,
     request,
     jsonify,
     send_file,
     render_template,
-    send_from_directory
-    )
+    Response,
+    send_from_directory,
+)
+
 import os.path
 import random
 
-app = Flask(__name__, 
-            static_folder='', 
-            static_url_path='',
-            template_folder='')
+app = Flask(__name__, static_folder="", static_url_path="", template_folder="")
 
 import datetime
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import socket
 import sys
+import time
+import queue
+from dispacher import dispacher
+from NoteException import *
+
 
 log = logging.getLogger(__name__)
 
-@app.route("/note/store", methods = ['POST'])
+g_events = queue.Queue()
+
+@app.route("/fire")
+def fire():
+    global g_events
+
+    g_events.put(1)
+    return "success"
+
+
+@app.route("/stream")
+def stream():
+    def eventStream():
+        global g_events
+
+        while True:
+            if g_events.empty():
+                yield 'data: ""\n\n'
+            else:
+                g_events.get()
+                # wait for source data to be available, then push it
+                yield "data: {}\n\n".format("reload")
+
+            time.sleep(0.5)
+
+    return Response(eventStream(), mimetype="text/event-stream")
+
+
+@app.route("/note/", methods=["POST"])
 def store():
     """
     https://stackoverflow.com/questions/10434599/get-the-data-received-in-a-flask-request
-    
+
     How to use json object
     https://www.programcreek.com/python/example/64945/flask.request.get_json
     """
-    data = request.get_json(True)
+
+    response = {"success": False, "error": ""}
+
+    res = None
+    try:
+        data = request.get_json(True)
+        res = dispacher(data)
+    except InvalidRequest as e:
+        response = {"success": False, "error": str(e)}
+        return jsonify(response), 400
+    except InvalidCommand as e:
+        response = {"success": False, "error": str(e)}
+        return jsonify(response), 404
+    except InternalError as e:
+        response = {"success": False, "error": str(e)}
+        return jsonify(response), 500
+    except Exception as e:
+        response = {"success": False, "error": str(e)}
+        return jsonify(response), 500
+
+    # return render_template('index.html', rand=random.randint(1, 10000000))
+    if not res:
+        response = jsonify(success=True)
+    else:
+        response = jsonify(res)
+
+    return response, 200
 
 
-    #return render_template('index.html', rand=random.randint(1, 10000000))
-    resp = jsonify(success=True)
-    return resp
-
-@app.route('/media/<path:path>')
+@app.route("/media/<path:path>")
 def media_file(path):
-    #dir = os.path.join(config.image_path, path)
+    # dir = os.path.join(config.image_path, path)
     return send_from_directory(config.get("image_path"), path)
+
 
 @app.route("/nextimage")
 def next_image():
@@ -103,9 +158,10 @@ def next_image():
     return s
 
 
-@app.route('/<path:path>')
+@app.route("/<path:path>")
 def static_file(path):
     return app.send_static_file(path)
+
 
 def is_port_used(port):
     try:
@@ -118,19 +174,24 @@ def is_port_used(port):
     s.close()
     return False
 
+
 if __name__ == "__main__":
     if not os.path.exists("log"):
         os.makedirs("log")
-    logging.basicConfig(filename="log\\ss.log", level=logging.DEBUG,
-                    format='%(asctime)s %(name)s.%(funcName)s %(levelname)s %(message)s')
+    logging.basicConfig(
+        filename="log\\ss.log",
+        level=logging.DEBUG,
+        format="%(asctime)s %(name)s.%(funcName)s %(levelname)s %(message)s",
+    )
 
-    formatter = logging.Formatter('%(asctime)s %(name)s.%(funcName)s %(levelname)s %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s %(name)s.%(funcName)s %(levelname)s %(message)s"
+    )
 
     logname = "test"
-    fileHandler = TimedRotatingFileHandler("log\\%s.log" % logname,
-                                            when="d",
-                                            interval=1,
-                                            backupCount=20)
+    fileHandler = TimedRotatingFileHandler(
+        "log\\%s.log" % logname, when="d", interval=1, backupCount=20
+    )
     fileHandler.setFormatter(formatter)
     log.addHandler(fileHandler)
     consoleHandler = logging.StreamHandler()
@@ -142,7 +203,7 @@ if __name__ == "__main__":
         log.error("port is being used.  Quit")
         sys.exit(0)
 
-    app.run(host= '0.0.0.0', port=port, threaded=True)
+    app.run(host="0.0.0.0", port=port, threaded=True)
 
 
 # http://192.168.1.10:5000/media/2009-1/SNC13009.jpg

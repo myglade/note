@@ -79,16 +79,16 @@ client(web javascript) checks it's dirty or not.  If not dirty, skip
  modified, save to db, otherwise skip
 
 {
-    "cmd": "update",
-    "note_id": 1111,
-    "pages": [
+    "cmd": "update_note",
+    "note_id": 1111,  
+    "pages": [      // only need page_id, content
     {
-        "id": 1234,
+        "page_id": 1234,
         "type": "a",
         "content": "xxxxx"
     },
     {
-        "id": 2345,
+        "page_id": 2345,
         "type": "b",
         "content": "yyyyy"
     }
