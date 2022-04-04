@@ -35,6 +35,7 @@ SUBPAGE_TYPE_A = 0
 SUBPAGE_TYPE_B = 1
 SEQ_INC = 100
 
+
 def dict_factory(cursor, row):
     d = {}
     for idx, col in enumerate(cursor.description):
@@ -480,14 +481,26 @@ class Db(object):
         self.update("section", {"section_id": id, "name": name}, ["section_id"])
 
     def update_section_all(self, sections, commit=True):
-        self.delete_and("section", {}, False)
+        cur = self.get_section()
 
-        col = ["seq", "name"]
-        rows = []
-        for section in sections:
-            rows.append((section["seq"], section["name"]))
+        cur_map = {}
+        for p in cur:
+            cur_map[p["section_id"]] = p
 
-        self.insert_bulk("section", col, rows, commit)
+        new_map = {}
+        for p in sections:
+            new_map[p["section_id"]] = p
+            if p["section_id"] not in cur_map:
+                self.insert("section", p, False)
+            else:
+                self.update("section", p, ["section_id"], False)
+
+        for p in cur:
+            if p["section_id"] not in new_map:
+                self.delete_or("section", {"section_id": p["section_id"]}, False)
+
+        self.commit()
+
 
     def get_section(self):
         q = f"SELECT * FROM section ORDER BY seq"
@@ -716,14 +729,25 @@ class Db(object):
         self.update("property", {"property_id": id, "name": name}, ["property_id"])
 
     def update_property_all(self, properties, commit=True):
-        self.delete_and("property", {}, False)
+        cur = self.get_property()
 
-        col = ["seq", "name"]
-        rows = []
-        for prop in properties:
-            rows.append((prop["seq"], prop["name"]))
+        cur_map = {}
+        for p in cur:
+            cur_map[p["property_id"]] = p
 
-        self.insert_bulk("property", col, rows, commit)
+        new_map = {}
+        for p in properties:
+            new_map[p["property_id"]] = p
+            if p["property_id"] not in cur_map:
+                self.insert("property", p, False)
+            else:
+                self.update("property", p, ["property_id"], False)
+
+        for p in cur:
+            if p["property_id"] not in new_map:
+                self.delete_or("property", {"property_id": p["property_id"]}, False)
+
+        self.commit()
 
     def get_property(self):
         q = f"SELECT * FROM property ORDER BY seq"
@@ -788,14 +812,25 @@ class Db(object):
         self.update("tag", {"tag_id": tag_id, "name": name}, ["tag_id"])
 
     def update_tag_all(self, tags, commit=True):
-        self.delete_and("tag", {}, False)
+        cur = self.get_tag()
 
-        col = ["seq", "name"]
-        rows = []
-        for tag in tags:
-            rows.append((tag["seq"], tag["name"]))
+        cur_map = {}
+        for p in cur:
+            cur_map[p["tag_id"]] = p
 
-        self.insert_bulk("tag", col, rows, commit)
+        new_map = {}
+        for p in tags:
+            new_map[p["tag_id"]] = p
+            if p["tag_id"] not in cur_map:
+                self.insert("tag", p, False)
+            else:
+                self.update("tag", p, ["tag_id"], False)
+
+        for p in cur:
+            if p["tag_id"] not in new_map:
+                self.delete_or("tag", {"tag_id": p["tag_id"]}, False)
+
+        self.commit()
 
     def get_tag(self):
         q = f"SELECT * FROM tag"

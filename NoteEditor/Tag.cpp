@@ -208,3 +208,11 @@ void Tag::OnLbnSelchangeList()
 	}
 
 }
+
+
+void Tag::OnOK()
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+	CResizableDialog::OnOK();
+}

@@ -6,6 +6,7 @@
 #include "afxdialogex.h"
 #include "Section.h"
 #include "Input.h"
+#include "util.h"
 
 // Section dialog
 
@@ -207,4 +208,13 @@ void Section::OnLbnSelchangeList()
 		m_move_down_bt.EnableWindow(FALSE);
 	}
 
+}
+
+
+
+void Section::OnOK()
+{
+	json j;
+
+	CResizableDialog::OnOK();
 }

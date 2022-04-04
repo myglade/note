@@ -5,6 +5,8 @@
 
 #include "json.hpp"
 
+using json = nlohmann::json;
+
 const std::string SERVER_URL = "http://localhost:5000/note/";
 
 inline void MsgBox(const std::string& msg) {

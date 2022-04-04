@@ -35,4 +35,5 @@ public:
 	CButton m_rename_bt;
 	CButton m_move_up_bt;
 	CButton m_move_down_bt;
+	virtual void OnOK();
 };
