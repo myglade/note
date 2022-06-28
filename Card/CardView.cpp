@@ -187,6 +187,8 @@ BEGIN_MESSAGE_MAP(CCardView, CFormView)
     ON_COMMAND(ID_EDIT_EXPORTTOHTML, &CCardView::OnEditExporttohtml)
     ON_COMMAND(IDC_PUSH_FOR_SYNC, &CCardView::OnPushForSync)
     ON_UPDATE_COMMAND_UI(IDC_PUSH_FOR_SYNC, &CCardView::OnUpdatePushForSync)
+	ON_COMMAND(ID_VIEW_COPY_URL, &CCardView::OnViewCopyUrl)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_COPY_URL, &CCardView::OnUpdateViewUrl)
 END_MESSAGE_MAP()
 
 // CCardView construction/destruction
@@ -1732,6 +1734,30 @@ void CCardView::OnUpdateViewUrl(CCmdUI *pCmdUI)
 }
 
 
+void CCardView::OnViewCopyUrl()
+{
+	if (m_db.GetCurDb() == NULL)
+		return;
+
+	auto id = m_db.GetCurId();
+	CString	section;
+
+	auto i = m_section->GetCurSel();
+	if (i >= 0)
+		m_section->GetLBText(i, section);
+
+	CString summary = m_db.GetCurKeyAsText();
+	int position = 0;
+	CString title = summary.Tokenize("\n", position);
+
+	CString s;
+	CString url = GetEnv(PROFILE_SECTION, URL, "http://localhost:9999/db/query2");
+
+	s.Format("%s\t%s?type=2&sec=%s&id=%s\tcard:sec=%s&id=%s", title, url, section, id, section, id);
+	toClipboard(s);
+}
+
+
 void CCardView::UpdateKeyListView()
 {
 	if (m_keyListView == NULL)
@@ -1893,3 +1919,4 @@ void CCardView::OnUpdatePushForSync(CCmdUI *pCmdUI)
 {
     pCmdUI->Enable(m_db.HasPushList());
 }
+

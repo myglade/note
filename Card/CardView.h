@@ -238,6 +238,7 @@ public:
     afx_msg void OnPushForSync();
     afx_msg void OnUpdatePushForSync(CCmdUI *pCmdUI);
     CButton m_syncButton;
+	afx_msg void OnViewCopyUrl();
 };
 
 #ifndef _DEBUG  // debug version in CardView.cpp

@@ -109,6 +109,7 @@ BEGIN
     BUTTON      ID_OR_TAG_HOLDER
     BUTTON      ID_VIEW_BOOKMARKMODE
     BUTTON      ID_VIEW_URL
+    BUTTON      ID_VIEW_COPY_URL
 END
 
 
@@ -163,7 +164,8 @@ BEGIN
         MENUITEM "ReadOnly Mode",               ID_VIEW_READONLYMODE
         MENUITEM "Test Mode",                   ID_VIEW_TESTMODE
         MENUITEM SEPARATOR
-        MENUITEM "Copy URL",                    ID_VIEW_URL
+        MENUITEM "Open Web",                    ID_VIEW_URL
+        MENUITEM "Copy Url",                    ID_VIEW_COPY_URL
     END
     POPUP "Setting"
     BEGIN

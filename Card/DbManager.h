@@ -103,6 +103,7 @@ public:
 	void GetCurContent(CString &str) ;
 	RtfImageList &GetCurKeyImageList();
 	RtfImageList &GetCurContentImageList();
+	CString GetCurKeyAsText();
 
     void SetBookmark(BOOL set);
 	void SetSort(LPCTSTR sort);

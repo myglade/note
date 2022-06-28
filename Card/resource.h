@@ -123,6 +123,9 @@
 #define ID_VIEW_URL                     32839
 #define ID_VIEW_COPYURL                 32840
 #define ID_EDIT_PUSHFORSYNC             32841
+#define ID_VIEW_COPY_URL                32842
+#define ID_VIEW_CP_URL                  32842
+#define ID_VIEW_COPYURL32843            32843
 #define ID_REQUEST                      33333
 
 // Next default values for new objects
@@ -130,7 +133,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        144
-#define _APS_NEXT_COMMAND_VALUE         32842
+#define _APS_NEXT_COMMAND_VALUE         32844
 #define _APS_NEXT_CONTROL_VALUE         1031
 #define _APS_NEXT_SYMED_VALUE           106
 #endif

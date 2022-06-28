@@ -137,6 +137,7 @@ public:
 	CUIntArray &GetCurItemTag() { return m_cur_itemTag; }
 	RtfImageList &GetCurKeyImageList() { return m_cur_keyImageList; }
 	RtfImageList &GetCurContentImageList() { return m_cur_contentImageList; }
+	CString GetCurKeyAsText();
 
 	static int GetVersion(LPCTSTR file);
 	int GetItemIndex() { return m_index; }

@@ -2236,6 +2236,23 @@ int CDb::Query(StringMapArray &result, LPCTSTR id, BOOL useCategory, CString sor
 	return total;
 }
 
+CString CDb::GetCurKeyAsText()
+{
+	CTextListener		listener(100, "\n", false);
+	CRtfParser			parser;
+
+	if (parser.OpenFromString(m_cur_key, NULL) == -1)
+	{
+		return "";
+	}
+	if (parser.Parse(&listener, 0) == -1)
+	{
+		return "";
+	}
+	
+	return listener.m_text;
+}
+
 int CDb::GetSummary(StringMapArray &result, BOOL categoryName,
                     CString lineFeed, bool stressHead)
 {

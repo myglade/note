@@ -1417,6 +1417,13 @@ void CDbManager::GetCurKey(CString &str)
 	return;
 }
 
+
+CString CDbManager::GetCurKeyAsText()
+{
+	return m_curDb->db->GetCurKeyAsText();
+
+}
+
 void CDbManager::GetCurContent(CString &str) 
 {
 	RtfImageList &	list = m_curDb->db->GetCurContentImageList();
