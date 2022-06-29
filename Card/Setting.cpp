@@ -20,7 +20,8 @@ CSetting::CSetting(CWnd* pParent /*=NULL*/)
 	, m_webServer(FALSE)
 	, m_workingFolder(_T(""))
 	, m_cacheSize(0)
-    , m_hideTags(_T(""))
+	, m_url(_T(""))
+	, m_hideTags(_T(""))
     , m_allowImmediatePush(FALSE)
     , m_pushInterval(0)
 {
@@ -52,6 +53,7 @@ void CSetting::DoDataExchange(CDataExchange* pDX)
     DDX_Text(pDX, IDC_EDIT8, m_hideTags);
     DDX_Check(pDX, IDC_CHECK4, m_allowImmediatePush);
     DDX_Text(pDX, IDC_EDIT9, m_pushInterval);
+	DDX_Text(pDX, IDC_EDIT10, m_url);
 	DDV_MinMaxUInt(pDX, m_pushInterval, 0, UINT_MAX);
 }
 
@@ -87,7 +89,7 @@ BOOL CSetting::OnInitDialog()
 	m_port = GetEnv(PROFILE_SECTION, WEBSERVER_PORT, 9999);
 	m_cacheSize = GetEnv(PROFILE_SECTION, CACHE_SIZE, 30);
 
-//    m_url = GetEnv(PROFILE_SECTION, URL, "http://localhost:9999/db/query2");
+    m_url = GetEnv(PROFILE_SECTION, URL, "http://localhost:9999/db/query2");
     m_hideTags = GetEnv(PROFILE_SECTION, HIDE_TAGS, "");
     m_pushInterval = GetEnv(PROFILE_SECTION, PUSH_INTERVAL, 300);
     m_allowImmediatePush = GetEnv(PROFILE_SECTION, ALLOW_IMMEDIATE_PUSH, 0);
@@ -270,7 +272,7 @@ void CSetting::OnOK()
 	}
 	SetEnv(PROFILE_SECTION, CACHE_SIZE, m_cacheSize);
 
-//    SetEnv(PROFILE_SECTION, URL, m_url);
+    SetEnv(PROFILE_SECTION, URL, m_url);
     SetEnv(PROFILE_SECTION, HIDE_TAGS, m_hideTags);
 
     SetEnv(PROFILE_SECTION, PUSH_INTERVAL, m_pushInterval);

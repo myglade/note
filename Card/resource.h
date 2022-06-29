@@ -70,6 +70,7 @@
 #define IDC_STRING                      1030
 #define IDC_CHECK4                      1030
 #define IDC_EDIT9                       1031
+#define IDC_EDIT10                      1032
 #define ID_FILE_SAVE_IOS                32785
 #define ID_VIEW_PREV                    32786
 #define ID_VIEW_NEXT                    32787
@@ -124,7 +125,6 @@
 #define ID_VIEW_COPYURL                 32840
 #define ID_EDIT_PUSHFORSYNC             32841
 #define ID_VIEW_COPY_URL                32842
-#define ID_VIEW_CP_URL                  32842
 #define ID_VIEW_COPYURL32843            32843
 #define ID_REQUEST                      33333
 
