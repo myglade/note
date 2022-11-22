@@ -10,33 +10,33 @@
 <STYLE TYPE="text/css"><!--
 @font-face{  
     font-family: Andale Mono;  
-    src: url('/fonts/andalemo.ttf') format('truetype');  
+    src: url('/db/fonts/andalemo.ttf') format('truetype');  
 }
 
 @font-face{  
     font-family: Courier New;  
-    src: local('cour'), url('/fonts/cour.ttf') format('truetype');  
+    src: local('cour'), url('/db/fonts/cour.ttf') format('truetype');  
 }
 
 @font-face{  
     font-family: Consolas;  
-    src: local('consolas'), url('/fonts/consola.ttf') format('truetype');  
+    src: local('consolas'), url('/db/fonts/consola.ttf') format('truetype');  
 }
 
 /*
 @font-face{  
     font-family: Consolas;  
-    src: local('consolas'), url('/fonts/consola.ttf') format('truetype');  
+    src: local('consolas'), url('/db/fonts/consola.ttf') format('truetype');  
 }
 
 @font-face{  
     font-family: Andale Mono;  
-    src: url('/fonts/andalemo.ttf') format('truetype');  
+    src: url('/db/fonts/andalemo.ttf') format('truetype');  
 }
 
 @font-face{  
     font-family: Courier New1;  
-    src: local('cour'), url('/fonts/cour.ttf') format('truetype');  
+    src: local('cour'), url('/db/fonts/cour.ttf') format('truetype');  
 }
 */
 
@@ -122,11 +122,11 @@ function LoadFont()
 
 	if (OSName == "Linux") 
 	{
-		ApplyFontface("Consolas", "monospace", "/fonts/consola.ttf", "truetype");
+		ApplyFontface("Consolas", "monospace", "/db/fonts/consola.ttf", "truetype");
 	}
 	else
 	{
-		ApplyFontface("Consolas", "consolas", "/fonts/consola.ttf", "truetype");
+		ApplyFontface("Consolas", "consolas", "/db/fonts/consola.ttf", "truetype");
 	}
 }
 
@@ -170,7 +170,7 @@ String.prototype.format = function() {
     return s;
 };
 
-function createCookie(name,value,days) {
+function setCookie(name,value,days) {
     if (days) {
         var date = new Date();
         date.setTime(date.getTime()+(days*24*60*60*1000));
@@ -192,7 +192,7 @@ function readCookie(name, def) {
 }
 
 function eraseCookie(name) {
-    createCookie(name,"",-1);
+    setCookie(name,"",-1);
 }
 
 var QueryString = function () {
@@ -226,27 +226,37 @@ function saveTag()
 		tag_name = "tag_" + item["id"];
         if (getElementById(tag_name).checked)
         {
-			createCookie(tag_name, 1, 3650);
+			setCookie(tag_name, 1, 3650);
         }
 		else
 		{
-			createCookie(tag_name, 0, 3650);
+			setCookie(tag_name, 0, 3650);
 		}
     }
-
+	
+	setCookie("user1Min", getElementById("user1Min").value, 3650);
+	setCookie("user1Max", getElementById("user1Max").value, 3650);
+	setCookie("user2Min", getElementById("user2Min").value, 3650);
+	setCookie("user2Max", getElementById("user2Max").value, 3650);
+	
 	reloadPage();
 }
 
 function reloadPage()
 {
+	setCookie("user1Min", getElementById("user1Min").value, 3650);
+	setCookie("user1Max", getElementById("user1Max").value, 3650);
+	setCookie("user2Min", getElementById("user2Min").value, 3650);
+	setCookie("user2Max", getElementById("user2Max").value, 3650);
+
     var s = getElementById('category');
     if (s.selectedIndex != -1)
         gCategory = s[s.selectedIndex].value;
     else
         gCategory = "-1";
 
-	createCookie("category", gCategory, 3650);
-	createCookie("section", gSection, 3650);
+	setCookie("category", gCategory, 3650);
+	setCookie("section", gSection, 3650);
 	
     if (getElementById("bookmark").checked)
         gQueryBookmark = "1";
@@ -295,8 +305,8 @@ function zoom()
     var s = getElementById('hzoom');
 
     getElementById("summary").style.zoom = s[s.selectedIndex].value + "%";
-	createCookie("hzoom", s.selectedIndex, 3650);
-	createCookie("hzoom_v", s[s.selectedIndex].value + "%", 3650);
+	setCookie("hzoom", s.selectedIndex, 3650);
+	setCookie("hzoom_v", s[s.selectedIndex].value + "%", 3650);
 }
 
 function ChangeSection(e)
@@ -429,6 +439,11 @@ function load()
  	var s = getElementById('hzoom');
 	s.selectedIndex = readCookie("hzoom", 0);
 	
+	gUser1Min = +readCookie("user1Min", 0);
+	gUser1Max = +readCookie("user1Max", 100);
+	gUser2Min = +readCookie("user2Min", 0);
+	gUser2Max = +readCookie("user2Max", 100);
+
 	getElementById("user1Min").value = gUser1Min;
 	getElementById("user1Max").value = gUser1Max;
 	getElementById("user2Min").value = gUser2Min;
@@ -500,11 +515,11 @@ function OrSearch()
 {
     if (getElementById("smode").checked)
 	{
-		createCookie("smode", 1, 3650);
+		setCookie("smode", 1, 3650);
 	}
 	else
 	{
-		createCookie("smode", 0, 3650);
+		setCookie("smode", 0, 3650);
 	}
 	reloadPage();
 }
@@ -542,7 +557,7 @@ function browseMode()
 		right.src = src;
 	}
 
- 	createCookie("bmode", gBMode, 3650);
+ 	setCookie("bmode", gBMode, 3650);
     reloadPage();
 }
 
@@ -553,7 +568,7 @@ function hideTag()
 	else
 		hidetag = 0;
 		
-	createCookie("hidetag", hidetag, 3650);
+	setCookie("hidetag", hidetag, 3650);
     reloadPage();    
 }
 
@@ -632,6 +647,13 @@ function DisplaySummary(str, url)
     if (+obj["total"] > 0)
     {
         summary = obj["summary"];
+			
+		s = "   <tr>\r\n" + 
+			"{3}" +
+			"       <td id='s{5}'>{4}</td>" +
+			"       <td style='text-align:left;'><a href='{0}&start={1}' onclick='return clickContent(this);'>{2}</a></td>\r\n" +
+			"   </tr>\r\n";
+				
         for(var i = 0; i < summary.length; i++)
         {
 			if (gNumbering == 1)
@@ -642,12 +664,7 @@ function DisplaySummary(str, url)
 			{
 				num = "";
 			}
-			
-            s = "   <tr>\r\n" + 
-                "{3}" +
-                "       <td id='s{5}'>{4}</td>" +
-                "       <td style='text-align:left;'><a href='{0}&start={1}' onclick='return clickContent(this);'>{2}</a></td>\r\n" +
-                "   </tr>\r\n";
+
                 
             e += s.format(url, i + 1, summary[i]["key"], num, summary[i]["bookmark"], i+1);
 				 

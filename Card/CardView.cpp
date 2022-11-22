@@ -1749,11 +1749,22 @@ void CCardView::OnViewCopyUrl()
 	CString summary = m_db.GetCurKeyAsText();
 	int position = 0;
 	CString title = summary.Tokenize("\n", position);
+	
+	int start = summary.Find(_T("https://leetcode.com/problems/"));
+	CString leet = _T("");
+	if (start >= 0) {
+		int end = start;
+		while (end < summary.GetLength()) {
+			if (summary[end] == ' ' || summary[end] == '\\r' || summary[end] == '\\n')
+				leet = summary.Mid(start, end - start);
 
+			end++;
+		}
+	}
 	CString s;
 	CString url = GetEnv(PROFILE_SECTION, URL, "http://localhost:9999/db/query2");
 
-	s.Format("%s\t%s?type=2&sec=%s&id=%s\tcard:sec=%s&id=%s", title, url, section, id, section, id);
+	s.Format("%s\t%s\t%s?type=2&sec=%s&id=%s\tcard:sec=%s&id=%s", title, leet, url, section, id, section, id);
 	toClipboard(s);
 }
 

@@ -70,6 +70,7 @@
 #define IDC_STRING                      1030
 #define IDC_CHECK4                      1030
 #define IDC_EDIT9                       1031
+#define IDC_EDIT10                      1032
 #define ID_FILE_SAVE_IOS                32785
 #define ID_VIEW_PREV                    32786
 #define ID_VIEW_NEXT                    32787
@@ -123,6 +124,8 @@
 #define ID_VIEW_URL                     32839
 #define ID_VIEW_COPYURL                 32840
 #define ID_EDIT_PUSHFORSYNC             32841
+#define ID_VIEW_COPY_URL                32842
+#define ID_VIEW_COPYURL32843            32843
 #define ID_REQUEST                      33333
 
 // Next default values for new objects
@@ -130,7 +133,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        144
-#define _APS_NEXT_COMMAND_VALUE         32842
+#define _APS_NEXT_COMMAND_VALUE         32844
 #define _APS_NEXT_CONTROL_VALUE         1031
 #define _APS_NEXT_SYMED_VALUE           106
 #endif

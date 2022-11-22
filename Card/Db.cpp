@@ -2238,7 +2238,7 @@ int CDb::Query(StringMapArray &result, LPCTSTR id, BOOL useCategory, CString sor
 
 CString CDb::GetCurKeyAsText()
 {
-	CTextListener		listener(100, "\n", false);
+	CTextListener		listener(100000, "\n", false);
 	CRtfParser			parser;
 
 	if (parser.OpenFromString(m_cur_key, NULL) == -1)

@@ -11,33 +11,33 @@
         <!--
         @font-face {
             font-family: Andale Mono;
-            src: url('/fonts/andalemo.ttf') format('truetype');
+            src: url('/db/fonts/andalemo.ttf') format('truetype');
         }
 
         @font-face {
             font-family: Courier New;
-            src: local('cour'), url('/fonts/cour.ttf') format('truetype');
+            src: local('cour'), url('/db/fonts/cour.ttf') format('truetype');
         }
 
         @font-face {
             font-family: Consolas;
-            src: local('consolas'), url('/fonts/consola.ttf') format('truetype');
+            src: local('consolas'), url('/db/fonts/consola.ttf') format('truetype');
         }
 
         /*
         @font-face{
             font-family: Consolas;
-            src: local('consolas'), url('/fonts/consola.ttf') format('truetype');
+            src: local('consolas'), url('/db/fonts/consola.ttf') format('truetype');
         }
 
         @font-face{
             font-family: Andale Mono;
-            src: url('/fonts/andalemo.ttf') format('truetype');
+            src: url('/db/fonts/andalemo.ttf') format('truetype');
         }
 
         @font-face{
             font-family: Courier New1;
-            src: local('cour'), url('/fonts/cour.ttf') format('truetype');
+            src: local('cour'), url('/db/fonts/cour.ttf') format('truetype');
         }
         */
 
@@ -118,10 +118,10 @@
             if (navigator.appVersion.indexOf("Linux") != -1) OSName = "Linux";
 
             if (OSName == "Linux") {
-                ApplyFontface("Consolas", "monospace", "/fonts/consola.ttf", "truetype");
+                ApplyFontface("Consolas", "monospace", "/db/fonts/consola.ttf", "truetype");
             }
             else {
-                ApplyFontface("Consolas", "consolas", "/fonts/consola.ttf", "truetype");
+                ApplyFontface("Consolas", "consolas", "/db/fonts/consola.ttf", "truetype");
             }
         }
 
@@ -213,9 +213,32 @@
             return query_string;
         }();
 
+		function saveTag()
+		{
+			for(var i = 0; i < gInfo[gSection]["tag"].length; i++)
+			{
+				item = gInfo[gSection]["tag"][i];
+				tag_name = "tag_" + item["id"];
+				if (getElementById(tag_name).checked)
+				{
+					setCookie(tag_name, 1, 3650);
+				}
+				else
+				{
+					setCookie(tag_name, 0, 3650);
+				}
+			}
+
+			reloadPage();
+		}
 
         function reloadPage() {
-            var s = getElementById('category');
+			setCookie("user1Min", getElementById("user1Min").value, 3650);
+			setCookie("user1Max", getElementById("user1Max").value, 3650);
+			setCookie("user2Min", getElementById("user2Min").value, 3650);
+			setCookie("user2Max", getElementById("user2Max").value, 3650);
+
+     		var s = getElementById('category');
             if (s.selectedIndex != -1)
                 gCategory = s[s.selectedIndex].value;
             else
@@ -317,7 +340,7 @@
             str = '';
             for (var i = 0; i < gInfo[section]["tag"].length; i++) {
                 item = gInfo[section]["tag"][i];
-                str += "<input type='checkbox' name='tag_{0}' id='tag_{0}' value='{0}' onChange='reloadPage()' style='vertical-align:middle'/>{1} \r\n".format(item["id"], item["name"]);
+                str += "<input type='checkbox' name='tag_{0}' id='tag_{0}' value='{0}' onChange='saveTag()' style='vertical-align:middle'/>{1} \r\n".format(item["id"], item["name"]);
                 tagListG[i] = 'tag_{0}'.format(item["id"]);
             }
             getElementById("tagDiv").innerHTML = str;
@@ -377,14 +400,24 @@
             //  getElementById("category").selectedIndex = gCategory;
             getElementById("bookmark").checked = +gQueryBookmark;
             getElementById("smode").checked = +gQuerySearchMode;
-
-            for (var i = 0; i < gQueryTag.length; i++) {
-                getElementById("tag_" + gQueryTag[i]).checked = true;
-            }
+			
+			for(var i = 0; i < gInfo[gSection]["tag"].length; i++)
+			{
+				item = gInfo[gSection]["tag"][i];
+				tag_name = "tag_" + item["id"];
+				
+				v = readCookie(tag_name, 0);
+				getElementById(tag_name).checked = +v;
+			}
 
             var s = getElementById('hzoom');
             s.selectedIndex = readCookie("hzoom", 0);
 
+			gUser1Min = +readCookie("user1Min", 0);
+			gUser1Max = +readCookie("user1Max", 100);
+			gUser2Min = +readCookie("user2Min", 0);
+			gUser2Max = +readCookie("user2Max", 100);
+			
 			getElementById("user1Min").value = gUser1Min;
 			getElementById("user1Max").value = gUser1Max;
 			getElementById("user2Min").value = gUser2Min;
@@ -541,17 +574,17 @@
 
             if (+obj["total"] > 0) {
                 summary = obj["summary"];
+				s = "   <tr>\r\n" +
+					"       <td><a href='{0}&start={1}'>{1}</a></td>\r\n" +
+					"       <td>{2}</td>\r\n" +
+					"       <td>{3}</td>\r\n" +
+					"       <td>{4}</td>\r\n" +
+					"       <td>{5}</td>\r\n" +
+					"       <td>{6}</td>\r\n" +
+					"       <td style='text-align:left;'><a href='{0}&start={1}'>{7}</a></td>\r\n" +
+					"   </tr>\r\n";
+						
                 for (var i = 0; i < summary.length; i++) {
-                    s = "   <tr>\r\n" +
-                        "       <td><a href='{0}&start={1}'>{1}</a></td>\r\n" +
-                        "       <td>{2}</td>\r\n" +
-                        "       <td>{3}</td>\r\n" +
-                        "       <td>{4}</td>\r\n" +
-                        "       <td>{5}</td>\r\n" +
-                        "       <td>{6}</td>\r\n" +
-                        "       <td style='text-align:left;'><a href='{0}&start={1}'>{7}</a></td>\r\n" +
-                        "   </tr>\r\n";
-
                     e += s.format(url, i + 1, summary[i]["category"], summary[i]["bookmark"], summary[i]["user1"], summary[i]["user2"],
                         summary[i]["tag"], summary[i]["key"]);
                 }
@@ -579,15 +612,15 @@
 
             if (+obj["total"] > 0) {
                 summary = obj["summary"];
+				s = "   <tr>\r\n" +
+					"       <td><a href='javascript:go({0})'>{0}</a></td>\r\n" +
+					"       <td>{1}</td>\r\n" +
+					"       <td>{2}</td>\r\n" +
+					"       <td>{3}</td>\r\n" +
+					"       <td style='text-align:left;'><a href='javascript:go({0})'>{4}</a></td>\r\n" +
+					"   </tr>\r\n";
+						
                 for (var i = 0; i < summary.length; i++) {
-                    s = "   <tr>\r\n" +
-                        "       <td><a href='javascript:go({0})'>{0}</a></td>\r\n" +
-                        "       <td>{1}</td>\r\n" +
-                        "       <td>{2}</td>\r\n" +
-                        "       <td>{3}</td>\r\n" +
-                        "       <td style='text-align:left;'><a href='javascript:go({0})'>{4}</a></td>\r\n" +
-                        "   </tr>\r\n";
-
                     e += s.format(i + 1, summary[i]["category"], summary[i]["bookmark"],
                         summary[i]["tag"], summary[i]["key"]);
                 }
@@ -641,7 +674,7 @@
                             <tr>
                                 <TD><B>Total&nbsp;</B></TD>
                                 <td>min</td>
-                                <td><input type="number" id="user1Min" min="-1" max="100" value="-1" style="width: 3em;" /></td>
+                                <td><input type="number" id="user1Min" min="-1" max="100" value="0" style="width: 3em;" /></td>
                                 <td>max</td>
                                 <td><input type="number" id="user1Max" min="-1" max="100" value="99" style="width: 3em;" /></td>
                             </tr>
@@ -652,7 +685,7 @@
                             <tr>
                                 <TD><B>Failure&nbsp;</B></TD>
                                 <td>min</td>
-                                <td><input type="number" id="user2Min" min="-1" max="100" value="-1" style="width: 3em;" /></td>
+                                <td><input type="number" id="user2Min" min="-1" max="100" value="0" style="width: 3em;" /></td>
                                 <td>max</td>
                                 <td><input type="number" id="user2Max" min="-1" max="100" value="99" style="width: 3em;" /></td>
                             </tr>
@@ -668,7 +701,7 @@
     <p>
         <A href="/" target="_parent" class="page">Home</A>
         <br />
-        <A href="home" target="_parent" class="page">To One View Mode</A>
+        <A href="fhome" target="_parent" class="page">To List View Mode</A>
 
         <h2 class="result"><div id="result">Result</div></h2>
         <table class="reference" width="100%" border="1" cellpadding="0" cellspacing="0">

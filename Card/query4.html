@@ -9,32 +9,32 @@
 <STYLE TYPE="text/css"><!--
 @font-face{  
     font-family: Andale Mono;  
-    src: url('/fonts/andalemo.ttf') format('truetype');  
+    src: url('/db/fonts/andalemo.ttf') format('truetype');  
 }
 
 @font-face{  
     font-family: Consolas;  
-    src: local('consolas'), url('/fonts/consola.ttf') format('truetype');  
+    src: local('consolas'), url('/db/fonts/consola.ttf') format('truetype');  
 }
 
 @font-face{  
     font-family: Courier New;  
-    src: local('cour'), url('/fonts/cour.ttf') format('truetype');  
+    src: local('cour'), url('/db/fonts/cour.ttf') format('truetype');  
 }
 /*
 @font-face{  
     font-family: Consolas;  
-    src: local('consolas'), url('/fonts/consola.ttf') format('truetype');  
+    src: local('consolas'), url('/db/fonts/consola.ttf') format('truetype');  
 }
 
 @font-face{  
     font-family: Andale Mono;  
-    src: url('/fonts/andalemo.ttf') format('truetype');  
+    src: url('/db/fonts/andalemo.ttf') format('truetype');  
 }
 
 @font-face{  
     font-family: Courier New1;  
-    src: local('cour'), url('/fonts/cour.ttf') format('truetype');  
+    src: local('cour'), url('/db/fonts/cour.ttf') format('truetype');  
 }
 */
 
@@ -184,11 +184,11 @@ function LoadFont()
 
 	if (OSName == "Linux") 
 	{
-		ApplyFontface("Consolas", "monospace", "/fonts/consola.ttf", "truetype");
+		ApplyFontface("Consolas", "monospace", "/db/fonts/consola.ttf", "truetype");
 	}
 	else
 	{
-		ApplyFontface("Consolas", "consolas", "/fonts/consola.ttf", "truetype");
+		ApplyFontface("Consolas", "consolas", "/db/fonts/consola.ttf", "truetype");
 	}
 }
 
@@ -197,6 +197,15 @@ LoadFont();
 // Browser mode
 // keyword
 // key, content,(summary,1,10), info
+
+//////////////////////////////////////////////////////////////////////////////////////////
+/// Tag description
+
+var gTagInfo = [
+	["arr", "array"],
+	["bdfs", "bfs"],
+];
+//////////////////////////////////////////////////////////////////////////////////////////
 
 		var gType = <!--{type}-->;
 		var gSection = "<!--{section}-->";
@@ -569,6 +578,24 @@ function load()
 		card = "card:sec={0}&id={1}".format(gSection, gId);
 		s = "<A href='{0}' target='_blank'>{0}</A> <p> <A href='{1}'>{1}</A>".format(url, card);
 		getElementById("urlinfo").innerHTML = s;
+		
+		e = "<tr>\r\n" +
+		"       <th width=\"20%\">tag</th>\r\n" +
+		"       <th width=\"25%\">desc</th>\r\n" +
+		"   </tr>\r\n"; 
+
+		s = "   <tr>\r\n" +
+			"       <td>{0}</td>\r\n" +
+			"       <td>{1}</td>\r\n" +
+			"   </tr>\r\n";
+		for (var i = 0; i < gTagInfo.length; i++) {
+			e += s.format(gTagInfo[i][0], gTagInfo[i][1]);
+		}
+		getElementById("taginfo").innerHTML = e;
+		
+		var path = window.location.pathname;
+		var page = path.split("/").pop();
+		getElementById("fileinfo").innerHTML = "<br>module name: " + page;
 	}
 
 	// When the user clicks on <span> (x), close the modal
@@ -677,7 +704,26 @@ function SaveTags()
 
 			UpdateUserFields();
 		}
+	
+		function SetUserFields() {
+			var a = getElementById("resetTotal").value;
+			var b = getElementById("resetFail").value;
+			
+			if (a == null || a == "" || a.length > 2 || parseInt(a) < 0) {
+				alert("invalid total = " + a);
+				return;
+			}
+			if (b == null || b == "" || b.length > 2 || parseInt(b) < 0) {
+				alert("invalid fail = " + b);
+				return;
+			}
 
+			gUser1 = parseInt(a);
+			gUser2 = parseInt(b);
+			
+			UpdateUserFields();
+		}
+		
 		function UpdateUserFields() {
             var xmlhttp;
             if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -711,8 +757,22 @@ function SaveTags()
 
   <!-- Modal content -->
   <div class="modal-content">
-    <span class="close">¡¿</span>
-    <p><div id='urlinfo'> dddSome text in the Modal..</div></p>
+            <span class="close">¡¿</span>
+            <p>
+			<div id='urlinfo'> Some text in the Modal..</div>
+			<div> 
+				  Total: <input type="text" name="resetTotal" id="resetTotal" value="0" style="width: 3em;"> 
+				  Fail : <input type="text" name="resetFail" id="resetFail" value="0" style="width: 3em;">
+				  <input type="button" value="Set" id="reset" onclick="SetUserFields()" />
+			</div>
+			<br>
+			<table class="reference">
+				<tbody id='taginfo'>
+				</tbody>
+			</table>
+			<div id='fileinfo'></div>
+			</p>
+
   </div>
 
 </div>
