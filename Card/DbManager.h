@@ -159,14 +159,14 @@ public:
 	int GetDbListAsJson(std::string &s);
 	int Query(StringMapArray &result, int contentType, LPCTSTR db, int category, 
 			int bookmark, CUIntArray &tagList, pair<int, int> user1, pair<int, int> user2,
-            int tagSearchMode, LPCTSTR sort, int index, int count = 1);
+            int tagSearchMode, CUIntArray& xtagList, int xtagSearchMode, LPCTSTR sort, int index, int count = 1);
     int Query(StringMapArray &result, LPCTSTR db, LPCTSTR id, BOOL useCategory, CString sort, int &index);
 
 	int SearchKey(StringMapArray &result, CString &key,
             CString lineFeed, bool stressHead);
 	int GetContentInfoAsJson(std::string &s);
 	int GetSummaryAsJson(std::string &s, LPCTSTR db, int category, 
-		int bookmark, CUIntArray &tagList, pair<int, int> user1, pair<int, int> user2, int tagSearchMode, LPCTSTR sort,
+		int bookmark, CUIntArray &tagList, pair<int, int> user1, pair<int, int> user2, int tagSearchMode, CUIntArray& xtagList, int xtagSearchMode, LPCTSTR sort,
         CString lineFeed, bool stressHead, int start = -1, int count = -1);
 	int UpdateTag(LPCTSTR db, unsigned int id, 
 				   int mask, int bookmark, CUIntArray &tag);

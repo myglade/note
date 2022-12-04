@@ -701,7 +701,7 @@ int CDbManager::GetDbListAsJson(std::string &s)
 
 int CDbManager::Query(StringMapArray &result, int contentType, LPCTSTR db, int category, 
 		int bookmark, CUIntArray &tagList, pair<int,int> user1, pair<int,int> user2, 
-        int tagSearchMode, LPCTSTR sort, int index, int count)
+        int tagSearchMode, CUIntArray& xtagList, int xtagSearchMode, LPCTSTR sort, int index, int count)
 {
 	DbMap::iterator		iter;
 
@@ -717,7 +717,7 @@ int CDbManager::Query(StringMapArray &result, int contentType, LPCTSTR db, int c
 		return - 1;
 
 	return iter->second->db->Query(result, contentType, category, bookmark, tagList, user1, user2, 
-            tagSearchMode, sort, index, count);
+            tagSearchMode, xtagList, xtagSearchMode, sort, index, count);
 }
 
 int CDbManager::Query(StringMapArray &result, LPCTSTR db, LPCTSTR id, 
@@ -740,7 +740,7 @@ int CDbManager::Query(StringMapArray &result, LPCTSTR db, LPCTSTR id,
 
 int CDbManager::GetSummaryAsJson(std::string &s, LPCTSTR db, int category, 
 		int bookmark, CUIntArray &tagList, pair<int, int> user1, pair<int, int> user2, 
-        int tagSearchMode, LPCTSTR sort,
+        int tagSearchMode, CUIntArray& xtagList, int xtagSearchMode, LPCTSTR sort,
         CString lineFeed, bool stressHead, int start, int count)
 {
 	DbMap::iterator		iter;
@@ -756,7 +756,7 @@ int CDbManager::GetSummaryAsJson(std::string &s, LPCTSTR db, int category,
 		return - 1;
 
 	return iter->second->db->GetSummaryAsJson(s, category, 
-		bookmark, tagList, user1, user2, tagSearchMode, sort, lineFeed, stressHead, start, count);
+		bookmark, tagList, user1, user2, tagSearchMode, xtagList, xtagSearchMode, sort, lineFeed, stressHead, start, count);
 }
 
 int CDbManager::UpdateTag(LPCTSTR db, unsigned int id, 

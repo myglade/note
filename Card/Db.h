@@ -111,9 +111,9 @@ public:
 	virtual int DeleteItem();
 	virtual int LoadData(CppSQLite3Query &q, BOOL raw, int contentType, int category,
 			int bookmark, CUIntArray &tagList, pair<int, int> user1, pair<int, int> user2,
-            int tagSearchMode, LPCTSTR sort, int start, int count);
-	virtual int LoadData(CppSQLite3Query &q, BOOL raw, int contentType,
-			unsigned int id, unsigned int itime, LPCTSTR sort);
+            int tagSearchMode, CUIntArray& xtagList, int xtagSearchMode, LPCTSTR sort, int start, int count);
+	//virtual int LoadData2(CppSQLite3Query &q, BOOL raw, int contentType,
+	//		unsigned int id, unsigned int itime, LPCTSTR sort);
 	virtual int SearchKey(CppSQLite3Query &q, CString key);
 	virtual int LoadImage(unsigned int id, int owner, RtfImageList &imageList, bool loadActualData = false);
 	virtual int LoadDataFromCurrentSetting(CppSQLite3Query &q, int start, int count);
@@ -168,13 +168,14 @@ public:
 	virtual int ExecuteSql(CppSQLite3Query &q, char *format, ...);
 	virtual int ExecuteSql2(CppSQLite3Query &q, const char *query);
 	virtual void CreateTagField(CUIntArray &list, CString &tag, int mode);
+	virtual void CreateXTagField(CUIntArray& list, CString& tag, int mode);
 	virtual void EncodeTagString(CUIntArray &tag, CString &tagStr);
 	virtual void DecodeTagString(LPCTSTR tagStr, CUIntArray &tag);
 	virtual void DecodeTagString(LPCTSTR tagStr, CNames &names);
 
 	virtual int Query(StringMapArray &result, int contentType, int category,
 			int bookmark, CUIntArray &tagList, pair<int, int> user1, pair<int, int> user2,
-            int tagSearchMode, LPCTSTR sort, int index, int count = 1);
+            int tagSearchMode, CUIntArray& xtagList, int xtagSearchMode, LPCTSTR sort, int index, int count = 1);
 	virtual int Query(StringMapArray &result, LPCTSTR id, BOOL useCategory, CString sort, int &index);
 
 	virtual int GetCategoryName(int id, CString &name);
@@ -185,7 +186,7 @@ public:
                     StringMapArray &result, BOOL categoryName,
                     CString lineFeed, bool stressHead);
 	virtual int GetSummaryAsJson(std::string &s, int category,
-			int bookmark, CUIntArray &tagList, pair<int, int> user1, pair<int, int> user2, int tagSearchMode, LPCTSTR sort,
+			int bookmark, CUIntArray &tagList, pair<int, int> user1, pair<int, int> user2, int tagSearchMode, CUIntArray& xtagList, int xtagSearchMode, LPCTSTR sort,
             CString lineFeed, bool stressHead, int maxLen, int start = -1, int count = -1);
 	virtual int GetCategoryListAsJson(std::string &s);
 	virtual int SearchKey(StringMapArray &result, CString &key,

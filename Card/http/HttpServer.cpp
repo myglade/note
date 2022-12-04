@@ -386,14 +386,14 @@ void DbHandler(webserver::http_request* r, CString page)
 	CString				section;
 	int					cate = -1;
 	int					bookmark = 0;
-	CUIntArray			tags;
+	CUIntArray			tags, xtags;
 	CString				sort = "ASC";
 	int					start = 0;
 	int					count = 1;
 	CDbManager *		db;
 	int					type;
-	CString				tagStr;
-    int                 searchMode = 0;
+	CString				tagStr, xtagStr;
+    int                 searchMode = 0, xsearchMode = 0;
 	CTemplateParser		parser;
 	StringMapArray		result;
 	CFile				file;
@@ -443,10 +443,27 @@ void DbHandler(webserver::http_request* r, CString page)
 				tagStr += iter->second.c_str();
 			}
 		}
+		else if (iter->first.substr(0, 5) == "xtag_")
+		{
+			int id = atoi(iter->second.c_str());
+			xtags.Add(id);
+
+			if (xtagStr == "")
+				xtagStr = iter->second.c_str();
+			else
+			{
+				xtagStr += ",";
+				xtagStr += iter->second.c_str();
+			}
+		}
 	}
 	iter = r->params_.find("smode");
 	if (iter != r->params_.end())
 		searchMode = atoi(iter->second.c_str());
+
+	iter = r->params_.find("xsmode");
+	if (iter != r->params_.end())
+		xsearchMode = atoi(iter->second.c_str());
 
     iter = r->params_.find("user1min");
     if (iter != r->params_.end()) {
@@ -491,7 +508,7 @@ void DbHandler(webserver::http_request* r, CString page)
     if (id == "")
         total = db->Query(result, type, section, cate, bookmark, tags, { user1min, user1max }, 
             { user2min, user2max },
-            searchMode, sort, start - 1, count);
+            searchMode, xtags, xsearchMode, sort, start - 1, count);
     else
     {
         total = db->Query(result, section, id, TRUE, sort, start);
@@ -549,10 +566,14 @@ void DbHandler(webserver::http_request* r, CString page)
 		}
 		else if (s == "querytag")
 			parser.AddString(tagStr);
+		else if (s == "queryxtag")
+			parser.AddString(xtagStr);
 		else if (s == "querybookmark")
 			parser.AddString(bookmark);
 		else if (s == "querymode")
 			parser.AddString(searchMode);
+		else if (s == "queryxmode")
+			parser.AddString(xsearchMode);
 		else if (s == "tag")	
 		{
 			if (result.size() > 0)
@@ -715,8 +736,8 @@ void HomeHandler(webserver::http_request* r, CString htmlTemplate)
 	CString				section;
 	CString				cate = "-1";
 	CString				bookmark = "0";
-	CString				searchMode = "0";
-	CString				tagStr;
+	CString				searchMode = "0", xsearchMode = "0";
+	CString				tagStr, xtagStr;
 	CDbManager *		db;
 	CString				s;
 	string				info;
@@ -758,6 +779,10 @@ void HomeHandler(webserver::http_request* r, CString htmlTemplate)
 	if (iter != r->params_.end())
 		searchMode = iter->second.c_str();
 
+	iter = r->params_.find("xsmode");
+	if (iter != r->params_.end())
+		xsearchMode = iter->second.c_str();
+
 	iter = r->params_.find("id");
 	if (iter != r->params_.end())
 		id = iter->second.c_str();
@@ -789,6 +814,7 @@ void HomeHandler(webserver::http_request* r, CString htmlTemplate)
         user2Max = iter->second.c_str();
 
 	tagStr = "";
+	xtagStr = "";
 	for(iter = r->params_.begin(); iter != r->params_.end(); iter++)
 	{
 		if (iter->first.substr(0,4) == "tag_")
@@ -799,6 +825,16 @@ void HomeHandler(webserver::http_request* r, CString htmlTemplate)
 			{
 				tagStr += ",";
 				tagStr += iter->second.c_str();
+			}
+		}
+		if (iter->first.substr(0, 5) == "xtag_")
+		{
+			if (xtagStr == "")
+				xtagStr = iter->second.c_str();
+			else
+			{
+				xtagStr += ",";
+				xtagStr += iter->second.c_str();
 			}
 		}
 	}
@@ -828,10 +864,14 @@ void HomeHandler(webserver::http_request* r, CString htmlTemplate)
 			parser.AddString(id);
 		else if (s == "querytag")
 			parser.AddString(tagStr);
+		else if (s == "queryxtag")
+			parser.AddString(tagStr);
 		else if (s == "querybookmark")
 			parser.AddString(bookmark);
 		else if (s == "querymode")
 			parser.AddString(searchMode);
+		else if (s == "queryxmode")
+			parser.AddString(xsearchMode);
 		else if (s == "info")
 		{
 			string		info;
@@ -898,9 +938,9 @@ void MakeSummary(webserver::http_request* r, string &res)
 	int					bookmark = 0;
 	CDbManager *		db;
 	string				s;
-	CUIntArray			tags;
+	CUIntArray			tags, xtags;
 	CString				sort = "ASC";
-    int                 searchMode = 0;
+    int                 searchMode = 0, xsearchMode = 0;
     int                 len = 100;
     pair<int, int>       user1 = { -1, -1 }, user2 = { -1, -1 };
 
@@ -930,11 +970,20 @@ void MakeSummary(webserver::http_request* r, string &res)
 			int id = atoi(iter->second.c_str());
 			tags.Add(id);
 		}
+		if (iter->first.substr(0, 5) == "xtag_")
+		{
+			int id = atoi(iter->second.c_str());
+			xtags.Add(id);
+		}
 	}
 
     iter = r->params_.find("smode");
 	if (iter != r->params_.end())
 		searchMode = atoi(iter->second.c_str());
+
+	iter = r->params_.find("xsmode");
+	if (iter != r->params_.end())
+		xsearchMode = atoi(iter->second.c_str());
 
     iter = r->params_.find("user1min");
     if (iter != r->params_.end()) {
@@ -964,7 +1013,7 @@ void MakeSummary(webserver::http_request* r, string &res)
 	}
 
 	int total = db->GetSummaryAsJson(s, section, cate, bookmark, tags, user1, user2, 
-        searchMode, sort, LINE_FEED, true, len);
+        searchMode, xtags, xsearchMode, sort, LINE_FEED, true, len);
 
 	ConvUtf8(s, res);
 
