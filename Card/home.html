@@ -133,8 +133,10 @@
         var gSection = "<!--{section}-->";
         var gCategory = <!--{category}-->;
         var gQueryTag = [<!--{querytag}-->];
+		var gQueryxTag = [<!--{queryxtag}-->];
         var gQueryBookmark = <!--{querybookmark}-->;
         var gQuerySearchMode = <!--{querymode}-->;
+		var gQueryxSearchMode = <!--{queryxmode}-->;
         var gInfo = <!--{info}-->;
         var gType = <!--{type}-->;
         var gCurUrl = "<!--{curUrl}-->";
@@ -144,6 +146,7 @@
         var gUser2Max = <!--{user2max}-->;
 
         var tagListG = new Array();
+		var xtagListG = new Array();
         var gUrl;
 
         function getElementById(name) {
@@ -232,6 +235,25 @@
 			reloadPage();
 		}
 
+		function savexTag()
+		{
+			for(var i = 0; i < gInfo[gSection]["tag"].length; i++)
+			{
+				item = gInfo[gSection]["tag"][i];
+				tag_name = "xtag_" + item["id"];
+				if (getElementById(tag_name).checked)
+				{
+					setCookie(tag_name, 1, 3650);
+				}
+				else
+				{
+					setCookie(tag_name, 0, 3650);
+				}
+			}
+
+			reloadPage();
+		}
+		
         function reloadPage() {
 			setCookie("user1Min", getElementById("user1Min").value, 3650);
 			setCookie("user1Max", getElementById("user1Max").value, 3650);
@@ -260,6 +282,13 @@
 
             setCookie("querymode", gQuerySearchMode);
 
+            if (getElementById("xsmode").checked)
+                gQueryxSearchMode = "1";
+            else
+                gQueryxSearchMode = "0";
+
+            setCookie("queryxmode", gQueryxSearchMode);
+			
             if (getElementById("bmode").checked) {
                 gBMode = "1";
                 gType = "1";
@@ -278,6 +307,16 @@
 					tag += "&tag_{0}={0}".format(item["id"]);
 				}
 			}
+
+			xtag = '';
+			for(var i = 0; i < gInfo[gSection]["tag"].length; i++)
+			{
+				item = gInfo[gSection]["tag"][i];
+				if (getElementById("xtag_" + item["id"]).checked)
+				{
+					xtag += "&xtag_{0}={0}".format(item["id"]);
+				}
+			}
 			
 			gUser1Min = getElementById("user1Min").value;
 			gUser1Max = getElementById("user1Max").value;
@@ -285,8 +324,8 @@
 			gUser2Max = getElementById("user2Max").value;
 			
             //  s = "home";
-            s = "home?sec={0}&cate={1}&bk={2}&smode={3}&type={4}&user1min={5}&user1max={6}&user2min={7}&user2max={8}".format(gSection, gCategory, gQueryBookmark, gQuerySearchMode, gType, gUser1Min,
-                gUser1Max, gUser2Min, gUser2Max) + tag;
+            s = "home?sec={0}&cate={1}&bk={2}&smode={3}&type={4}&user1min={5}&user1max={6}&user2min={7}&user2max={8}&xsmode={9}".format(gSection, gCategory, gQueryBookmark, gQuerySearchMode, gType, gUser1Min,
+                gUser1Max, gUser2Min, gUser2Max, gQueryxSearchMode) + tag + xtag;
             window.location = s;
         }
 
@@ -336,7 +375,8 @@
             getElementById("categoryDiv").innerHTML = str;
             getElementById("bookmark").checked = 0;
             getElementById("smode").checked = 0;
-
+            getElementById("xsmode").checked = 0;
+			
             str = '';
             for (var i = 0; i < gInfo[section]["tag"].length; i++) {
                 item = gInfo[section]["tag"][i];
@@ -344,6 +384,14 @@
                 tagListG[i] = 'tag_{0}'.format(item["id"]);
             }
             getElementById("tagDiv").innerHTML = str;
+			
+            str = '';
+            for (var i = 0; i < gInfo[section]["tag"].length; i++) {
+                item = gInfo[section]["tag"][i];
+                str += "<input type='checkbox' name='xtag_{0}' id='xtag_{0}' value='{0}' onChange='savexTag()' style='vertical-align:middle'/>{1} \r\n".format(item["id"], item["name"]);
+                xtagListG[i] = 'xtag_{0}'.format(item["id"]);
+            }
+            getElementById("xtagDiv").innerHTML = str;
         }
 
         function load() {
@@ -400,6 +448,7 @@
             //  getElementById("category").selectedIndex = gCategory;
             getElementById("bookmark").checked = +gQueryBookmark;
             getElementById("smode").checked = +gQuerySearchMode;
+            getElementById("xsmode").checked = +gQueryxSearchMode;
 			
 			for(var i = 0; i < gInfo[gSection]["tag"].length; i++)
 			{
@@ -409,7 +458,16 @@
 				v = readCookie(tag_name, 0);
 				getElementById(tag_name).checked = +v;
 			}
-
+			
+			for(var i = 0; i < gInfo[gSection]["tag"].length; i++)
+			{
+				item = gInfo[gSection]["tag"][i];
+				tag_name = "xtag_" + item["id"];
+				
+				v = readCookie(tag_name, 0);
+				getElementById(tag_name).checked = +v;
+			}
+			
             var s = getElementById('hzoom');
             s.selectedIndex = readCookie("hzoom", 0);
 
@@ -448,6 +506,11 @@
             else
                 searchMode = "";
 
+            if (getElementById("xsmode").checked)
+                xsearchMode = "&xsmode=1";
+            else
+                xsearchMode = "";
+				
             tag = '';
             for (var i = 0; i < gInfo[section]["tag"].length; i++) {
                 item = gInfo[section]["tag"][i];
@@ -455,7 +518,16 @@
                     tag += "&tag_{0}={0}".format(item["id"]);
                 }
             }
-            url = "sec={0}&cate={1}{2}{3}{4}".format(section, cate, bookmark, tag, searchMode)
+			
+            xtag = '';
+            for (var i = 0; i < gInfo[section]["tag"].length; i++) {
+                item = gInfo[section]["tag"][i];
+                if (getElementById("xtag_" + item["id"]).checked) {
+                    xtag += "&xtag_{0}={0}".format(item["id"]);
+                }
+            }
+			
+            url = "sec={0}&cate={1}{2}{3}{4}{5}{6}".format(section, cate, bookmark, tag, searchMode, xtag, xsearchMode)
             DisplaySummary(gSummary, url);
         }
 
@@ -494,6 +566,11 @@
             else
                 searchMode = "";
 
+            if (getElementById("xsmode").checked)
+                xsearchMode = "&xsmode=1";
+            else
+                xsearchMode = "";
+				
             tag = '';
             for (var i = 0; i < gInfo[section]["tag"].length; i++) {
                 item = gInfo[section]["tag"][i];
@@ -501,9 +578,18 @@
                     tag += "&tag_{0}={0}".format(item["id"]);
                 }
             }
+			
+            xtag = '';
+            for (var i = 0; i < gInfo[section]["tag"].length; i++) {
+                item = gInfo[section]["tag"][i];
+                if (getElementById("xtag_" + item["id"]).checked) {
+                    xtag += "&xtag_{0}={0}".format(item["id"]);
+                }
+            }
+			
             user = "&user1min={0}&user1max={1}&user2min={2}&user2max={3}".format(gUser1Min, gUser1Max, gUser2Min, gUser2Max);
 
-            xmlhttp._url = "sec={0}&cate={1}{2}{3}{4}{5}&len={6}".format(section, cate, bookmark, tag, searchMode, user, 200);
+            xmlhttp._url = "sec={0}&cate={1}{2}{3}{4}{5}{6}&len={7}{8}".format(section, cate, bookmark, tag, searchMode, user, xsearchMode, 200, xtag);
             query = "summary?" + xmlhttp._url;
             xmlhttp.open("GET", query, true);
             xmlhttp.send();
@@ -655,6 +741,7 @@
                     <TD colspan=4>
                         <input type="checkbox" name="bookmark" id="bookmark" value="0" onchange="reloadPage()" style='vertical-align:middle' /> Bookmark
                         <input type="checkbox" name="smode" id="smode" value="0" onchange="reloadPage()" style='vertical-align:middle' /> OR Search
+						<input type="checkbox" name="xsmode" id="xsmode" value="0" onchange="reloadPage()" style='vertical-align:middle' /> OR XSearch
                         <input type="checkbox" name="bmode" id="bmode" value="0" onchange="browseMode()" style='vertical-align:middle' /> Browse Mode
                         <input type="checkbox" name="hidetag" id="hidetag" value="0" onchange="hideTag()" style='vertical-align:middle' /> Hide Tag
                     </TD>
@@ -663,6 +750,13 @@
                     <TD>Tag</TD>
                     <TD colspan=10>
                         <div id="tagDiv">
+                        </div>
+                    </TD>
+                </TR>
+                <TR>
+                    <TD>xTag</TD>
+                    <TD colspan=10>
+                        <div id="xtagDiv">
                         </div>
                     </TD>
                 </TR>
@@ -699,8 +793,6 @@
     </FORM>
 
     <p>
-        <A href="/" target="_parent" class="page">Home</A>
-        <br />
         <A href="fhome" target="_parent" class="page">To List View Mode</A>
 
         <h2 class="result"><div id="result">Result</div></h2>
