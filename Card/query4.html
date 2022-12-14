@@ -210,7 +210,7 @@ var gTagInfo = [
 	["pq/map", "priority_queue / tree map"],
 	["sch", "search"],
 	["trie", "trie"],
-	["ts", "Topological sort"],
+	["tp", "Topological sort"],
 	["uf", "union find"],
 
 ];
@@ -583,7 +583,9 @@ function load()
 	// When the user clicks the button, open the modal
 	btn.onclick = function() {
 		modal.style.display = "block";
-		url = "{0}/db/query2?type=2&sec={1}&id={2}".format(location.origin, gSection, gId);
+		//host = location.origin;
+		host = "http://myglade.mynetgear.com";
+		url = "{0}/db/query2?type=2&sec={1}&id={2}".format(host, gSection, gId);
 		card = "card:sec={0}&id={1}".format(gSection, gId);
 		s = "<A href='{0}' target='_blank'>{0}</A> <p> <A href='{1}'>{1}</A>".format(url, card);
 		getElementById("urlinfo").innerHTML = s;

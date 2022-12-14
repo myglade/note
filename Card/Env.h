@@ -20,7 +20,7 @@
 
 #define WINDOW_SETTING_SECTION	"Settings"
 
-#define LINE_FEED               "."
+#define LINE_FEED               ""
 
 #ifdef _DEBUG
 #define REGKEY "Software\\Flash Card Test\\Card\\"

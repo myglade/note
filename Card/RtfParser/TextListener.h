@@ -26,5 +26,6 @@ public:
     bool        m_stressHead;
     CString     m_lineFeed;
     bool        m_captureFirstLine;
+	bool		m_focusStatus;  // user emphasize
 };
 

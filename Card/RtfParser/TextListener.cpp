@@ -4,6 +4,10 @@
 #define STRESS_START "<span class=\"stress\">"
 #define STRESS_END   "</span>"
 
+#define FOCUS_START "<span class=\"focus\">"
+#define FOCUS_END   "</span>"
+#define FOCUS_STR "**"
+
 CTextListener::CTextListener(int maxSize, CString lineFeed, bool stressHead)
 {
     if (maxSize < 0)
@@ -18,6 +22,8 @@ CTextListener::CTextListener(int maxSize, CString lineFeed, bool stressHead)
     }
     m_stressHead = stressHead;
     m_lineFeed = lineFeed;
+    // to disable, set to 2
+    m_focusStatus = 0;     // emphasize text to start with **. but after head stress 
 }
 
 void CTextListener::OnStart()
@@ -116,6 +122,13 @@ void CTextListener::OnLineEnd()
         m_text += STRESS_END;        
         m_headStaus = 2;
     }
+
+    if (m_focusStatus == 1)
+    {
+        m_text += FOCUS_END;
+        m_focusStatus = 0;
+    }
+
     m_lineEnd++;
 }
 
@@ -152,6 +165,14 @@ void CTextListener::OnText(const char *data, int len)
     {
         m_text += STRESS_START;        
         m_headStaus = 1;
+    }
+
+    if (m_headStaus == 2 && m_focusStatus == 0) {
+        if (strncmp(data, FOCUS_STR, strlen(FOCUS_STR)) == 0) {
+            m_text += FOCUS_START;
+            m_focusStatus = 1;
+            data += strlen(FOCUS_STR);
+        }
     }
 
     bool blank = false;
@@ -196,8 +217,6 @@ void CTextListener::OnText(const char *data, int len)
         char *p = (char *) data;
         p[len] = 0;
     }
-
-
 
     if (blank == false)
     {

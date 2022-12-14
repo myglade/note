@@ -91,6 +91,10 @@
             font-weight: bold;
         }
 
+        .focus {
+            color: #FF0000;
+        }
+		
         -->
     </STYLE>
     <script type="text/javascript" src="js/summary.js"></script>
@@ -589,7 +593,7 @@
 			
             user = "&user1min={0}&user1max={1}&user2min={2}&user2max={3}".format(gUser1Min, gUser1Max, gUser2Min, gUser2Max);
 
-            xmlhttp._url = "sec={0}&cate={1}{2}{3}{4}{5}{6}&len={7}{8}".format(section, cate, bookmark, tag, searchMode, user, xsearchMode, 200, xtag);
+            xmlhttp._url = "sec={0}&cate={1}{2}{3}{4}{5}{6}&len={7}{8}".format(section, cate, bookmark, tag, searchMode, user, xsearchMode, 300, xtag);
             query = "summary?" + xmlhttp._url;
             xmlhttp.open("GET", query, true);
             xmlhttp.send();
