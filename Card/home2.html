@@ -91,6 +91,105 @@ h2.result_head {font-size:140%%;}
     color:#003366;
 	font-weight: normal;
 }
+table.reference2
+{
+    background-color:#ffffff;
+    border:1px solid #c3c3c3;
+    border-collapse:collapse;
+    font-family:Consolas, Arial, Monospace;
+    font-size:12px;
+}
+
+table.reference2 th
+{
+    background-color:#e5eecc;
+    border:1px solid #c3c3c3;
+    padding:3px;
+    vertical-align:top;
+}
+
+table.reference2 td 
+{
+    border:1px solid #c3c3c3;
+    padding:3px;
+    vertical-align:top;
+    text-align:left;
+}
+
+table.reference2 a 
+{
+    text-decoration: none;
+}
+
+
+table.reference3
+{
+    background-color:#ffffff;
+
+    border-collapse:collapse;
+    font-family:Consolas, Arial, Monospace;
+    font-size:12px;
+}
+
+table.reference3 th
+{
+    background-color:#e5eecc;
+	border:0px solid #c3c3c3;
+    padding:3px;
+    vertical-align:top;
+}
+
+table.reference3 td 
+{
+    border:0px solid #c3c3c3;*/
+    padding:3px;
+    vertical-align:top;
+    text-align:left;
+}
+
+.detail
+{
+/*	visibility: hidden;*/
+}
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    font-family:Consolas, Arial, Monospace, Courier New;
+    font-size:14px;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
 
 -->
 </STYLE>
@@ -135,8 +234,10 @@ LoadFont();
 var gSection = "<!--{section}-->";
 var gCategory = <!--{category}-->;
 var gQueryTag = [<!--{querytag}-->];
+var gQueryxTag = [<!--{queryxtag}-->];
 var gQueryBookmark = <!--{querybookmark}-->;
 var gQuerySearchMode = <!--{querymode}-->;
+var gQueryxSearchMode = <!--{queryxmode}-->;
 var gInfo = <!--{info}-->;
 var gType = <!--{type}-->;
 var gCurUrl = "<!--{curUrl}-->";
@@ -146,6 +247,7 @@ var gUser2Min = <!--{user2min}-->;
 var gUser2Max = <!--{user2max}-->;
 		
 var tagListG = new Array();
+var xtagListG = new Array();
 var gUrl;
 var gBMode = 0;		// browser
 var gPageName = "home2";
@@ -239,9 +341,28 @@ function saveTag()
 	setCookie("user2Min", getElementById("user2Min").value, 3650);
 	setCookie("user2Max", getElementById("user2Max").value, 3650);
 	
-	reloadPage();
+	//reloadPage();
 }
 
+function savexTag()
+{
+	for(var i = 0; i < gInfo[gSection]["tag"].length; i++)
+	{
+		item = gInfo[gSection]["tag"][i];
+		tag_name = "xtag_" + item["id"];
+		if (getElementById(tag_name).checked)
+		{
+			setCookie(tag_name, 1, 3650);
+		}
+		else
+		{
+			setCookie(tag_name, 0, 3650);
+		}
+	}
+
+	//reloadPage();
+}
+		
 function reloadPage()
 {
 	setCookie("user1Min", getElementById("user1Min").value, 3650);
@@ -268,6 +389,13 @@ function reloadPage()
     else
         gQuerySearchMode = "0";
 
+	if (getElementById("xsmode").checked)
+		gQueryxSearchMode = "1";
+	else
+		gQueryxSearchMode = "0";
+
+	setCookie("queryxmode", gQueryxSearchMode);
+			
     if (getElementById("bmode").checked)
 	{
         gBMode = "1";
@@ -289,13 +417,24 @@ function reloadPage()
         }
     }
 
+	xtag = '';
+	for(var i = 0; i < gInfo[gSection]["tag"].length; i++)
+	{
+		item = gInfo[gSection]["tag"][i];
+		if (getElementById("xtag_" + item["id"]).checked)
+		{
+			xtag += "&xtag_{0}={0}".format(item["id"]);
+		}
+	}
+			
 	gUser1Min = getElementById("user1Min").value;
 	gUser1Max = getElementById("user1Max").value;
 	gUser2Min = getElementById("user2Min").value;
 	gUser2Max = getElementById("user2Max").value;
 			
-    s = "{5}?sec={0}&cate={1}&bk={2}&smode={3}&type={4}&user1min={6}&user1max={7}&user2min={8}&user2max={9}".format(gSection, gCategory, gQueryBookmark, gQuerySearchMode, gType, gPageName, gUser1Min,
-                gUser1Max, gUser2Min, gUser2Max) + tag;
+    s = "{5}?sec={0}&cate={1}&bk={2}&smode={3}&type={4}&user1min={6}&user1max={7}&user2min={8}&user2max={9}&xsmode={10}".format(gSection, gCategory, gQueryBookmark, gQuerySearchMode, gType, gPageName, gUser1Min,
+                gUser1Max, gUser2Min, gUser2Max, gQueryxSearchMode) + tag + xtag;
+		
 	window.location = s;
 	
 }
@@ -338,10 +477,18 @@ function SetElement(section)
     for(var i = 0; i < gInfo[section]["tag"].length; i++)
     {
         item = gInfo[section]["tag"][i];
-        str += "<input type='checkbox' name='tag_{0}' id='tag_{0}' value='{0}' onChange='saveTag()' style='vertical-align:middle'/>{1} \r\n".format(item["id"], item["name"]);
+        str += "<TR><TD><input type='checkbox' name='tag_{0}' id='tag_{0}' value='{0}' onChange='saveTag()' style='vertical-align:middle'/>{1} </TD></TR> \r\n".format(item["id"], item["name"]);
         tagListG[i] = 'tag_{0}'.format(item["id"]);
     }
     getElementById("tagDiv").innerHTML = str;
+	
+	str = '';
+	for (var i = 0; i < gInfo[section]["tag"].length; i++) {
+		item = gInfo[section]["tag"][i];
+		str += "<TR><TD><input type='checkbox' name='xtag_{0}' id='xtag_{0}' value='{0}' onChange='savexTag()' style='vertical-align:middle'/>{1}  </TD></TR>\r\n".format(item["id"], item["name"]);
+		xtagListG[i] = 'xtag_{0}'.format(item["id"]);
+	}
+	getElementById("xtagDiv").innerHTML = str;
 }
 
 function load()
@@ -424,8 +571,10 @@ function load()
     }
 //  getElementById("category").selectedIndex = gCategory;
     getElementById("bookmark").checked = +gQueryBookmark;
-    getElementById("smode").checked = +readCookie("smode", 0);
-    
+//    getElementById("smode").checked = +readCookie("smode", 0);
+	getElementById("smode").checked = +gQuerySearchMode;
+	getElementById("xsmode").checked = +gQueryxSearchMode;
+
     for(var i = 0; i < gInfo[gSection]["tag"].length; i++)
     {
         item = gInfo[gSection]["tag"][i];
@@ -435,6 +584,14 @@ function load()
 		getElementById(tag_name).checked = +v;
     }
 
+	for(var i = 0; i < gInfo[gSection]["tag"].length; i++)
+	{
+		item = gInfo[gSection]["tag"][i];
+		tag_name = "xtag_" + item["id"];
+		
+		v = readCookie(tag_name, 0);
+		getElementById(tag_name).checked = +v;
+	}
 	
  	var s = getElementById('hzoom');
 	s.selectedIndex = readCookie("hzoom", 0);
@@ -448,7 +605,41 @@ function load()
 	getElementById("user1Max").value = gUser1Max;
 	getElementById("user2Min").value = gUser2Min;
 	getElementById("user2Max").value = gUser2Max;
-			
+		
+
+	var modal = document.getElementById('myModal');
+	var btn = document.getElementById("setting");
+
+	// Get the <span> element that closes the modal
+	var span = document.getElementsByClassName("close")[0];	
+	// When the user clicks the button, open the modal
+	btn.onclick = function() {
+		modal.style.display = "block";
+		//host = location.origin;
+		host = "http://myglade.mynetgear.com";
+
+		s = "=============================";
+		getElementById("urlinfo").innerHTML = s;
+		
+
+		
+		var path = window.location.pathname;
+		var page = path.split("/").pop();
+		getElementById("fileinfo").innerHTML = "<br>module name: " + page;
+	}
+
+	// When the user clicks on <span> (x), close the modal
+	span.onclick = function() {
+		modal.style.display = "none";
+	}
+
+	// When the user clicks anywhere outside of the modal, close it
+	window.onclick = function(event) {
+		if (event.target == modal) {
+			modal.style.display = "none";
+		}
+	}
+
     //loadSummaryFromJavascript();
 	loadSummary();
 }
@@ -493,6 +684,11 @@ function loadSummary()
     else
         searchMode = "";
 
+	if (getElementById("xsmode").checked)
+		xsearchMode = "&xsmode=1";
+	else
+		xsearchMode = "";
+				
     tag = '';
     for(var i = 0; i < gInfo[section]["tag"].length; i++)
     {
@@ -502,9 +698,18 @@ function loadSummary()
             tag += "&tag_{0}={0}".format(item["id"]);
         }
     }
+	
+	xtag = '';
+	for (var i = 0; i < gInfo[section]["tag"].length; i++) {
+		item = gInfo[section]["tag"][i];
+		if (getElementById("xtag_" + item["id"]).checked) {
+			xtag += "&xtag_{0}={0}".format(item["id"]);
+		}
+	}
+			
     user = "&user1min={0}&user1max={1}&user2min={2}&user2max={3}".format(gUser1Min, gUser1Max, gUser2Min, gUser2Max);
 
-    xmlhttp._url = "sec={0}&cate={1}{2}{3}{4}{5}&len={6}".format(section, cate, bookmark, tag, searchMode, user, -100);
+	xmlhttp._url = "sec={0}&cate={1}{2}{3}{4}{5}{6}&len={7}{8}".format(section, cate, bookmark, tag, searchMode, user, xsearchMode, -100, xtag);
     query = "summary?" + xmlhttp._url;
     xmlhttp.open("GET", query, true);
     xmlhttp.send();
@@ -690,7 +895,135 @@ function DisplaySummary(str, url)
 
 <BODY onload="load()">
 
+
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+            <span class="close">x</span>
+
+
+<TABLE class="reference3">
+
+    <TR>
+        <TD colspan=4>
+            <input type="checkbox" name="bookmark" id="bookmark" value="0" onchange="reloadPage()" style='vertical-align:middle' />Bookmark
+		</TD>
+	</TR>
+    <TR>
+        <TD colspan=4>
+			<input type="checkbox" name="smode" id="smode" value="0" onchange="OrSearch()" style='vertical-align:middle' />OR Search
+		</TD>
+	</TR>
+    <TR>
+        <TD colspan=4>
+			<input type="checkbox" name="xsmode" id="xsmode" value="0" onchange="reloadPage()" style='vertical-align:middle' />OR XSearch
+		</TD>
+	</TR>
+    <TR>
+        <TD colspan=4>
+			<input type="checkbox" name="bmode" id="bmode" value="0" onchange="browseMode()" style='vertical-align:middle' />Browse
+		</TD>
+	</TR>
+	<TR>
+        <TD colspan=4>
+			<input type="checkbox" name="hidetag" id="hidetag" value="0" onchange="hideTag()" style='vertical-align:middle' />Hide Tag
+		</TD>
+	</TR>
+	<TR>
+        <TD colspan=4>
+            +/-&nbsp;<select class="page" name="hzoom" id="hzoom" onchange="zoom()">
+                <option value="100">100%</option>
+                <option value="80">80%</option>
+                <option value="90">90%</option>
+                <option value="110">110%</option>
+                <option value="120">120%</option>
+                <option value="130">130%</option>
+                <option value="140">140%</option>
+                <option value="150">150%</option>
+                <option value="175">175%</option>
+                <option value="200">200%</option>
+            </select>		
+		</TD>
+	</TR>
+		
+   	<TR>
+        <TD><P><P> </TD>
+    </TR>
+
+
+    <TR>
+		<table class="reference">
+			<TR><TD>tag list</TD></TR>
+			<TR>
+				<TD>
+				<div id="tagDiv">
+				</div>
+				</TD>
+			</TR>
+			<TR><TD>xTag</TD></TR>
+			<TR>
+				<TD>
+					<div id="xtagDiv">
+					</div>
+				</TD>
+			</TR>
+			<TR>
+
+				<TD class="reference3">
+					<table class="reference3">
+						<tr>
+							<TD><B>Total&nbsp;</B></TD>
+							<td>min</td>
+							<td><input type="number" id="user1Min" min="-1" max="100" value="-1" style="width: 3em;" /></td>
+							<td>max</td>
+							<td><input type="number" id="user1Max" min="-1" max="100" value="99" style="width: 3em;" /></td>
+						</tr>
+					</table>
+				</TD>
+			</TR>
+			<TR>
+				<TD>
+					<table class="reference3">
+						<tr>
+							<TD><B>Failure&nbsp;</B></TD>
+							<td>min</td>
+							<td><input type="number" id="user2Min" min="-1" max="100" value="-1" style="width: 3em;" /></td>
+							<td>max</td>
+							<td><input type="number" id="user2Max" min="-1" max="100" value="99" style="width: 3em;" /></td>
+						</tr>
+					</table>
+				</TD>
+			</TR>
+	<TR>
+		<TD STYLE='width:5%;'><input type="button" value="Search" class="button1" id="prev2" onclick="reloadPage()" /></TD>
+	</TR>			
+		</table>
+
+    </TR>
+
+
+   	<TR>
+        <TD>&nbsp;&nbsp;&nbsp;&nbsp; </TD>
+    </TR>
+   	<TR>
+        <TD>&nbsp;&nbsp;&nbsp;&nbsp; </TD>
+    </TR>
+   	<TR>
+        <TD>&nbsp;&nbsp;&nbsp;&nbsp; </TD>
+    </TR>	
+
+	
+</TABLE>
+
+
+
+  </div>
+
+</div>
+
 <FORM ACTION="" METHOD="get">
+
 
 <TABLE class="page" border="0" cellpadding="3" cellspacing="1">
     <TR>
@@ -704,70 +1037,11 @@ function DisplaySummary(str, url)
         </TD>
 	</TR>
 	<TR>
-
-    </TR>
-
-    <TR>
         <TD colspan=4>
-            <input type="checkbox" name="bookmark" id="bookmark" value="0" onchange="reloadPage()" style='vertical-align:middle' />Bookmark
-            <input type="checkbox" name="smode" id="smode" value="0" onchange="OrSearch()" style='vertical-align:middle' />OR Search
-            <input type="checkbox" name="bmode" id="bmode" value="0" onchange="browseMode()" style='vertical-align:middle' />Browse
-            <input type="checkbox" name="hidetag" id="hidetag" value="0" onchange="hideTag()" style='vertical-align:middle' />Hide Tag
-            &nbsp;&nbsp;<select class="page" name="hzoom" id="hzoom" onchange="zoom()">
-                <option value="100">100%</option>
-                <option value="80">80%</option>
-                <option value="90">90%</option>
-                <option value="110">110%</option>
-                <option value="120">120%</option>
-                <option value="130">130%</option>
-                <option value="140">140%</option>
-                <option value="150">150%</option>
-                <option value="175">175%</option>
-                <option value="200">200%</option>
-            </select>
-            </TD>
-
-    </TR>
-   	<TR>
-        <TD> </TD>
-    </TR>
-
-    <TR>
-        <TD colspan=10>
-            <div id="tagDiv">
-            </div>
-        </TD>
-    </TR>
-
-	<TR>
-		<TD STYLE='width:5%;'><input type="button" value="Search" class="button1" id="prev2" onclick="reloadPage()" /></TD>
-
-		<TD>
-			<table>
-				<tr>
-					<TD><B>Total&nbsp;</B></TD>
-					<td>min</td>
-					<td><input type="number" id="user1Min" min="-1" max="100" value="-1" style="width: 3em;" /></td>
-					<td>max</td>
-					<td><input type="number" id="user1Max" min="-1" max="100" value="99" style="width: 3em;" /></td>
-				</tr>
-			</table>
+			 <A href="#0" id='setting'>setting</A>
 		</TD>
-		<TD>
-			<table>
-				<tr>
-					<TD><B>Failure&nbsp;</B></TD>
-					<td>min</td>
-					<td><input type="number" id="user2Min" min="-1" max="100" value="-1" style="width: 3em;" /></td>
-					<td>max</td>
-					<td><input type="number" id="user2Max" min="-1" max="100" value="99" style="width: 3em;" /></td>
-				</tr>
-			</table>
-		</TD>
-		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	</TR>	
-	
+    </TR>
+
     </div>
 </TABLE>
 </FORM>

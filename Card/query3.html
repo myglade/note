@@ -203,11 +203,15 @@ LoadFont();
 /// Tag description
 
 var gTagInfo = [
+	["#1", "Not for interview"],
+	["#2", "Medium"],
+	["#3", "Difficult"],
 	["arr", "array"],
 	["bs", "binary search"],
 	["bfs", "bfs"],
 	["dfs", "dfs"],
 	["inter", "interval"],
+	["pal", "palindrome"],
 	["pq/map", "priority_queue / tree map"],
 	["sch", "search"],
 	["trie", "trie"],
@@ -520,7 +524,7 @@ function load()
 	<tr>
 		<td width="150"> Total: <label id="total">100</label> / Fail: <label id="fail">100</label>  </td>
 		<td >
-		<input name='successbtn' id='successbtn' value="Success" type='button' onclick='UpdateSuccess()' style="vertical-align:middle" />
+		<!--<input name='successbtn' id='successbtn' value="Success" type='button' onclick='UpdateSuccess()' style="vertical-align:middle" />-->
 		<input name='failbtn' id='failbtn' value="Failure" type='button' onclick='UpdateFailure()' style="vertical-align:middle" />
 		</td>
 

@@ -485,54 +485,7 @@
 			getElementById("user2Min").value = gUser2Min;
 			getElementById("user2Max").value = gUser2Max;
 			
-            //loadSummaryFromJavascript();
             loadSummary();
-        }
-
-        function loadSummaryFromJavascript() {
-            var section, cate, s;
-
-            s = document.getElementById("section");
-            section = s[s.selectedIndex].value;
-            s = getElementById('category');
-            if (s.selectedIndex != -1)
-                cate = s[s.selectedIndex].value;
-            else
-                cate = "-1";
-
-            if (getElementById("bookmark").checked)
-                bookmark = "&bk=1";
-            else
-                bookmark = "";
-
-            if (getElementById("smode").checked)
-                searchMode = "&smode=1";
-            else
-                searchMode = "";
-
-            if (getElementById("xsmode").checked)
-                xsearchMode = "&xsmode=1";
-            else
-                xsearchMode = "";
-				
-            tag = '';
-            for (var i = 0; i < gInfo[section]["tag"].length; i++) {
-                item = gInfo[section]["tag"][i];
-                if (getElementById("tag_" + item["id"]).checked) {
-                    tag += "&tag_{0}={0}".format(item["id"]);
-                }
-            }
-			
-            xtag = '';
-            for (var i = 0; i < gInfo[section]["tag"].length; i++) {
-                item = gInfo[section]["tag"][i];
-                if (getElementById("xtag_" + item["id"]).checked) {
-                    xtag += "&xtag_{0}={0}".format(item["id"]);
-                }
-            }
-			
-            url = "sec={0}&cate={1}{2}{3}{4}{5}{6}".format(section, cate, bookmark, tag, searchMode, xtag, xsearchMode)
-            DisplaySummary(gSummary, url);
         }
 
         function loadSummary() {
