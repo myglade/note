@@ -230,6 +230,7 @@ function LoadFont()
 }
 
 LoadFont();
+var gOrBehavior = 2;	// 1: tag only OR, 2: tag + min/max OR
 
 var gSection = "<!--{section}-->";
 var gCategory = <!--{category}-->;
@@ -389,6 +390,8 @@ function reloadPage()
     else
         gQuerySearchMode = "0";
 
+	setCookie("querymode", gQuerySearchMode);
+	
 	if (getElementById("xsmode").checked)
 		gQueryxSearchMode = "1";
 	else
@@ -434,7 +437,6 @@ function reloadPage()
 			
     s = "{5}?sec={0}&cate={1}&bk={2}&smode={3}&type={4}&user1min={6}&user1max={7}&user2min={8}&user2max={9}&xsmode={10}".format(gSection, gCategory, gQueryBookmark, gQuerySearchMode, gType, gPageName, gUser1Min,
                 gUser1Max, gUser2Min, gUser2Max, gQueryxSearchMode) + tag + xtag;
-		
 	window.location = s;
 	
 }
@@ -499,6 +501,12 @@ function load()
     getElementById("hidetag").checked = +readCookie("hidetag", 0);
 	getElementById("summary").style.zoom = readCookie("hzoom_v", "100%");
 	
+
+	gCategory = readCookie("category", gCategory);
+	gSection = readCookie("section", gSection);
+	gQuerySearchMode = +readCookie("querymode", gQuerySearchMode);
+	gQueryxSearchMode = +readCookie("queryxmode", gQueryxSearchMode);
+			
  	gBMode = readCookie("bmode", 0);
     getElementById("bmode").checked = +gBMode;
     if (gBMode)
@@ -574,6 +582,7 @@ function load()
 //    getElementById("smode").checked = +readCookie("smode", 0);
 	getElementById("smode").checked = +gQuerySearchMode;
 	getElementById("xsmode").checked = +gQueryxSearchMode;
+	//alert(gQuerySearchMode);
 
     for(var i = 0; i < gInfo[gSection]["tag"].length; i++)
     {
@@ -680,7 +689,7 @@ function loadSummary()
         bookmark = "";
     
     if (getElementById("smode").checked)
-        searchMode = "&smode=1";
+        searchMode = "&smode=" + gOrBehavior;
     else
         searchMode = "";
 
@@ -718,14 +727,13 @@ function loadSummary()
 
 function OrSearch()
 {
-    if (getElementById("smode").checked)
-	{
-		setCookie("smode", 1, 3650);
-	}
+	if (getElementById("smode").checked)
+		gQuerySearchMode = "1";
 	else
-	{
-		setCookie("smode", 0, 3650);
-	}
+		gQuerySearchMode = "0";
+
+	setCookie("querymode", gQuerySearchMode);
+			
 	reloadPage();
 }
 
@@ -912,7 +920,7 @@ function DisplaySummary(str, url)
 	</TR>
     <TR>
         <TD colspan=4>
-			<input type="checkbox" name="smode" id="smode" value="0" onchange="OrSearch()" style='vertical-align:middle' />OR Search
+			<input type="checkbox" name="smode" id="smode" value="0" onchange="OrSearch()" style='vertical-align:middle' />OR Search(gOrBehavior)
 		</TD>
 	</TR>
     <TR>

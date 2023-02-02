@@ -131,6 +131,8 @@
 
         LoadFont();
 
+		var gOrBehavior = 2;	// 1: tag only OR, 2: tag + min/max OR
+		
         var gType = readCookie("type", "");
         var gBMode = readCookie("bmode", 0); // browser
 
@@ -405,6 +407,11 @@
             getElementById("hidetag").checked = +readCookie("hidetag", 0);
             getElementById("summary").style.zoom = readCookie("hzoom_v", "100%");
 
+			gCategory = readCookie("category", gCategory);
+			gSection = readCookie("section", gSection);
+			gQuerySearchMode = +readCookie("querymode", gQuerySearchMode);
+			gQueryxSearchMode = +readCookie("queryxmode", gQueryxSearchMode);
+			
             gBMode = readCookie("bmode", 0);
             getElementById("bmode").checked = +gBMode;
             if (gBMode) {
@@ -519,7 +526,7 @@
                 bookmark = "";
 
             if (getElementById("smode").checked)
-                searchMode = "&smode=1";
+                searchMode = "&smode=" + gOrBehavior;
             else
                 searchMode = "";
 
@@ -697,7 +704,7 @@
                 <TR>
                     <TD colspan=4>
                         <input type="checkbox" name="bookmark" id="bookmark" value="0" onchange="reloadPage()" style='vertical-align:middle' /> Bookmark
-                        <input type="checkbox" name="smode" id="smode" value="0" onchange="reloadPage()" style='vertical-align:middle' /> OR Search
+                        <input type="checkbox" name="smode" id="smode" value="0" onchange="reloadPage()" style='vertical-align:middle' /> OR Search(gOrBehavior)
 						<input type="checkbox" name="xsmode" id="xsmode" value="0" onchange="reloadPage()" style='vertical-align:middle' /> OR XSearch
                         <input type="checkbox" name="bmode" id="bmode" value="0" onchange="browseMode()" style='vertical-align:middle' /> Browse Mode
                         <input type="checkbox" name="hidetag" id="hidetag" value="0" onchange="hideTag()" style='vertical-align:middle' /> Hide Tag

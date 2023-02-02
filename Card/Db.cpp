@@ -1080,10 +1080,27 @@ int CDb::LoadData(CppSQLite3Query &q, BOOL raw, int contentType, int category,
 	CString		content;
 	int			total;
 	Lock		lock(m_mutex);
-    CString     user;
+    CString     user, orUser, t1, t2;
 
 	q.finalize();
-	CreateTagField(tagList, tag, tagSearchMode);
+
+	if (user1.first >= 0 && user1.second >= 0 && user1.first <= user1.second)
+		t1.Format(" %d <= user1 AND user1 <= %d ", user1.first, user1.second);
+
+	if (user2.first >= 0 && user2.second >= 0 && user2.first <= user2.second) {
+		t2.Format(" %d <= user2 AND user2 <= %d ", user2.first, user2.second);
+		if (t1 != "")
+			t2 = " AND " + t2;
+	}
+
+	if (t1 != "" || t2 != "") {
+		if (tagSearchMode == 2) 
+			orUser.Format(" (%s %s) ", t1, t2);
+		else 
+			user.Format("AND (%s %s)", t1, t2);
+	}
+
+	CreateTagField(tagList, tag, tagSearchMode, orUser);
 	if (!xtagList.IsEmpty()) 
 		CreateXTagField(xtagList, xtag, xtagSearchMode);
 
@@ -1107,11 +1124,11 @@ int CDb::LoadData(CppSQLite3Query &q, BOOL raw, int contentType, int category,
 		return -1;
 
     if (user1.first >= 0 && user1.second >= 0 && user1.first <= user1.second) {
-        user.Format(" AND (%d <= user1 AND user1 <= %d) ", user1.first, user1.second);
+        //user.Format(" AND (%d <= user1 AND user1 <= %d) ", user1.first, user1.second);
     }
 
     if (user2.first >= 0 && user2.second >= 0 && user2.first <= user2.second) {
-        user.Format("%s AND (%d <= user2 AND user2 <= %d) ", user, user2.first, user2.second);
+        //user.Format("%s AND (%d <= user2 AND user2 <= %d) ", user, user2.first, user2.second);
     }
 
     /* get total */
@@ -1135,6 +1152,8 @@ int CDb::LoadData(CppSQLite3Query &q, BOOL raw, int contentType, int category,
 				"SELECT count(*) FROM data WHERE category=%d %s %s %s;", 
 				category, user, tag, xtag);
 	}
+	//TRACE("%s\n", query);
+
 	total = m_db.execScalar(query);
 	if (total == 0)
 		return 0;
@@ -1780,19 +1799,24 @@ void CDb::Normalize(CString &src)
 	return;
 }
 
-void CDb::CreateTagField(CUIntArray &list, CString &tag, int mode)
+void CDb::CreateTagField(CUIntArray &list, CString &tag, int mode, const CString& user)
 {
+	CString s;
+
 	if (list.GetCount() == 0)
 	{
-		tag = "";
+		if (user == "")
+			tag = "";
+		else {
+			s.Format("AND (%s)", user);
+			tag += s;
+		};
 		return;
 	}
 	CUIntArray		temp;
 	
 	temp.Copy(list);
 	qsort(temp.GetData(), temp.GetCount(), sizeof(int), compare);
-
-	CString s;
 
     if (mode == 0)  // AND
     {
@@ -1816,6 +1840,12 @@ void CDb::CreateTagField(CUIntArray &list, CString &tag, int mode)
 		        s.Format("OR tag LIKE '%%$%d$%%' ", temp[i]);
 		    tag += s;
 	    }
+
+		if (user != "") {
+			s.Format(" OR %s", user);
+			tag += s;
+		}
+
 	    tag += ")";
     }
 

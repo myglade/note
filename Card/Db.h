@@ -167,7 +167,7 @@ public:
 	virtual int ExecuteSql(char *format, ...);
 	virtual int ExecuteSql(CppSQLite3Query &q, char *format, ...);
 	virtual int ExecuteSql2(CppSQLite3Query &q, const char *query);
-	virtual void CreateTagField(CUIntArray &list, CString &tag, int mode);
+	virtual void CreateTagField(CUIntArray &list, CString &tag, int mode, const CString& user="");
 	virtual void CreateXTagField(CUIntArray& list, CString& tag, int mode);
 	virtual void EncodeTagString(CUIntArray &tag, CString &tagStr);
 	virtual void DecodeTagString(LPCTSTR tagStr, CUIntArray &tag);
