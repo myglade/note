@@ -230,7 +230,7 @@ function LoadFont()
 }
 
 LoadFont();
-var gOrBehavior = 2;	// 1: tag only OR, 2: tag + min/max OR
+var gOrType = 2;	// 1: tag only OR, 2: tag + min/max OR
 
 var gSection = "<!--{section}-->";
 var gCategory = <!--{category}-->;
@@ -371,6 +371,13 @@ function reloadPage()
 	setCookie("user2Min", getElementById("user2Min").value, 3650);
 	setCookie("user2Max", getElementById("user2Max").value, 3650);
 
+	hideTag();
+	combineOr();
+	setBookmark();
+	OrSearch();
+	XorSearch();
+	browseMode();
+	
     var s = getElementById('category');
     if (s.selectedIndex != -1)
         gCategory = s[s.selectedIndex].value;
@@ -379,37 +386,6 @@ function reloadPage()
 
 	setCookie("category", gCategory, 3650);
 	setCookie("section", gSection, 3650);
-	
-    if (getElementById("bookmark").checked)
-        gQueryBookmark = "1";
-    else
-        gQueryBookmark = "0";
-		
-    if (getElementById("smode").checked)
-        gQuerySearchMode = "1";
-    else
-        gQuerySearchMode = "0";
-
-	setCookie("querymode", gQuerySearchMode);
-	
-	if (getElementById("xsmode").checked)
-		gQueryxSearchMode = "1";
-	else
-		gQueryxSearchMode = "0";
-
-	setCookie("queryxmode", gQueryxSearchMode);
-			
-    if (getElementById("bmode").checked)
-	{
-        gBMode = "1";
-		gType = "1";
-	}
-    else
-	{
-        gBMode = "0";
-		gType = "0";
-	}
-
     tag = '';
     for(var i = 0; i < gInfo[gSection]["tag"].length; i++)
     {
@@ -500,8 +476,10 @@ function load()
   
     getElementById("hidetag").checked = +readCookie("hidetag", 0);
 	getElementById("summary").style.zoom = readCookie("hzoom_v", "100%");
+	gOrType = +readCookie("ortype", 2);
+	if (gOrType == 2)
+		getElementById("combineor").checked = 1;
 	
-
 	gCategory = readCookie("category", gCategory);
 	gSection = readCookie("section", gSection);
 	gQuerySearchMode = +readCookie("querymode", gQuerySearchMode);
@@ -689,7 +667,7 @@ function loadSummary()
         bookmark = "";
     
     if (getElementById("smode").checked)
-        searchMode = "&smode=" + gOrBehavior;
+        searchMode = "&smode=" + gOrType;
     else
         searchMode = "";
 
@@ -733,9 +711,19 @@ function OrSearch()
 		gQuerySearchMode = "0";
 
 	setCookie("querymode", gQuerySearchMode);
-			
-	reloadPage();
 }
+
+
+function XorSearch()
+{
+	if (getElementById("xsmode").checked)
+		gQueryxSearchMode = "1";
+	else
+		gQueryxSearchMode = "0";
+
+	setCookie("queryxmode", gQueryxSearchMode);
+}
+
 
 function browseMode()
 {
@@ -771,7 +759,7 @@ function browseMode()
 	}
 
  	setCookie("bmode", gBMode, 3650);
-    reloadPage();
+    //reloadPage();
 }
 
 function hideTag()
@@ -782,8 +770,28 @@ function hideTag()
 		hidetag = 0;
 		
 	setCookie("hidetag", hidetag, 3650);
-    reloadPage();    
 }
+
+
+function setBookmark()
+{
+    if (getElementById("bookmark").checked)
+        gQueryBookmark = "1";
+    else
+        gQueryBookmark = "0";
+		
+	setCookie("bookmark", gQueryBookmark, 3650);
+}
+
+
+function combineOr() {
+	if (getElementById("combineor").checked)
+		ortype = 2;
+	else
+		ortype = 1;
+
+	setCookie("ortype", ortype, 3650);
+}            
 
 function go(start)
 {
@@ -915,17 +923,17 @@ function DisplaySummary(str, url)
 
     <TR>
         <TD colspan=4>
-            <input type="checkbox" name="bookmark" id="bookmark" value="0" onchange="reloadPage()" style='vertical-align:middle' />Bookmark
+            <input type="checkbox" name="bookmark" id="bookmark" value="0" onchange="setBookmark()" style='vertical-align:middle' />Bookmark
 		</TD>
 	</TR>
     <TR>
         <TD colspan=4>
-			<input type="checkbox" name="smode" id="smode" value="0" onchange="OrSearch()" style='vertical-align:middle' />OR Search(gOrBehavior)
+			<input type="checkbox" name="smode" id="smode" value="0" onchange="OrSearch()" style='vertical-align:middle' />OR Search
 		</TD>
 	</TR>
     <TR>
         <TD colspan=4>
-			<input type="checkbox" name="xsmode" id="xsmode" value="0" onchange="reloadPage()" style='vertical-align:middle' />OR XSearch
+			<input type="checkbox" name="xsmode" id="xsmode" value="0" onchange="XorSearch()" style='vertical-align:middle' />OR XSearchaa
 		</TD>
 	</TR>
     <TR>
@@ -936,6 +944,11 @@ function DisplaySummary(str, url)
 	<TR>
         <TD colspan=4>
 			<input type="checkbox" name="hidetag" id="hidetag" value="0" onchange="hideTag()" style='vertical-align:middle' />Hide Tag
+		</TD>
+	</TR>
+	<TR>
+        <TD colspan=4>
+			<input type="checkbox" name="combineor" id="combineor" value="0" onchange="combineOr()" style='vertical-align:middle' /> CombineOr
 		</TD>
 	</TR>
 	<TR>
@@ -1004,7 +1017,7 @@ function DisplaySummary(str, url)
 				</TD>
 			</TR>
 	<TR>
-		<TD STYLE='width:5%;'><input type="button" value="Search" class="button1" id="prev2" onclick="reloadPage()" /></TD>
+		<TD STYLE='width:5%;'><input type="button" value="Save" class="button1" id="prev2" onclick="reloadPage()" /></TD>
 	</TR>			
 		</table>
 
